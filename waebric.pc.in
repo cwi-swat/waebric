@@ -1,0 +1,6 @@
+prefix=@prefix@
+Maintainers=storm@cwi.nl
+Name: waebric
+Version: 0.1
+Description: a little language for XHTML markup generation
+Requires: asc-support,aterm,pgen,pt-support,sglr
