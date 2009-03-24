@@ -1,0 +1,7 @@
+equations
+
+[main]	start(Module, $module) = start(Summary, check($module))
+
+
+
+

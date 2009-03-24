@@ -1,0 +1,4 @@
+equations
+
+[main]	start(Module, $module) = start(RStore, summarize($module, initialize()))
+

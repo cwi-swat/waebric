@@ -1,0 +1,18 @@
+module languages/waebric/run/Values
+
+imports
+        basic/NatCon basic/IdentifierCon
+        languages/waebric/syntax/Text
+        containers/List[Value] [List[[Value]] => Value]
+        containers/Table[IdCon Value] [Table[[IdCon,Value]] => Value]
+
+hiddens
+context-free start-symbols Value
+
+exports
+sorts Value 
+
+context-free syntax
+  NatCon  -> Value  
+  Text -> Value  
+  "undef" -> Value

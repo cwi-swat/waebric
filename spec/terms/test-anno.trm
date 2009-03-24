@@ -1,0 +1,12 @@
+compile(
+
+module bla
+
+def main
+  bla;
+end
+
+def bla
+  h1 "Hello";
+end
+)

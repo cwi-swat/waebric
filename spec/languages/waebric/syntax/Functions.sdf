@@ -1,0 +1,10 @@
+module languages/waebric/syntax/Functions
+
+imports languages/waebric/syntax/Statements
+
+exports
+
+sorts FunctionDef
+
+context-free syntax
+  "def" IdCon Formals? Statement* "end" -> FunctionDef

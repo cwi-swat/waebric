@@ -1,0 +1,6 @@
+# $Id: configure.ac 27756 2009-01-15 15:20:24Z lankamp $
+
+AC_INIT
+META_SETUP
+META_C_SETUP
+AC_OUTPUT

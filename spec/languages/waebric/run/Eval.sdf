@@ -1,0 +1,157 @@
+module languages/waebric/run/Eval
+
+imports languages/waebric/syntax/Waebric
+        basic/Strings
+        basic/Booleans
+        utilities/Parsing[IdCon]
+        utilities/Parsing[Value]
+        languages/waebric/run/Markup
+        languages/waebric/run/Values
+        containers/Table[Var Value] [Table[[Var,Value]] => Environment]
+
+hiddens
+context-free start-symbols
+  Elements Module
+
+exports
+
+sorts Closure
+
+context-free syntax
+  <Environment, FunctionDef> -> Closure
+  Closure -> Value
+
+  value-to-text(Value) -> Text
+
+  eval(IdCon, {Value ","}*, Module*)                                          -> Elements                                        
+  eval-func(FunctionDef, {Value ","}*, Environment, block:Elements, Module*)               -> Elements                                        
+  bind-formals(Formals, {Value ","}*, Environment)                                         -> Environment                                     
+  bind-each-formal(Environment, {Var ","}*, {Value ","}*)                     -> Environment                                     
+  could-be-user-markup(Markup)                                                -> Markup?                                         
+  eval-markup(Markup, Environment, block:Elements, Module*)                   -> Elements                                        
+  eval-embedding(Embedding, Environment, Module*)                   -> Elements                                        
+  eval-embed(Embed, Environment, Module*)                   -> Elements                                        
+  eval-markups(Markup+, Environment, block:Elements, Module*)                   -> Elements                                        
+  eval-markup-func(Markup, FunctionDef, Environment, block:Elements, Module*) -> Elements                                        
+  eval-closure(Markup, Closure, Environment, block:Elements, Module*) -> Elements                                        
+  eval-tail(TextTail, Environment, Module*)                   -> Elements                                        
+  eval-designator(Designator)                                                 -> Header                                          
+  eval-attrs(Attribute*)                                                      -> {Attr ","}*                                     
+  eval-args-for-func(Arguments, Environment)                                  -> {Value ","}*                                    
+  eval-args-for-markup(Arguments, Environment)                                -> {Attr ","}*                                     
+  eval-arg-to-attr(Argument, Environment)                                     -> Attr                                            
+  eval-let-bindings(Assignment+, Environment)                                 -> Environment                                     
+  eval-each(IdCon, Value, Statement, Environment, block:Elements, Module*)    -> Elements                                        
+  eval-builtin-markup(Markup, Environment, block:Elements, Module*)           -> Elements                                        
+  eval-stat(Statement, Environment, block:Elements, Module*)                  -> Elements                                        
+  eval-stats(Statement*, Environment, block:Elements, Module*)                -> Elements                                        
+  eval-exp(Expression, Environment)                                           -> Value                                           
+  eval-pred(Predicate, Environment)                                           -> Boolean                                         
+  lookup-func(Module*, FunctionDef?, IdCon)                                   -> FunctionDef? {traversal(top-down, accu, break)} 
+  lookup-func(FunctionDef, FunctionDef?, IdCon)                               -> FunctionDef? {traversal(top-down, accu, break)} 
+  text-to-strcon(Text)                                                        -> StrCon                                          
+  pre-to-text(PreText)                                                        -> Text                                            
+  post-to-text(PostText)                                                      -> Text                                            
+  mid-to-text(MidText)                                                        -> Text                                            
+  join(StrCon, StrCon)                                                        -> StrCon                                          
+  natcon-to-strcon(NatCon)                                                    -> StrCon                                          
+  symbol-to-strcon(SymbolCon)                                                 -> StrCon                                          
+  symbol-to-text(SymbolCon) -> Text
+  join(Text, Text) -> Text
+  id-to-text(IdCon) -> Text
+  strcon-to-text(StrCon) -> Text
+
+  eval-tail-exp(TextTail, Environment) -> Value
+  eval-tail-exp(TextTail, Environment, Elements, Module*) -> Value
+
+hiddens
+variables
+  "$strcon" [0-9\']*  -> StrCon                
+  "$bytes" [0-9\']*   -> Bytes                 
+  "$natcon" [0-9\']*  -> NatCon                
+  "$boolcon" [0-9\']* -> BoolCon               
+  "$value" [0-9\']*   -> Value                 
+  "$value*" [0-9\']*  -> {Value ","}*          
+  "$value+" [0-9\']*  -> {Value ","}+          
+  "$env" [0-9\']*     -> Environment           
+  "$attr" [0-9\']*    -> Attr                  
+  "$attr*" [0-9\']*   -> {Attr ","}*           
+  "$elt" [0-9\']*     -> Element               
+  "$elts" [0-9\']*    -> Elements              
+  "$elt*" [0-9\']*    -> Element*              
+  "$block" [0-9\']*   -> Element*              
+  "$elt+" [0-9\']*    -> Element+              
+  "$head" [0-9\']*    -> Header                
+  "$vpair*" [0-9\']*  -> {<IdCon,Value> ","}*  
+  "$vpair" [0-9\']*   -> <IdCon,Value>         
+
+variables
+  %% Waebric
+
+  "$arg" [0-9\']*         -> Argument             
+  "$arg*" [0-9\']*        -> {Argument ","}*      
+  "$arg+" [0-9\']*        -> {Argument ","}*      
+  "$pred" [0-9\']*        -> Predicate            
+  "$type" [0-9\']*        -> Type                 
+  "$exp" [0-9\']*         -> Expression           
+  "$exp*" [0-9\']*        -> {Expression ","}*    
+  "$exp+" [0-9\']*        -> {Expression ","}+    
+  "$des" [0-9\']*         -> Designator           
+  "$attribute" [0-9\']*   -> Attribute            
+  "$attribute*" [0-9\']*  -> Attribute*           
+  "$stat" [0-9\']*        -> Statement            
+  "$stat+" [0-9\']*       -> Statement+           
+  "$stat*" [0-9\']*       -> Statement*           
+  "$no-else" [0-9\']*     -> NoElseMayFollow      
+  "$sym" [0-9\']*         -> SymbolCon            
+  "$var" [0-9\']*         -> Var                  
+  "$var*" [0-9\']*        -> {Var ","}*           
+  "$args" [0-9\']*        -> Arguments            
+  "$args?" [0-9\']*       -> Arguments?           
+  "$func" [0-9\']*        -> IdCon                
+  "$id" [0-9\']*          -> IdCon                
+  "$formals" [0-9\']*     -> Formals              
+  "$func-def" [0-9\']*    -> FunctionDef          
+  "$func-def?" [0-9\']*   -> FunctionDef?         
+  "$markup" [0-9\']*      -> Markup               
+  "$markup+" [0-9\']*      -> Markup+               
+  "$markup*" [0-9\']*      -> Markup*               
+  "$markup?" [0-9\']*     -> Markup?              
+  "$var" [0-9\']*         -> Var                  
+  "$mod-elt+" [0-9\']*    -> ModuleElement+       
+  "$mod-elt*" [0-9\']*    -> ModuleElement*       
+  "$module*" [0-9\']*     -> Module*              
+  "$module" [0-9\']*      -> Module               
+  "$mod-id" [0-9\']*      -> ModuleId             
+  "$mod-id*" [0-9\']*     -> ModuleId*            
+  "$import" [0-9\']*      -> Import               
+  "$key-val" [0-9\']*     -> KeyValuePair         
+  "$key-val*" [0-9\']*    -> {KeyValuePair ","}*  
+  "$text" [0-9\']*        -> Text                 
+  "$pre" [0-9\']*         -> PreText              
+  "$post" [0-9\']*        -> PostText             
+  "$mid" [0-9\']*         -> MidText              
+  "$tail" [0-9\']*        -> TextTail             
+  "$embed" [0-9\']*        -> Embed
+  "$embedding" [0-9\']*        -> Embedding
+  "$assignment" [0-9\']*  -> Assignment          
+  "$assignment+" [0-9\']* -> Assignment+    
+
+lexical variables
+  "$d" [0-9\']*                -> [0-9]   
+  "$textchar*" [0-9\']*    -> TextChar*                                 
+  "$textchar" [0-9\']*     -> TextChar                                  
+  "$strchar*" [0-9\']*     -> StrChar*                                  
+  "$strchar" [0-9\']*      -> StrChar                                   
+  "$both" [0-9\']*         -> ~[\0-\31\n\t\"\\] /\ (~[\0-\31\&\"\<\128-\255] \/ [\n\r\t])
+  "$amp"[0-9\']* -> [\&]
+  "$quote"                 -> EscQuote                                  
+  "$symchar" [0-9\']*      -> SymbolChar                                
+  "$symchar*" [0-9\']*     -> SymbolChar*                               
+  "$str-sym-char" [0-9\']* -> ~[\)\ \t\n\r\;\,\>] /\ ~[\0-\31\n\t\"\\]  
+  "$text-sym-char" [0-9\']* -> ~[\0-\31\)\ \t\n\r\;\,\>\127-\255] /\ (~[\0-\31\&\"\<\128-\255] \/ [\n\r\t])
+  "$idhead"[0-9\']* -> [a-zA-Z]
+  "$idtail"[0-9\']* -> [a-zA-Z\-0-9]
+  "$idtail+"[0-9\']* -> [a-zA-Z\-0-9]+
+  "$idtail*"[0-9\']* -> [a-zA-Z\-0-9]*
+

@@ -1,0 +1,19 @@
+equations
+
+[main]	start(Module, &module) = start(CompilationUnit, compile(&module))
+
+equations
+
+[compile-top]	
+	module &id* . &id &mod-elt* := &module,
+	&module* := import-only(&module)
+	===
+	compile(&module) = compile(&id, &module*)
+
+equations
+
+[compile-top]
+	module &id* . &id &mod-elt* := &module
+	===
+	compile(<&module &module*, &error*>) = compile(&id, &module &module*)
+

@@ -1,0 +1,77 @@
+equations
+
+[]	module $id $mod-elt* = <V vs=2 [ H ["module" [$id]] Vvs=2[[$mod-elt*]]]>
+
+[]	import $id = <H ["import" [$id]]>
+
+[1]	def $id $stat* end =  
+       <V[ H["def" [$id] ] I is=2[[$stat*]] "end"]>
+
+[]	def $id ($var*) $stat* end = <V [ H ["def" H hs=0 [ [$id] "(" H[G gs=4 op=H hs=0 [[$var*]]] ")"] ] I is=2 [[$stat*]] "end"]>
+
+[]	if ($pred) $stat = <V [H ["if" H hs=0 ["(" [$pred] ")"]] I is=2 [[$stat]]]>
+              when no-curlies($stat) == true
+
+[]	if ($pred) { $stat* } = <H [H ["if" H hs=0 ["(" [$pred] ")"] "{"] I is=2 [[$stat*]] "}"]>
+
+[]	if ($pred) $stat1 else $stat2 = <V [ H ["if" H hs=0 ["(" [$pred] ")"]] I is=2 [[$stat1]] "else" I is=2[[$stat2]]]>
+              when no-curlies($stat1) == true, no-curlies($stat2) == true
+
+[]	if ($pred) {$stat*} else $stat2 = <V [ H ["if" H hs=0 ["(" [$pred] ")"] "{"] I is=2 [[$stat*]] "}" 
+						"else" I is=2 [[$stat2]]]>
+              when no-curlies($stat2) == true
+
+[]	if ($pred) $stat1 else {$stat*} = <V [ H ["if" H hs=0 ["(" [$pred] ")"]] I is=2 [[$stat1]]
+						H["else" "{"] I is=2[[$stat*]] "}"]>
+              when no-curlies($stat1) == true
+
+[]	if ($pred) {$stat*1} else {$stat*2} =  <V [ H ["if" H hs=0 ["(" [$pred] ")"] "{"] I vs=0 is=2 [[$stat*1]] "}" 
+						H["else" "{"] I is=2[[$stat*2]] "}"]>
+
+
+[]	$markup ; = <H hs=0 [[$markup] ";"]>
+
+[]	each ($id : $exp) $stat = <V [H ["each" H hs=0["(" [$id] H[":" [$exp]] ")"]] I is=2[[$stat]]]>
+		when no-curlies($stat) == true
+
+[]	each ($id : $exp) {$stat*} = <V [H ["each" H hs=0["(" [$id] H[":" [$exp]] ")"] "{"] I is=2[[$stat*]] "}"]>
+
+[]	let $assignment+ in $stat* end = <V ["let" I is=2 [[$assignment+]] "in" I is=2 [[$stat*]] "end"]>
+
+[]	echo $exp ; = <H ["echo" H hs=0 [[$exp] ";"]]>
+
+[]	$des ($arg*) = <H hs=0 [[$des] "(" [$arg*] ")"]>
+
+[]	$des ($arg*) $markup = <H [H hs=0 [[$des] "(" H[[$arg*]] ")"] [$markup]]>
+
+[]	$des $markup = <H [[$des] [$markup]]>
+
+[]	$des ($arg*) { $stat* } = <V [H[H hs=0 [[$des] "(" [$arg*] ")"] "{"] I is=2 [[$stat*]] "}"]>
+
+[]	$des { $stat* } = <V [H[ [$des] "{"] I is=2 [[$stat*]] "}"]>
+
+[]	$id $attribute+ = <H hs=0 [[$id] H hs=0 [[$attribute+]]]>
+
+[]	$exp . $id = <H hs=0 [[$exp] "." [$id]]>
+
+[]	$exp = <H hs=0 ["{" "}"]>
+		when $exp == {}
+
+[]	{$key-val+} = <HV ["{" [$key-val+] "}"]>
+
+[]	$id : $exp = <H [H hs=0[[$id] ":"] HV [[$exp]]]>
+
+
+[]	[] = <H hs=0 ["[" "]"]>
+
+[]	[$exp+] = <HV ["[" [$exp+] "]"]>
+
+[]	$arg = <H hs=0[[$id] "=" [$exp]]> when $id = $exp := $arg
+
+equations
+
+[no-curlies-1]
+	no-curlies({$stat*}) = false
+
+[default-no-curlies-2]
+	no-curlies($stat) = true

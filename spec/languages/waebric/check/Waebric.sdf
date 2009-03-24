@@ -1,0 +1,10 @@
+module languages/waebric/check/Waebric
+
+imports languages/waebric/check/Check
+
+hiddens
+context-free start-symbols
+  Module Summary
+
+variables
+  "$module" [0-9\']*     -> Module               

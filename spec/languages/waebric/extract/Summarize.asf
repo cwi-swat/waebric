@@ -1,0 +1,154 @@
+equations
+
+[initialize-top]
+	$rstore0 := create-store(),
+	$rstore1 := declare($rstore0, Arity, rel[str, int]),
+	$rstore2 := declare($rstore1, Use, rel[str, loc]),
+	$rstore3 := declare($rstore2, Define, rel[str, loc]),
+	$rstore4 := declare($rstore3, UseArity, rel[loc, <str, int>]),
+	$rstore5 := declare($rstore4, Mapping, rel[str, loc]),
+	$rstore6 := declare($rstore5, Attributes, rel[loc, str]),
+	$rstore7 := declare($rstore6, Call, rel[str,str]),
+	$rstore8 := declare($rstore7, Statistics, rel[str, int])
+	===
+	initialize() = $rstore8
+
+equations
+
+[summarize-0]
+	summarize($text, $rstore) = inc($rstore, Statistics, "#strings")
+
+equations
+
+[summarize-1]
+	$natcon := formal-arity($var*, 0),
+	$strcon := unparse-to-string($id),
+	$rstore1 := insert($rstore, Arity, $strcon, $natcon),
+	$rstore2 := insert($rstore1, Define, $strcon, get-location($id)),
+	$rstore3 := inc($rstore2, Statistics, "#defines")
+	===
+	summarize(def $id ($var*) $stat* end, $rstore) = $rstore3
+
+[summarize-2]
+	$strcon := unparse-to-string($id),
+	$rstore1 := insert($rstore, Arity, $strcon, 0),
+	$rstore2 := insert($rstore1, Define, $strcon, get-location($id)),
+	$rstore3 := inc($rstore2, Statistics, "#defines")
+	===
+	summarize(def $id $stat* end, $rstore) = $rstore3
+
+equations
+
+[add-use-site-top]
+	$strcon := unparse-to-string($id),
+	$natcon := actual-arity($args),
+	$loc := get-location($id),
+	$rstore1 := insert($rstore, Use, $strcon, $loc),
+	$rstore2 := insert($rstore1, UseArity, $loc, <$strcon, $natcon>),
+	$rstore3 := add-attributes($loc, $args, $rstore2),
+	$rstore4 := add-attributes($loc, $attribute*, $rstore3),
+	$rstore5 := inc($rstore4, Statistics, "#call")
+	===
+	add-use-site($id, $attribute*, $args, $rstore) = $rstore5
+
+equations
+
+[add-attributes-args]
+	add-attributes($loc, (), $rstore) = $rstore
+
+[add-attributes-args]
+	$strcon := unparse-to-string($id),
+	$rstore' := insert($rstore, Attributes, $loc, $strcon),
+	$rstore'' := add-attributes($loc, ($arg*), $rstore')
+	=== 
+	add-attributes($loc, ($id = $exp, $arg*), $rstore) = $rstore''
+
+[default-add-attributes-args]
+	add-attributes($loc, ($exp, $arg*), $rstore) = 
+		add-attributes($loc, (value = $exp, $arg*), $rstore)
+
+equations
+
+[add-attributes-attrs-nil]
+	add-attributes($loc, , $rstore) = $rstore
+
+[add-attributes-attrs-cons-1]
+	$rstore' := insert($rstore, Attributes, $loc, "class"),
+	$rstore'' := inc($rstore', Statistics, "#class")
+	===
+	add-attributes($loc, . $id $attribute*, $rstore) = 
+		add-attributes($loc, $attribute*, $rstore'')
+
+[add-attributes-attrs-cons-2]
+	$rstore' := insert($rstore, Attributes, $loc, "id"),
+	$rstore'' := inc($rstore', Statistics, "#id")
+	===
+	add-attributes($loc, # $id $attribute*, $rstore) = 
+		add-attributes($loc, $attribute*, $rstore'')
+
+[add-attributes-attrs-cons-3]
+	$rstore' := insert($rstore, Attributes, $loc, "type"),
+	$rstore'' := inc($rstore', Statistics, "#type")
+	===
+	add-attributes($loc, : $id $attribute*, $rstore) = 
+		add-attributes($loc, $attribute*, $rstore'')
+
+[add-attributes-attrs-cons-4]
+	$rstore' := insert($rstore, Attributes, $loc, "name"),
+	$rstore'' := inc($rstore', Statistics, "#name")
+	===
+	add-attributes($loc, $ $id $attribute*, $rstore) = 
+		add-attributes($loc, $attribute*, $rstore'')
+
+
+equations
+
+[summarize-3]
+	summarize($id $attribute* $args, $rstore) = 
+		add-use-site($id, $attribute*, $args, $rstore)
+
+/*[summarize-4]
+	summarize($id $attribute* $markup, $rstore) = 
+		add-use-site($id, $attribute*, (), $rstore) */
+
+[summarize-5]
+	summarize($id $attribute*, $rstore) = 
+		add-use-site($id, $attribute*, (), $rstore)
+
+[summarize-6]
+	summarize($id $attribute* $args , $rstore) = 
+		add-use-site($id, $attribute*, $args, $rstore)
+
+/*[summarize-7]
+	summarize($id $attribute* { $stat* }, $rstore) = 
+		add-use-site($id, $attribute*, (), $rstore) 
+
+[summarize-8]
+	summarize($id $attribute* $args { $stat* }, $rstore) = 
+		add-use-site($id, $attribute*, $args, $rstore)
+*/
+
+
+
+equations
+
+[summarize-map]
+	$strcon := unparse-to-string($path),
+	$loc := get-location($path),
+	$rstore' := insert($rstore, Mapping, $strcon, $loc),
+	$rstore'' := inc($rstore', Statistics, "#sites")
+	===
+	summarize($path: $markup, $rstore) = $rstore''
+
+equations
+
+[arity-param-top]
+	formal-arity($var, $natcon) = $natcon + 1
+
+equations
+
+[arity-args-nil]
+	actual-arity(()) = 0
+
+[arity-args-cons]
+	actual-arity(($arg, $arg*)) = 1 + actual-arity(($arg*))

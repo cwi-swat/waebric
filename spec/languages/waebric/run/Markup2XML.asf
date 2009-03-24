@@ -1,0 +1,231 @@
+equations
+
+[markup-to-document-rooted]
+	>$stag$content*$etag< := markup-to-content($elt*)
+	===
+	markup-to-xhtml($elt*) =
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+$stag$content*$etag
+
+[default-markup-to-document-unrooted]
+	>$content*< := markup-to-content($elt*)
+	===
+	markup-to-xhtml($elt*) =
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+$content*
+</html>
+
+equations
+
+[markup-to-xcomment1]
+	markup-to-content($text) = text-to-content($text)
+
+[markup-to-xcomment2]
+	markup-to-content(!comment $strcon) = >strcon-to-xcomment($strcon)<
+
+
+[markup-to-xcommentno-attrs-empty]
+	$name := id-to-name($id),
+	$empty-tag := <$name/>
+	===
+	markup-to-content($id () { }) = >$empty-tag<
+
+[markup-to-xcommentno-attrs-non-empty]
+	$name := id-to-name($id),
+	$stag := <$name>,
+	$etag := </$name>,
+	>$content*< := markup-to-content($elt+)
+	===
+	markup-to-content($id () { $elt+ }) = >$stag$content*$etag<
+
+[markup-to-xcommentattrs-empty]
+	$name := id-to-name($id),
+	$attribute* := attrs-to-attributes($attr+),
+	$empty-tag := <$name $attribute* />
+	===
+	markup-to-content($id ($attr+) { }) = >$empty-tag<
+
+
+[markup-to-xcommentattrs-non-empty]
+	$name := id-to-name($id),
+	$attribute* := attrs-to-attributes($attr+),
+	$stag := <$name $attribute*>,
+	$etag := </$name>,
+	>$content*< := markup-to-content($elt+)
+	===
+	markup-to-content($id ($attr+) { $elt+ }) = >$stag$content*$etag<
+
+equations
+
+[markup-to-xcommentnil]
+	markup-to-content() = ><
+
+[markup-to-xcommentcons]
+	>$content*1< := markup-to-content($elt),
+	>$content*2< := markup-to-content($elt*)
+	===
+	markup-to-content($elt $elt*) = >$content*1$content*2<
+
+equations
+
+[attrs-to-attributes-nil]
+	attrs-to-attributes() = 
+
+[attrs-to-attributes-cons]
+	$name := id-to-name($id),
+	$attvalue := text-to-attvalue($text)
+	===
+	attrs-to-attributes($id = $text, $attr*) = $name=$attvalue attrs-to-attributes($attr*)
+
+
+equations
+
+[id-to-name-1]
+	name($name-head) := name($id-head)
+	===
+	id-to-name(idcon($id-head)) = name($name-head)
+
+[id-to-name-2]
+	name($name-head $name-tail*) := id-to-name(idcon($id-head $id-tail*))
+	===
+	id-to-name(idcon($id-head $both-tail $id-tail*)) = name($name-head $both-tail $name-tail*)
+
+equations
+
+[text-to-xcommentnil]
+	text-to-content("") = ><
+
+[text-to-xcommentcons-1]
+	>$content*< := text-to-content(text(" $text-char* "))
+	===
+	text-to-content(text(" textchar($text-chardata-char) $text-char* ")) = 
+		>chardata($text-chardata-char)$content*<
+
+[text-to-xcommentcons-1]
+	>$content*< := text-to-content(text(" $text-char* "))
+	===
+	text-to-content(text(" textchar(escquote(\\\")) $text-char* ")) = 
+		>chardata(\")$content*<
+
+[text-to-xcommentcons-2]
+	>$content*< := text-to-content(text(" $text-char* "))
+	===
+	text-to-content(text(" textchar(amp($amp)) $text-char* ")) = 
+		>&amp;$content*<
+
+[text-to-xcommentcons-3]
+	>$content*< := text-to-content(text(" $text-char* ")),
+	$ref := charref(&# $d+ ;)
+	===
+	text-to-content(text(" textchar(textcharref(&# $d+;)) $text-char* ")) = 
+		>$ref$content*<
+
+[text-to-xcommentcons-4]
+	>$content*< := text-to-content(text(" $text-char* ")),
+	$ref := charref(&#x $h+ ;)
+	===
+	text-to-content(text(" textchar(textcharref(&#x $h+;)) $text-char* ")) = 
+		>$ref$content*<
+
+[text-to-xcommentcons-5]
+	>$content*< := text-to-content(text(" $text-char* ")),
+	$ref := entityref(& name($name-head $name-tail*) ;)
+	===
+	text-to-content(text(" textchar(textentityref(& $name-head $name-tail*;)) $text-char* ")) = 
+		>$ref$content*<
+
+equations
+
+[text-att-value-nil]
+	text-to-attvalue("") = ""
+
+[text-to-attvalue-cons-1]
+	attvalue(" $att-value-char* ") := text-to-attvalue(text(" $text-char* "))
+	===
+	text-to-attvalue(text(" textchar($text-attvalue-char) $text-char* ")) = 
+		attvalue(" attvaluechardouble($text-attvalue-char) $att-value-char* ")
+
+[text-to-attvalue-cons-2]
+	attvalue(" $att-value-char* ") := text-to-attvalue(text(" $text-char* "))
+	===
+	text-to-attvalue(text(" textchar(amp($amp)) $text-char* ")) = 
+		attvalue(" attvaluechardouble(entityref(& name(amp) ;)) $att-value-char* ")
+
+[text-to-attvalue-cons-3]
+	attvalue(" $att-value-char* ") := text-to-attvalue(text(" $text-char* "))
+	===
+	text-to-attvalue(text(" textchar(textcharref(&# $d+ ;)) $text-char* ")) = 
+		attvalue(" attvaluechardouble(charref(&# $d+;)) $att-value-char* ")
+
+[text-to-attvalue-cons-4]
+	attvalue(" $att-value-char* ") := text-to-attvalue(text(" $text-char* "))
+	===
+	text-to-attvalue(text(" textchar(textcharref(&#x $h+ ;)) $text-char* ")) = 
+		attvalue(" attvaluechardouble(charref(&#x $h+ ;)) $att-value-char* ")
+
+[text-to-attvalue-cons-5]
+	attvalue(" $att-value-char* ") := text-to-attvalue(text(" $text-char* "))
+	===
+	text-to-attvalue(text(" textchar(textentityref(& $name-head $name-tail* ;)) $text-char* ")) = 
+		attvalue(" attvaluechardouble(entityref(& name($name-head $name-tail*) ;)) $att-value-char* ")
+
+equations
+
+[str-to-xcomment-nil]
+        strcon-to-xcomment("") = <!---->
+
+
+[str-to-xcomment-cons-1]
+        xcomment(<!--$xcomment-char*-->) := strcon-to-xcomment(strcon(\" $strchar* \"))
+        ===
+        strcon-to-xcomment(strcon(\" strchar($x-str-char) $strchar* \")) = 
+                xcomment(<!-- xcommentchar($x-str-char) $xcomment-char*-->)
+
+[str-to-xcomment-cons-2]
+        xcomment(<!--$xcomment-char*-->) := strcon-to-xcomment(strcon(\" $strchar* \"))
+        ===
+        strcon-to-xcomment(strcon(\" strchar(\-) strchar($x-str-char) $strchar* \")) = 
+                xcomment(<!-- xcommentchar(minus(\-)) xcommentchar($x-str-char) $xcomment-char* -->)
+
+[str-to-xcomment-cons-2]
+        xcomment(<!--$xcomment-char*-->) := strcon-to-xcomment(strcon(\" $strchar* \"))
+        ===
+        strcon-to-xcomment(strcon(\" strchar(\-) strchar(\-) $strchar* \")) = 
+                xcomment(<!-- xcommentchar(minus(\-)) xcommentchar(\ ) xcommentchar(minus(\-)) $xcomment-char* -->)
+
+[str-to-xcomment-cons-5]
+        xcomment(<!--$xcomment-char*-->) := strcon-to-xcomment(strcon(\" $strchar* \"))
+        ===
+        strcon-to-xcomment(strcon(\" strchar(\n) $strchar* \")) = 
+                xcomment(<!-- xcommentchar(\n) $xcomment-char*-->)
+
+[str-to-xcomment-cons-6]
+        xcomment(<!--$xcomment-char*-->) := strcon-to-xcomment(strcon(\" $strchar* \"))
+        ===
+        strcon-to-xcomment(strcon(\" strchar(\\) $strchar* \")) = 
+                xcomment(<!-- xcommentchar(\\) $xcomment-char*-->)
+
+
+[str-to-xcomment-cons-7]
+        xcomment(<!--$xcomment-char*-->) := strcon-to-xcomment(strcon(\" $strchar* \"))
+        ===
+        strcon-to-xcomment(strcon(\" strchar(\t) $strchar* \")) = 
+                xcomment(<!-- xcommentchar(\t) $xcomment-char*-->)
+
+[str-to-xcomment-cons-8]
+        	xcomment(<!--$xcomment-char*-->) := strcon-to-xcomment(strcon(\" $strchar* \"))
+        	===
+        	strcon-to-xcomment(strcon(\" strchar(\") $strchar* \")) = 
+		xcomment(<!-- xcommentchar(\") $xcomment-char*-->)
+
+
+[str-to-xcomment-cons-9]
+        	xcomment(<!--$xcomment-char*-->) := strcon-to-xcomment(strcon(\" $strchar* \"))
+	===
+        	strcon-to-xcomment(strcon(\" strchar(\ $d1 $d2 $d3) $strchar* \")) = 
+                         xcomment(<!-- xcommentchar(\\) xcommentchar($d1) xcommentchar($d2) xcommentchar($d3) $xcomment-char*-->)
+
+
+
+

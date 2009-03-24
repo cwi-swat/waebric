@@ -1,0 +1,10 @@
+module languages/waebric/extract/Waebric
+
+imports languages/waebric/extract/Summarize
+
+hiddens
+context-free start-symbols RStore Module
+
+hiddens
+variables 
+  "$module" [0-9\']*    -> Module                 

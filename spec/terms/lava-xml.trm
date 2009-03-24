@@ -1,0 +1,160 @@
+format(<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>Lava Literair</title>
+    <meta http-equiv="content-type"
+    content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="css/blueprint/screen.css"
+    type="text/css" media="screen, projection" />
+    <link rel="stylesheet" href="css/blueprint/print.css"
+    type="text/css" media="print" />
+    <link rel="stylesheet" href="css/lava.css" type="text/css"
+    media="screen" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="span-21">
+        <img src="images/lavalogo.gif" alt="Lava Literair" />
+      </div>
+      <div class="span-5">
+        <hr class="space" />
+        <div id="button">
+          <ul class="menu">
+            <li>
+              <a href="index.html">Lava Voorpagina</a>
+            </li>
+            <li>
+              <a href="brandende.html">Brandende Pen</a>
+            </li>
+            <li>
+              <a href="verhalen.html">Korte verhalen</a>
+            </li>
+            <li>
+              <a href="movels.html">Movels</a>
+            </li>
+            <li>
+              <a href="overlava.html">Over Lava</a>
+            </li>
+            <li>
+              <a href="kopij.html">Kopij insturen</a>
+            </li>
+            <li>
+              <a href="abonnementen.html">Abonnementen</a>
+            </li>
+            <li>
+              <a href="contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="span-7 colborder">
+      <hr class="space" />
+      <a href="http://www.sebes.nl">
+        <h1>
+          <img class="vlam" src="images/vlamgroot-inv.jpg"
+          alt="lava vlam">Two-book deal voor Brusselse theatermaker
+          Vandecasteele</img>
+        </h1>
+      </a>
+      <p>
+      <img class="thumb" src="images/brpen06_beeldthumb.jpg" />De
+      Vlaamse golf zet door bij Amsterdamse uitgevers: nadat Joost
+      Vandecasteele (1979, schrijver, standup komiek en
+      theatermaker bij het gezelschap Abattoir Ferm&#233;) de
+      Brandende Pen 2007 van 
+      <em>Lava Literair</em>had gewonnen, werd hij door de
+      Amsterdamse literair agent Paul Sebes benaderd om eens te
+      praten over zijn werk. Sebes: 'Wat hij schrijft vond ik
+      steengoed, keihard, hyperrealistisch en vaak erg grappig.'
+      Vandecasteele bleek vergevorderd met de verhalenbundel 
+      <em>Brulletje</em>. De meerderheid van deze verhalen was
+      reeds gepubliceerd in literaire tijdschrijften als 
+      <em>De Revisor</em>, 
+      <em>Lava Literair</em>, 
+      <em>Deus ex Machina</em> en 
+      <em>De Brakke Hond</em>. Maar ook een roman, 
+      <em>De Slag om Neo-Sparta</em>genaamd, was reeds in de maak.
+      Met dit materiaal is Sebes uitgeverijen gaan benaderen. De
+      vijf belangrijkste literaire huizen in Amsterdam toonden
+      interesse, maar Peter Nijssen van de Arbeiderspers wist
+      Vandecasteele en Sebes met zijn enthousiasme en een
+      contractvoorstel voor zowel de bundel als de roman te
+      overtuigen. Nijssen: 'Het talent spat van de pagina's. We
+      gaan 
+      <em>Brulletje</em>meteen in 2009 brengen.' Vandecasteele, die
+      met zijn bundel en ambitieuze roman iets nieuws probeert te
+      cre&#235;ren binnen de Nederlandstalige literatuur, is zeer
+      verheugd met de deal en het vertrouwen van de 
+      <a href="http://www.arbeiderspers.nl">Arbeiderspers</a>.</p>
+      <a href="movels.html">
+        <h1>
+          <img class="vlam" src="images/vlamgroot-inv.jpg"
+          alt="lava vlam">Lava op je mobiel</img>
+        </h1>
+      </a>
+      <h1>
+        <img class="vlam" src="images/vlamgroot-inv.jpg"
+        alt="lava vlam">Lava bij de VPRO</img>
+      </h1>
+      <a href="http://www.vpro.nl/programma/deavonden/afleveringen/34639264/items/35915764/media/35915897/">
+
+        <img class="thumb" src="images/radio.jpg" />
+      </a>Hoofdredacteur van Lava, Xavier van Leeuwe, was te gast
+      bij radioprogramma De Avonden van VPRO-Radio. Klik 
+      <a href="http://www.vpro.nl/programma/deavonden/afleveringen/34639264/items/35915764/" />om
+      de VPRO-site te bezoeken. De bijdrage in het radioprogramma
+      'live' beluisteren? Klik dan op de afbeelding links of 
+      <a href="http://www.vpro.nl/programma/deavonden/afleveringen/34639264/items/35915764/media/35915897/">
+      hier</a>.</div>
+      <div class="span-8 last">
+        <hr class="space" />
+        <object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
+        codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0"
+        id="banner" width="300" height="200" align="middle">
+          <param name="allowScriptAccess" value="sameDomain" />
+          <param name="movie"
+          value="http://www.lavaliterair.nl/banners/banner_deux.swf" />
+          <param name="quality" value="high" />
+          <param name="bgcolor" value="#fffce6" />
+          <embed src="http://www.lavaliterair.nl/banners/banner_deux.swf"
+          quality="high" bgcolor="#fffce6" name="banner"
+          align="middle" allowScriptAccess="sameDomain"
+          type="application/x-shockwave-flash"
+          pluginspage="http://www.macromedia.com/go/getflashplayer" />
+        </object>
+        <p align="center">
+          <a href="http://www.woordheks.nl" target="_new">
+            <object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
+            codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0"
+            id="banner" width="300" height="60" align="middle">
+              <param name="allowScriptAccess" value="sameDomain" />
+              <param name="movie"
+              value="http://www.lavaliterair.nl/banners/banner468X60.swf" />
+              <param name="quality" value="high" />
+              <param name="bgcolor" value="#fffce6" />
+              <embed src="http://www.lavaliterair.nl/banners/banner468X60.swf"
+              quality="high" bgcolor="#fffce6" name="banner"
+              align="middle" allowScriptAccess="sameDomain"
+              type="application/x-shockwave-flash"
+              pluginspage="http://www.macromedia.com/go/getflashplayer" />
+            </object>
+          </a>
+        </p>
+        <h1>
+          <img class="vlam" src="images/vlamgroot-inv.jpg"
+          alt="lava vlam">Literair nieuws</img>
+        </h1>
+        <script language="JavaScript"
+        src="http://feed2js.org///feed2js.php?src=http%3A%2F%2Fwww.nrcboeken.nl%2Frss.xml&amp;num=10&amp;targ=y&amp;utf=y"
+        type="text/javascript" />
+        <noscript>
+          <a href="http://feed2js.org///feed2js.php?src=http%3A%2F%2Fwww.nrcboeken.nl%2Frss.xml&amp;num=10&amp;targ=y&amp;utf=y">
+          View RSS Feed</a>
+        </noscript>
+      </div>
+      <div class="span-21">Footer</div>
+    </div>
+  </body>
+</html>
+)

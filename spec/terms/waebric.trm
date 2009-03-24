@@ -1,0 +1,31 @@
+
+module test
+
+import bla.layout
+import subdir.bla
+
+def page(users)
+  html(title="Bla") {
+    layout(bla) head title.a bla.a(a=a) { yield; }; 
+    if (bla == true) 
+      if (true == true) 
+        body div.container yield;
+      else {
+      }
+   }
+ /* C style comments */
+
+
+  cdata {
+ead title.a bla.a(a=a) { yield; \}; 
+    if (bla) 
+      if (true) 
+        body div.container yield;
+      else {
+  }
+
+  each (u: bla) {
+   p u bla.a;
+   p ();
+  }
+end

@@ -1,0 +1,3 @@
+markup-to-xhtml(
+html () { body () { h1 () { p () { "Hallo\n wereld" }}}}
+)

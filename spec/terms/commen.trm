@@ -1,0 +1,10 @@
+module bla
+
+def g
+end
+
+def f
+ //
+/* */
+ p;
+end

@@ -1,0 +1,103 @@
+
+
+create table todos (
+  id integer not null primary key,
+  action char(255) not null,
+  due date not null,
+  done boolean default 'f'
+)
+
+def get /()
+  todos = select * from todos 
+            where done = 'f' 
+            order by due desc;
+  return index(todos);
+end
+
+def post /done/:id()
+  update todos set done = 't' 
+    where id = :id;
+  redirect /;  
+end
+
+def post /create(action, due)
+  id = (select max(id) from todos) + 1;
+  insert into todos values(:id, :action, :due);
+  redirect /;
+end
+
+
+def post /new()
+  insert new_row() bottom #todos;
+end
+
+def post /cancel()
+  remove .new;
+end
+
+def new_row()
+   tr.new { 
+     td(colspan="2") {
+       form(action=/create, method='post) {
+         input$action:text("action");
+         input$due:text("due date");
+         input:submit("Submit");
+       }
+     }
+     td a@click{/cancel} "Cancel";
+     td a#implode@click{/implode} "Implode";
+   }
+end
+
+def post /implode()
+  puff #implode ;
+end
+
+def index(todos)
+  layout {
+    table#todos {
+      th { 
+        td "Todo"; 
+        td "Due date"; 
+        td "Done"; 
+      }
+      each (t: todos) {
+        tr { 
+          td t[action]; 
+          td t[due]; 
+
+          td button(/done + t[id] + /bla, "Done"); 
+        }
+      }
+    }
+    button(/new, "New");
+  }
+end
+
+def header(hs)
+  th {
+    each (h: hs) {
+      td h;
+    }
+  }
+end
+
+def button(action, label) 
+  form(action=action, method='post) 
+    input:submit(label);
+end
+
+def button(url, label) 
+  form(method='post) input:submit@click{url}(label);
+end
+ 
+
+def layout()
+  html {
+    head title "My todos"; 
+    body div.container yield;
+  }
+end
+
+
+

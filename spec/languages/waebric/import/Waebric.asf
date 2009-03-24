@@ -1,0 +1,10 @@
+equations
+
+[main]	start(Module, $module) = start(ImportResults, import($module))
+
+equations
+
+[import-summary-1]
+	import-summary(<$module*, $error*>) = summary("Waebric", "import summary", [$error*])
+
+

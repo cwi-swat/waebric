@@ -1,0 +1,616 @@
+equations
+
+[eval-top]
+	$func-def := lookup-func($module*, , $func)
+	===
+	eval($func, $value*, $module*) = eval-func($func-def, $value*, new-table, ,$module*)
+
+equations
+
+[eval-func-top]
+	$env' := bind-formals($formals, $value*, $env)
+	===
+	eval-func(def $func $formals $stats end, $value*, $env, $block, $module*) =
+		eval-stats($stats, $env', $block, $module*)
+
+[eval-func-2]
+	eval-func(def $func $stats end, $value*, $env, $block, $module*) =
+		eval-func(def $func () $stats end, $value*, $env, $block, $module*)
+
+equations
+
+[eval-stats-nil]
+	eval-stats(, $env, $block, $module*) = 
+
+[eval-stats-cons]
+	$elt*1 := eval-stat($stat, $env, $block, $module*),
+	$elt*2 := eval-stats($stat*, $env, $block, $module*)
+	===
+	eval-stats($stat $stat*, $env, $block, $module*) = $elt*1 $elt*2
+
+
+equations
+
+[eval-stat-0]
+	eval-stat(comment $strcon;, $env, $block, $module*) = !comment $strcon
+
+[eval-stat-1]
+	eval-stat($markup ;, $env, $block, $module*) = 
+		eval-markup($markup, $env, $block, $module*)
+
+[eval-stat-2]
+	eval-stat($block-exp, $env, $block, $module*) =
+		eval-block-exp($block-exp, $env, $block, $module*)
+
+[eval-stat-3]
+	eval-stat(if ($pred) $stat, $env, $block, $module*) =
+		eval-stat(if ($pred) $stat else {}, $env, $block, $module*)
+
+[if1]	eval-pred($pred, $env) == true
+	==========================================
+	eval-stat(if ($pred) $stat1 else $stat2, 
+			$env, $block, $module*) =
+	  eval-stat($stat1, $env, $block, $module*)
+
+[if2] eval-pred($pred, $env) == false
+	==========================================
+	eval-stat(if ($pred) $stat1 else $stat2, 
+			$env, $block, $module*) =
+	  eval-stat($stat2, $env, $block, $module*)
+
+
+
+[eval-stat-6]
+	$value := eval-exp($exp, $env)
+	===
+	eval-stat(each ($id : $exp) $stat, $env, $block, $module*) =
+		eval-each($id, $value, $stat, $env, $block, $module*)
+
+[eval-stat-7]
+	eval-stat({ $stats }, $env, $block, $module*) = 
+		eval-stats($stats, $env, $block, $module*)
+
+[eval-stat-8]
+	eval-stat(echo $exp ;, $env, $block, $module*) = 
+		eval-markup($exp, $env, $block, $module*)
+
+[eval-stat-10]
+	$env' := eval-let-bindings($assignments, $env)
+	===
+	eval-stat(let $assignments in $stats end, $env, $block, $module*) = 
+		eval-stats($stats, $env', $block, $module*)
+
+equations
+
+[eval-let-bindings-single-1]
+	$value := eval-exp($exp, $env),
+	$env' := store($env, $id, $value)
+	===
+	eval-let-bindings($id = $exp ;, $env) = $env'
+
+[eval-let-bindings-single-2]
+	$env' := store($env, $id, <$env, def $id $formals $stat end>)
+	===
+	eval-let-bindings($id $formals = $stat , $env) = $env'
+
+[eval-let-bindings-many]
+	$env' := eval-let-bindings($assignment, $env),
+	$env'' := eval-let-bindings($assignment+, $env')
+	===
+	eval-let-bindings($assignment $assignment+, $env) = $env''
+
+
+
+equations
+
+[eval-each-nil]
+	eval-each($id, [], $stat, $env, $block, $module*) = 
+
+[eval-each-cons-2]
+	$env1 := store($env, $id, $value),
+	$elt*1 := eval-stat($stat, $env1, $block, $module*),
+	$elt*2 := eval-each($id, [$value*], $stat, $env, $block, $module*)
+	===
+	eval-each($id, [$value, $value*], $stat, $env, $block, $module*) =
+		$elt*1 $elt*2
+
+[default-eval-each-otherwise]
+	eval-each($id, $value, $stat, $env, $block, $module*) = 
+
+
+equations
+
+/*[eval-exp-3]
+	eval-exp($text, $env) = text-to-strcon($text)*/
+
+[eval-exp-4]
+	eval-exp($sym, $env) = symbol-to-text($sym)
+
+[eval-exp-5]
+	$value := lookup($env, $id),
+	$value != not-in-table,
+	<$env', $func-def> !:= $value
+	===
+	eval-exp($id, $env) = $value
+
+[eval-exp-6]
+	[$vpair*] := eval-exp($exp, $env),
+	$value := lookup([$vpair*], $id),
+	$value != not-in-table
+	===
+	eval-exp($exp . $id, $env) = $value
+
+[eval-exp-7]
+	eval-exp([], $env) = []
+
+[eval-exp-8]
+	$value := eval-exp($exp, $env),
+	[$value*] := eval-exp([$exp*], $env)
+	===
+	eval-exp([$exp, $exp*], $env) = [$value, $value*]
+
+[eval-exp-9]
+	eval-exp({}, $env) = new-table
+
+[eval-exp-11]
+	$value := eval-exp({$key-val*}, $env),
+	$value' := eval-exp($exp, $env),
+	$value'' := store($value, $id, $value')
+	===
+	eval-exp({$id : $exp, $key-val*}, $env) = $value''
+
+[eval-exp-12]
+	eval-exp($text, $env) = $text
+
+[eval-exp-13]
+	eval-exp($natcon, $env) = $natcon
+
+[eval-exp-14]
+	$text1 := pre-to-text($pre),
+	$text2 := eval-exp($var, $env),
+	$text3 := post-to-text($post)
+	====
+	eval-exp($pre $var $post, $env) = join($text1, join($text2, $text3))
+
+
+[default-eval-exp-otherwise]
+	eval-exp($exp, $env) = undef
+
+equations
+
+[eval-pred-3]
+	eval-pred(! $pred, $env) = not(eval-pred($pred, $env))
+
+[eval-pred-4]
+	eval-pred($pred1 && $pred2, $env) =
+		eval-pred($pred1, $env) &
+		eval-pred($pred2, $env)
+
+[eval-pred-5]
+	eval-pred($pred1 || $pred2, $env) =
+		eval-pred($pred1, $env) |
+		eval-pred($pred2, $env)
+
+[eval-pred-6]
+	eval-exp($exp, $env) != undef
+	===
+	eval-pred($exp, $env) = true
+
+[eval-pred-7]
+	[$value*] := eval-exp($exp, $env),
+	eval-pred($exp.map?, $env) == false
+	===
+	eval-pred($exp.list?, $env) = true
+
+[eval-pred-8]
+	[$vpair*] := eval-exp($exp, $env)
+	===
+	eval-pred($exp.map?, $env) = true
+
+[default-eval-pred-otherwise]
+	eval-pred($pred, $env) = false
+
+equations
+
+[could-be-user-func-0]
+	$id := $des
+	===
+	could-be-user-markup($des) = $id
+
+[could-be-user-func-2]
+	could-be-user-markup($id $markup) = $id
+
+[could-be-user-func-3]
+	could-be-user-markup($id $args) = $id
+
+[could-be-user-func-4]
+	could-be-user-markup($id $args $markup) = $id
+
+[default-could-be-user-markup-5]
+	could-be-user-markup($markup) = 
+
+equations
+
+/* User defined markup, if designator has no attrs, and func is defined */
+[eval-markup-1]
+	$id := could-be-user-markup($markup),
+	$value := lookup($env, $id),
+	<$env', $func-def'> !:= $value,
+	$func-def := lookup-func($module*, , $id)
+	===
+	eval-markup($markup, $env, $block, $module*) =
+		eval-markup-func($markup, $func-def, $env, $block, $module*)
+
+/* User defined markup, if designator has no attrs, and func is defined */
+[eval-markup-1]
+	$id := could-be-user-markup($markup),
+	<$env', $func-def> := lookup($env, $id)
+	===
+	eval-markup($markup, $env, $block, $module*) =
+		eval-closure($markup, <$env', $func-def>, $env, $block, $module*)
+
+
+[eval-markup-2]
+	eval-markup($block-exp, $env, $block, $module*) =
+		eval-block-exp($block-exp, $env, $block, $module*)
+
+[eval-markup-3]
+	eval-markup(yield, $env, $block, $module*) = $block
+
+[eval-markup-4]
+	$value := eval-exp($exp, $env),
+	$value != undef,
+	$text !:= $value
+	===
+	eval-markup($exp, $env, $block, $module*) =  strcon-to-text(unparse-to-string($value))
+
+[eval-markup-5]
+	$text := eval-exp($exp, $env)
+	===
+	eval-markup($exp, $env, $block, $module*) = $text
+
+[eval-markup-6]
+	eval-exp($exp, $env) == undef
+	===
+	eval-markup($exp, $env, $block, $module*) = 
+
+[eval-markup-8]
+	eval-markup($text, $env, $block, $module*) = $text
+
+[eval-markup-9]
+	$text := pre-to-text($pre),
+	$elt*1 := eval-markup($markup, $env, $block, $module*),
+	$elt*2 := eval-tail($tail, $env, $block, $module*)
+	===
+	eval-markup($pre $markup $tail, $env, $block, $module*) = 
+		$text $elt*1 $elt*2
+
+[default-eval-markup-4]
+	eval-markup($markup, $env, $block, $module*) =
+		eval-builtin-markup($markup, $env, $block, $module*)
+
+equations
+
+[eval-tail-1]
+	eval-tail($post, $env, $block, $module*) =
+		post-to-text($post)
+
+[eval-tail-2]
+	$text := mid-to-text($mid),
+	$elt*1 := eval-markup($markup, $env, $block, $module*),
+	$elt*2 := eval-tail($tail, $env, $block, $module*)
+	===
+	eval-tail($mid $markup $tail, $env, $block, $module*) =
+		$text $elt*1 $elt*2
+
+equations
+
+[eval-arglist-nil]
+	eval-args-for-func((), $env) = 
+
+[eval-arglist-cons]
+	$value := eval-exp($exp, $env),
+	$value* := eval-args-for-func(($arg*), $env)
+	===
+	eval-args-for-func(($exp, $arg*), $env) = $value, $value*
+
+equations
+
+[eval-args-for-markup-nil]
+	eval-args-for-markup((), $env) = 
+
+[eval-args-for-markup-cons-1]
+	$attr := eval-arg-to-attr($arg, $env),
+	$attr* := eval-args-for-markup(($arg*), $env)
+	===
+	eval-args-for-markup(($arg, $arg*), $env) = $attr, $attr*
+
+equations
+
+[eval-arg-to-attr-1]
+	$text:= eval-exp($exp, $env)
+	===
+	eval-arg-to-attr($id = $exp, $env) = $id = $text
+
+[eval-arg-to-attr-2]
+	eval-exp($exp, $env) == undef
+	===
+	eval-arg-to-attr($id = $exp, $env) = $id = "UNDEFINED"
+
+[eval-arg-to-attr-3]
+	eval-arg-to-attr($exp, $env) = eval-arg-to-attr(value = $exp, $env)
+
+[default-eval-arg-to-attr-4]
+	$text := strcon-to-text(unparse-to-string(eval-exp($exp, $env)))
+	===
+	eval-arg-to-attr($id = $exp, $env) = $id = $text
+
+equations
+
+[eval-markup-func-1]
+	eval-markup-func($id , $func-def, $env, $block, $module*) =
+		 eval-func($func-def, , new-table, $block, $module*)
+
+[eval-markup-func-2]
+	$value* := eval-args-for-func($args, $env)
+	===
+	eval-markup-func($id $args, $func-def, $env, $block, $module*) =
+		 eval-func($func-def, $value*, new-table, $block, $module*)
+
+[eval-markup-func-3]
+	$value* := eval-args-for-func($args, $env),
+	$block' := eval-markup($markup, $env, $block, $module*),
+	$elt* := eval-func($func-def, $value*, new-table, $block', $module*)
+	===
+	eval-markup-func($id $args $markup, $func-def, $env, $block, $module*) = $elt*
+
+[eval-markup-func-4]
+	$block' := eval-markup($markup, $env, $block, $module*),
+	$elt* := eval-func($func-def, , new-table, $block', $module*)
+	===
+	eval-markup-func($id $markup, $func-def, $env, $block, $module*) = $elt*
+		 
+
+equations
+
+[eval-closure-1]
+	eval-closure($id , <$env', $func-def>, $env, $block, $module*) =
+		 eval-func($func-def, , $env', $block, $module*)
+
+[eval-closure-2]
+	$value* := eval-args-for-func($args, $env)
+	===
+	eval-closure($id $args, <$env', $func-def>, $env, $block, $module*) =
+		 eval-func($func-def, $value*, $env', $block, $module*)
+
+[eval-closure-3]
+	$value* := eval-args-for-func($args, $env),
+	$block' := eval-markup($markup, $env, $block, $module*),
+	$elt* := eval-func($func-def, $value*, $env', $block', $module*)
+	===
+	eval-closure($id $args $markup, <$env', $func-def>, $env, $block, $module*) = $elt*
+
+[eval-closure-4]
+	$block' := eval-markup($markup, $env, $block, $module*),
+	$elt* := eval-func($func-def, , $env', $block', $module*)
+	===
+	eval-closure($id $markup, <$env', $func-def>, $env, $block, $module*) = $elt*
+		 
+
+equations
+
+[eval-builtin-markup-1]
+	eval-builtin-markup($des, $env, $block, $module*) = 
+		eval-designator($des) {  }
+
+[eval-builtin-markup-2]
+	$id ($attr*1) := eval-designator($des),
+	$attr*2 := eval-args-for-markup($args, $env)
+	===
+	eval-builtin-markup($des $args, $env, $block, $module*) =
+		$id ($attr*1, $attr*2) { } 
+
+[eval-builtin-markup-3]
+	$id ($attr*1) := eval-designator($des),
+	$attr*2 := eval-args-for-markup($args, $env)
+	===
+	eval-builtin-markup($des $args $markup, $env, $block, $module*) = 
+		$id ($attr*1, $attr*2) { eval-markup($markup, $env, $block, $module*) } 
+
+[eval-builtin-markup-4]
+	eval-builtin-markup($des $markup, $env, $block, $module*) = 
+		eval-designator($des) { eval-markup($markup, $env, $block, $module*) } 
+
+
+equations
+
+[symbol-to-text-nil]
+	symbol-to-text(') = ""
+
+[symbol-to-text-cons-1]
+	symbol-to-text(symbolcon(' symbolchar($text-sym-char) $symchar*)) =
+		join(text(" textchar($text-sym-char) "),
+			symbol-to-text(symbolcon(' $symchar*)))
+
+[symbol-to-text-cons-2]
+	symbol-to-text(symbolcon(' symbolchar(\") $symchar*)) =
+		join(text(" textchar(textentityref(&quot;)) "),
+			symbol-to-text(symbolcon(' $symchar*)))
+
+[symbol-to-text-cons-3]
+	symbol-to-text(symbolcon(' symbolchar(\&) $symchar*)) =
+		join(text(" textchar(amp(\&)) "),
+			symbol-to-text(symbolcon(' $symchar*)))
+
+equations
+
+[join-text-top]
+	join(text(" $textchar*1 "), text(" $textchar*2 ")) = text(" $textchar*1 $textchar*2 ")
+
+equations
+
+[id-to-text-single]
+	id-to-text(idcon($idhead)) = text(" textchar($idhead) ")
+
+[id-to-text-many]
+	text(" $textchar $textchar* ") := id-to-text(idcon(a $idtail*))
+	===
+	id-to-text(idcon($idhead $idtail $idtail*)) =
+		text(" textchar($idhead) textchar($idtail) $textchar* ")
+
+equations
+
+[strcon-to-text-nil]
+	strcon-to-text("") = ""
+
+[strcon-to-text-cons-1]
+	strcon-to-text(strcon(\" strchar($both) $strchar* \")) =
+		join(text(" textchar($both) "), 
+			strcon-to-text(strcon(\" $strchar* \")))
+
+[strcon-to-text-cons-2]
+	strcon-to-text(strcon(\" strchar(\n) $strchar* \")) =
+		join(text(" textchar(\n) "), 
+			strcon-to-text(strcon(\" $strchar* \")))
+
+[strcon-to-text-cons-3]
+	strcon-to-text(strcon(\" strchar(\t) $strchar* \")) =
+		join(text(" textchar(\t) "), 
+			strcon-to-text(strcon(\" $strchar* \")))
+
+[strcon-to-text-cons-4]
+	strcon-to-text(strcon(\" strchar(\") $strchar* \")) =
+		join(text(" textchar(escquote(\\\")) "), 
+			strcon-to-text(strcon(\" $strchar* \")))
+
+[strcon-to-text-cons-4]
+	strcon-to-text(strcon(\" strchar(\ $d1 $d2 $d3) $strchar* \")) =
+		join(text(" textchar(textcharref(&# $d1 $d2 $d2 ;)) "), 
+			strcon-to-text(strcon(\" $strchar* \")))
+
+equations
+
+[pre-to-text-top]
+	pre-to-text(pretext(" $textchar* <)) = text(" $textchar* ")
+
+[post-to-text-top]
+	post-to-text(posttext(> $textchar* ")) = text(" $textchar* ")
+
+[mid-to-text-top]
+	mid-to-text(midtext(> $textchar* <)) = text(" $textchar* ")
+
+
+equations
+
+
+[eval-block-exp-1]
+	$block' := eval-stats($stats, $env, $block, $module*)
+	===
+	eval-block-exp($des { $stats }, $env, $block, $module*) = 
+		eval-block-result(eval-markup($des, $env, $block', $module*), 
+			$block', $env, $module*)
+
+[eval-block-exp-1]
+	$block' := eval-stats($stats, $env, $block, $module*)
+	===
+	eval-block-exp($des $args { $stats }, $env, $block, $module*) = 
+		eval-block-result(eval-markup($des $args, $env, $block', $module*), 
+			$block', $env, $module*)
+
+equations
+
+[eval-block-results-1]
+	eval-block-result($id ($attr*) {} , $block, $env, $module*) =
+		$id ($attr*) { $block }
+
+[default-eval-block-results-2]
+	eval-block-result($elt*, $block, $env, $module*) = $elt*
+
+equations
+
+[eval-designator-1]
+	$attr*' := eval-attrs($attribute*)
+	===
+	eval-designator($id $attribute*) = $id ($attr*')
+
+
+equations
+
+[normalize-attrs]
+	$text := join($text1, join(" ", $text2))
+	===
+	$attr*1, $id = $text1, $attr*2, $id = $text2, $attr*3 =
+		$attr*1, $id = $text, $attr*2, $attr*3 
+
+equations
+
+[eval-attrs-nil]
+	eval-attrs() = 
+
+[eval-attrs-cons-1]
+	$attr* := eval-attrs($attribute*),
+	$text := id-to-text($id)
+	===
+	eval-attrs(# $id $attribute*) = id = $text, $attr*
+
+[eval-attrs-cons-2]
+	$attr* := eval-attrs($attribute*),
+	$text := id-to-text($id)
+	===
+	eval-attrs(. $id $attribute*) = class = $text, $attr*
+
+[eval-attrs-cons-3]
+	$attr* := eval-attrs($attribute*),
+	$text := id-to-text($id)
+	===
+	eval-attrs($ $id $attribute*) =  name = $text, $attr*
+
+[eval-attrs-cons-4]
+	$attr* := eval-attrs($attribute*),
+	$text := id-to-text($id)
+	===
+	eval-attrs(: $id $attribute*) = type = $text, $attr*
+
+[eval-attrs-cons-5]
+	$attr* := eval-attrs($attribute*),
+	$text := strcon-to-text(unparse-to-string($natcon))
+	===
+	eval-attrs(@ $natcon $attribute*) = width = $text, $attr*
+
+[eval-attrs-cons-6]
+	$attr* := eval-attrs($attribute*),
+	$text1 := strcon-to-text(unparse-to-string($natcon1)),
+	$text2 := strcon-to-text(unparse-to-string($natcon2))
+	===
+	eval-attrs(@ $natcon1 % $natcon2 $attribute*) = width = $text1, height = $text2, $attr*
+
+
+equations
+
+[bind-formals-1]
+	bind-formals(( $var* ), $value*, $env) = bind-each-formal($env, $var*, $value*)
+
+equations
+
+/* Remaining values are discarded */
+[bind-each-formal-nil]
+	bind-each-formal($env, , $value*) = $env
+
+[bind-each-formal-cons-1]
+	bind-each-formal($env, $var, $var* , $value, $value*) = 
+		bind-each-formal(store($env, $var, $value), $var*, $value*)
+
+/* Absent values lead to binding of undef */
+[bind-each-formal-cons-2]
+	bind-each-formal($env, $var, $var* , ) = 
+		bind-each-formal(store($env, $var, undef), $var*, )
+
+
+
+equations
+
+[lookup-func-1]
+	lookup-func(def $func $formals $stats end, , $func) = def $func $formals $stats end
+
+[lookup-func-2]
+	lookup-func(def $func $stats end, , $func) = def $func $stats end

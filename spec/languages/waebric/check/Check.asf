@@ -1,0 +1,210 @@
+equations
+
+[check-top]
+	check($module) = check-import-results(import($module))
+
+equations
+
+[check-import-results-top]
+	$error*2 := errors-for-modules($module*)	
+	===
+	check-import-results(<$module*, $error*1>) = 
+		summary("Waebric", "Waebric", [$error*1, $error*2])
+
+equations
+
+[check-modules-top]
+	$rstore := extract($module*, initialize()),
+	$error* := errors-for-modules($rstore),
+	$error*' := errors-for-undefined-vars($module*, $error*, {})
+	===
+	errors-for-modules($module*) = $error*'
+
+equations
+
+[extract-top]
+	extract($module, $rstore) = summarize($module, $rstore)
+
+equations
+
+[check-modules-top]
+	$names:= domain(get($rstore, Define)),
+	$error*1 := errors-for-duplicate-definitions($names, $rstore),
+
+	$use := image(get($rstore, Use), $names), /* Only check arity for defined functions */
+	$rel1 := domain-restriction(get($rstore, UseArity), $use),
+	$rel2 := get($rstore, Arity),
+	$arities := range-exclusion($rel1, $rel2),
+	$error*2 := errors-for-mismatched-arities($arities, $rstore),
+
+	$set := domain(get($rstore, Mapping)),
+	$error*3 := errors-for-filenames($set, $rstore),
+
+	$set' := xhtml-elements(), // all tag names in XHTML 1.0 trans
+	// all use sites involving undefined names
+	$rel3 := domain-exclusion(get($rstore, Use), domain(get($rstore, Define))),
+	$rel4 := domain-exclusion($rel3, $set'), // all sites with undefined tags
+	$error*4 := errors-for-undefined-elements($rel4),
+
+	$set'' := xhtml-deprecated(),
+	$rel5 := domain-restriction($rel3, $set''),
+	$error*5 := errors-for-deprecated-elements($rel5)
+
+/*
+ 	// This works but is too expensive in asf
+	$rel6 := get($rstore, Attributes), // rel[loc, attr]
+	$rel7 := xhtml-attributes(), // rel[tag, attr] 
+	$rel8 := inverse($rel3), // rel[loc, tag] inverse of use without defines
+	$rel9 := compose($rel8, $rel7), // rel[loc, attr] (allowed attrs at loc)
+	$rel10 := difference($rel6, $rel9), // invalid attrs at per loc
+	$error*6 := errors-for-forbidden-attributes($rel10)
+
+*/
+
+	===
+	errors-for-modules($rstore) = 
+		$error*1, 
+		$error*2, 
+		$error*3, 
+		$error*4, 
+		$error*5
+
+equations
+
+[errors-for-undefined-vars-formals]
+	errors-for-undefined-vars(def $id ($var*) $stat* end, $error*, {$var*'}) =
+		errors-for-undefined-vars($stat*, $error*, union({$var*}, {$var*'}))
+
+[errors-for-undefined-vars-let]
+	errors-for-undefined-vars(let $assignment+ in $stat* end, $error*, {$var*}) =
+		errors-for-undefined-vars($stat*, $error*, vars($assignment+, {$var*}))
+
+[errors-for-undefined-vars-each]
+	errors-for-undefined-vars(each ($var : $exp) $stat, $error*, {$var*}) =
+		errors-for-undefined-vars($stat, $error*, union({$var},{$var*}))
+
+[errors-for-undefined-vars-unused]
+	echo $var; := echo $exp;,
+	$var in {$var*} == false,
+	$loc := get-location($var),
+	$strcon := unparse-to-string($var)
+	===
+	errors-for-undefined-vars($exp, $error*, {$var*}) =	
+		$error*, 
+		error("undefined variable", [localized($strcon, $loc)])
+
+equations
+
+[vars-top]
+	vars($var, {$var*}) = union({$var}, {$var*})
+
+equations
+
+[errors-for-forbidden-attributes-nil]
+	errors-for-forbidden-attributes({}) =
+
+[errors-for-forbidden-attributes-cons]
+	errors-for-forbidden-attributes({<$loc, $name>, $relem*}) =
+		errors-for-forbidden-attributes({$relem*}),
+		error("attribute is forbidden", [localized($name, $loc)])
+
+
+
+equations
+
+[errors-for-undefined-elements-nil]
+	errors-for-undefined-elements({}) = 
+
+[errors-for-undefined-elements-cons]
+	errors-for-undefined-elements({<$name, $loc>, $relem*}) = 
+		errors-for-undefined-elements({$relem*}),
+		error("tag not defined in XHTML 1.0 transitional", [localized($name, $loc)])
+
+equations
+
+[errors-for-deprecated-elements-nil]
+	errors-for-deprecated-elements({}) =
+
+[errors-for-deprecated-elements-cons]
+	errors-for-deprecated-elements({<$name, $loc>, $relem*}) =
+		errors-for-deprecated-elements({$relem*}),
+		warning("tag deprecated in XHTML 1.0 transitional", [localized($name, $loc)])
+
+
+
+
+equations
+
+
+[errors-for-filenames-cons]
+	$rel := get($rstore, Mapping),
+	$set := image($rel, {$strcon}),
+	size($set) > 1 == true
+	===
+	errors-for-filenames({$strcon, $relem*}, $rstore) = 
+		errors-for-filenames({$relem*}, $rstore),
+		warning("multiple mapping of filename",[
+			subjects-for-locations($strcon, $set)])
+
+[default-errors-for-filenames-otherwise]
+	errors-for-filenames({$relem*}, $rstore) =
+
+equations
+
+[subjects-for-locations-nil]
+	subjects-for-locations($strcon, {}) =
+
+[subjects-for-locations-cons]
+	subjects-for-locations($strcon, {$loc, $relem*}) =
+		subjects-for-locations($strcon, {$relem*}),
+		localized($strcon, $loc)
+
+equations
+
+[errors-for-mismatched-arities-nil]
+	errors-for-mismatched-arities({}, $rstore) = 
+
+[errors-for-mismatched-arities-cons]
+	{$natcon'} := image(get($rstore, Arity), {$strcon}),
+	$strcon1 := unparse-to-string($natcon'),
+	$strcon2 := unparse-to-string($natcon),
+	$strcon' := "expected " || $strcon1 || ", received " || $strcon2,
+	{$loc'} := image(get($rstore, Define), {$strcon}),
+	$strcon'' := "violation of definition of " || $strcon
+	===
+	errors-for-mismatched-arities({<$loc, <$strcon, $natcon>>, $relem*}, $rstore) = 
+		warning("wrong number of arguments", 
+			[localized($strcon', $loc), localized($strcon'', $loc')]),
+		errors-for-mismatched-arities({$relem*}, $rstore)
+
+equations
+
+[errors-for-duplicate-definitions-nil]
+	errors-for-duplicate-definitions({}, $rstore) =
+
+[errors-for-duplicate-definitions-cons-1]
+	$set := domain-restriction(get($rstore, Define), {$name}),
+	$set' := range($set),
+	size($set') > 1 == true
+	===
+	errors-for-duplicate-definitions({$name, $relem*}, $rstore) =
+		error("duplicate definition", [subjects-for-definitions($set)]),
+		errors-for-duplicate-definitions({$relem*}, $rstore)
+
+[default-errors-for-duplicate-definitions-cons-2]
+	errors-for-duplicate-definitions({$name, $relem*}, $rstore) =
+		errors-for-duplicate-definitions({$relem*}, $rstore)
+
+equations
+
+[subjects-for-definitions-nil]
+	subjects-for-definitions({}) =
+
+[subjects-for-definitions-cons]
+	$strcon := get-filename($loc),
+	$strcon' := "in " || $strcon || ": " || $name
+	===
+	subjects-for-definitions({<$name, $loc>, $relem*}) =
+		localized($strcon', $loc),
+		subjects-for-definitions({$relem*})
+

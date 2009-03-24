@@ -1,0 +1,8 @@
+module languages/waebric/run/Run-Formatted
+
+imports languages/waebric/run/Waebric
+        languages/waebric/run/FormatXML
+
+hiddens
+context-free start-symbols Document
+

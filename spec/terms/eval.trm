@@ -1,0 +1,22 @@
+eval(page, "Hello" , 
+
+module layout
+
+def page(title)
+  layout(title) 
+    p.alert "Hallo";
+  
+end
+
+def layout(title)
+   html {
+    p title;
+    head title title;
+    body {
+      yield;
+    }
+  }
+end
+
+
+)

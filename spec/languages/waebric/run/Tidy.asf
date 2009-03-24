@@ -1,0 +1,14 @@
+equations
+
+[tidy-top-1]
+	$strcon := ".tidy",
+	unparse-to-file($strcon, $document) == written,
+	$strcon' := "tidy -ascii -xml -quiet -indent " || $strcon,
+	read($bytes) := read-from-command($strcon'),
+	parse-tree($bytes1, $document', $bytes2, $natcon) := parse-bytes($bytes)
+	===
+	tidy($document) = $document'
+
+[default-tidy-2]
+	tidy($document) = $document
+

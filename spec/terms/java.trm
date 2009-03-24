@@ -1,0 +1,10 @@
+
+public class Bla {
+
+	@deprecated
+	List<Bla> getList(Bla bla) {
+		return bla;
+	}
+
+
+}

@@ -1,0 +1,18 @@
+module languages/waebric/import/Waebric
+
+imports languages/waebric/import/Resolve
+
+hiddens
+context-free start-symbols
+  ImportResults Module
+
+exports
+
+context-free syntax
+  import-summary(ImportResults) -> Summary
+
+hiddens
+variables
+  "$module" [0-9\']*     -> Module     
+  "$error*"[0-9\']* -> {Error ","}*
+  "$module*"[0-9\']* -> Module*          

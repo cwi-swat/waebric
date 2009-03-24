@@ -1,0 +1,46 @@
+module languages/waebric/syntax/Markup
+
+imports languages/waebric/syntax/Expressions
+        languages/waebric/syntax/Statements
+        languages/waebric/syntax/Embedding
+
+hiddens
+context-free start-symbols Markup
+
+exports
+sorts Markup Designator Attribute Arguments Argument
+
+context-free syntax
+  "(" {Argument ","}* ")" -> Arguments  
+  Var "=" Expression -> Argument  
+  Expression         -> Argument  
+
+context-free syntax
+  Designator Arguments -> Markup
+  Designator -> Markup
+
+context-free priorities
+  Markup+ Statement -> Statement {non-assoc}
+  >
+  {
+  Markup ";" -> Statement
+  Markup+ Markup ";" -> Statement
+  Markup+ Expression ";" -> Statement
+  }
+
+context-free priorities
+  Markup+ Markup ";" -> Statement
+  >
+  Designator -> Markup
+
+context-free syntax
+  IdCon Attribute* -> Designator  
+
+context-free syntax
+  "#" IdCon                 -> Attribute  
+  "." IdCon                 -> Attribute  
+  "$" IdCon                 -> Attribute  
+  ":" IdCon                 -> Attribute 
+  "@" w:NatCon "%" h:NatCon -> Attribute
+  "@" w:NatCon              -> Attribute
+

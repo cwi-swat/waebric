@@ -1,0 +1,71 @@
+
+compile(
+
+module bla
+
+site
+  bla.html: main
+end
+
+
+
+def main
+  layout("Hallo") {
+    h1 "Hallo Jeroen";
+  }
+end
+
+def b
+  h1 "hsdkjhsd";
+end
+
+def layout(title)
+  html {
+   head title title ;
+   body yield;
+  }
+end
+
+
+def f(l)
+  g(l);
+end
+
+def g(l)
+  each(x : l) {
+    f();
+  }
+end
+
+def main2
+  map({title: "Hello World!"});
+  ul {
+    items([1,2,3]);
+  }
+  tr {
+    each (x: ['a, 'b, "c"]) {
+
+
+
+      li.small.big.bla#lba x;
+      li.large x;
+    }
+  }
+end
+
+def map(m) 
+  each(l: m) {
+    each (x: l) {
+	h1 x;
+    }
+  }
+  echo m;
+end
+
+def items(l)
+  each (x: l) {
+    li x;
+  }
+end
+
+)

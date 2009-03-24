@@ -1,0 +1,136 @@
+module languages/xml/syntax/XML
+
+imports basic/Whitespace
+
+hiddens
+context-free start-symbols
+  Document
+
+exports
+sorts PIChar Name EncName VersionNum Document Prolog Element XMLDecl
+      VersionInfo EncodingDecl PI PITarget EmptyElementTag STag ETag Attribute
+      AttValue Content CharData Reference CDSect XComment XCommentChar Minus
+      CharRef EntityRef CDataChar RBracket TwoRBracket PIData Question
+      AttValueCharDouble AttValueCharSingle PubidLiteral PubidChar
+      SystemLiteral ExternalId DocTypeDecl
+
+lexical syntax
+  [a-zA-Z\_\:] [a-zA-Z0-9\.\-\_\:]* -> Name        
+  [A-Za-z] [A-Za-z0-9\.\_\-]*       -> EncName     
+  [a-zA-Z0-9\_\.\:\-]+              -> VersionNum  
+
+lexical restrictions
+  Name -/- [a-zA-Z0-9\.\-\_\:]
+  EncName -/- [A-Za-z0-9\.\_\-]
+  VersionNum -/- [a-zA-Z0-9\_\.\:\-]
+
+context-free syntax
+  %% NB: NO inline doctype decls and no standalone decls
+
+  Prolog Element PI*                     -> Document     
+  XMLDecl? PI*                           -> Prolog       
+  XMLDecl? PI* DocTypeDecl PI*           -> Prolog       
+  "<?xml" VersionInfo EncodingDecl? "?>" -> XMLDecl      
+  "<!DOCTYPE" Name ExternalId? ">"       -> DocTypeDecl  
+  "SYSTEM" SystemLiteral                 -> ExternalId   
+  "PUBLIC" PubidLiteral SystemLiteral    -> ExternalId   
+
+lexical syntax
+  "\"" ~[\"]* "\""                         -> SystemLiteral  
+  "'" ~[\']* "'"                           -> SystemLiteral  
+  "\"" PubidChar* "\""                     -> PubidLiteral   
+  "'" PubidChar* "'"                       -> PubidLiteral   
+  [\ \n\t]                                 -> PubidChar      
+  [a-zA-Z0-9]                              -> PubidChar      
+  [\-\'\(\)\+\,\.\/\:\=\?\;\!\*\#\@\$\_\%] -> PubidChar      
+
+context-free syntax
+  "version" "=" "\"" VersionNum "\"" -> VersionInfo   
+  "version" "=" "'" VersionNum "'"   -> VersionInfo   
+  "encoding" "=" "\"" EncName "\""   -> EncodingDecl  
+  "encoding" "=" "'" EncName "'"     -> EncodingDecl  
+
+context-free syntax
+  EmptyElementTag          -> Element          
+  STag Content* ETag       -> Element
+
+  XComment    -> Element
+  "<" Name Attribute* ">"  -> STag             
+  "<" Name Attribute* "/>" -> EmptyElementTag  
+  Name "=" AttValue        -> Attribute        
+  "</" Name ">"            -> ETag             
+
+context-free restrictions
+  "<" -/- [\ \t\n\r]
+
+lexical syntax
+  "\"" AttValueCharDouble* "\"" -> AttValue            
+  ~[\<\&\"]                     -> AttValueCharDouble  
+  EntityRef                     -> AttValueCharDouble  
+  CharRef                       -> AttValueCharDouble  
+  "'" AttValueCharSingle "'"    -> AttValue            
+  ~[\<\&\']                     -> AttValueCharSingle  
+  EntityRef                     -> AttValueCharSingle  
+  CharRef                       -> AttValueCharSingle  
+
+context-free syntax
+  Element   -> Content  
+  CharData  -> Content  
+  Reference -> Content  
+  CDSect    -> Content  
+  PI        -> Content  
+
+context-free syntax
+  "<?" PITarget PIData "?>" -> PI  
+
+lexical syntax
+  ~[\?]          -> PIChar            
+  [\?]           -> Question          
+  Question       -> PIChar            
+  PIChar*        -> PIData            
+  Name           -> PITarget          
+  [xX] [mM] [lL] -> PITarget {reject} 
+
+context-free restrictions
+  "<?" -/- [\ \t\n\r]
+
+lexical restrictions
+  Question -/- [\>]
+  PIData -/- ~[\?]
+
+lexical syntax
+  ~[\<\&]+ -> CharData  
+
+lexical restrictions
+  CharData -/- ~[\<\&]
+
+context-free syntax
+  EntityRef -> Reference  
+  CharRef   -> Reference  
+
+lexical syntax
+  "&#" [0-9]+ ";"        -> CharRef    
+  "&#x" [0-9a-fA-F]+ ";" -> CharRef    
+  "&" Name ";"           -> EntityRef  
+
+lexical syntax
+  "<![CDATA[" CDataChar* "]]>" -> CDSect       
+  ~[\]]                        -> CDataChar    
+  [\]]                         -> RBracket     
+  [\]] [\]]                    -> TwoRBracket  
+  RBracket                     -> CDataChar    
+  TwoRBracket                  -> CDataChar    
+
+lexical restrictions
+  RBracket -/- [\]].[\>]
+  TwoRBracket -/- [\>]
+
+lexical syntax
+%%  Comment                   -> LAYOUT      {category("Comment")} 
+  "<!--" XCommentChar* "-->" -> XComment                           
+  ~[\-]                     -> XCommentChar                       
+  [\-]                      -> Minus                             
+  Minus                     -> XCommentChar                       
+
+lexical restrictions
+  Minus -/- [\-].[\>]

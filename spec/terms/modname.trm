@@ -1,0 +1,4 @@
+module bla
+
+import test2
+

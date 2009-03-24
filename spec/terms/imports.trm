@@ -1,0 +1,10 @@
+result(fix-resolve-imports(<
+
+module Importer
+import layout
+
+import a.b.c.bla
+
+def f() 
+end
+,>))

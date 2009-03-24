@@ -1,0 +1,21 @@
+equations
+
+[]	idcon-to-id(idcon(&idhead)) = id(&idhead)
+
+[]	id(a &jtail*) := idcon-to-id(idcon(a &idtail*))
+	===
+	idcon-to-id(idcon(&idhead1 &idhead2 &idtail*)) =
+		id(&idhead1 &idhead2 &jtail*)
+
+[]	id(a &jtail*) := idcon-to-id(idcon(a &idtail*))
+	===
+	idcon-to-id(idcon(&idhead1 &d &idtail*)) =
+		id(&idhead1 &d &jtail*)
+
+[]	id(a &jtail*) := idcon-to-id(idcon(a &idtail*))
+	===
+	idcon-to-id(idcon(&idhead1 \- &idtail*)) =
+		id(&idhead1 \_ &jtail*)
+
+
+

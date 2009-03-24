@@ -1,0 +1,219 @@
+compile(Bla, module lava
+
+def main
+  home;
+end module home
+
+site
+  site/index.html: home()
+end
+
+def home
+  layout {
+   div.span-7.colborder {
+    bp-2009;
+    casteele;
+   }
+   div.span-8.last {
+    banners;
+    nieuws;
+    vpro;
+   }
+  }
+end
+
+
+def casteele
+  header("Two-book deal voor Brusselse theatermaker Vandecasteele");
+
+  p { 
+
+   echo "De Vlaamse golf zet door bij Amsterdamse uitgevers: nadat
+   Joost Vandecasteele (1979, schrijver, standup komiek en
+   theatermaker bij het gezelschap Abattoir Ferm&eacute;) de Brandende
+   Pen 2007 van <em "Lava Literair"> had gewonnen, werd hij door de
+   Amsterdamse literair agent <a(href="http://www.sebes.nl") "Paul
+   Sebes"> benaderd om eens te praten over zijn werk. Sebes: 'Wat hij
+   schrijft vond ik steengoed, keihard, hyperrealistisch en vaak erg
+   grappig.'  Vandecasteele bleek vergevorderd met de verhalenbundel
+   <em "Brulletje">. De meerderheid van deze verhalen was reeds
+   gepubliceerd in literaire tijdschrijften als <em "De Revisor">, <em
+   "Lava Literair">, <em "Deus ex Machina"> en <em "De Brakke
+   Hond">. Maar ook een roman, <em "De Slag om Neo-Sparta"> genaamd,
+   was reeds in de maak. Met dit materiaal is Sebes uitgeverijen gaan
+   benaderen. De vijf belangrijkste literaire huizen in Amsterdam
+   toonden interesse, maar Peter Nijssen van de Arbeiderspers wist
+   Vandecasteele en Sebes met zijn enthousiasme en een
+   contractvoorstel voor zowel de bundel als de roman te
+   overtuigen. Nijssen: 'Het talent spat van de pagina's. We gaan <em
+   "Brulletje"> meteen in 2009 brengen.' Vandecasteele, die met zijn
+   bundel en ambitieuze roman iets nieuws probeert te cre&euml;ren
+   binnen de Nederlandstalige literatuur, is zeer verheugd met de deal
+   en het vertrouwen van de <a(href="http://www.arbeiderspers.nl")
+   "Arbeiderspers">.";
+
+ }
+end
+
+
+def vpro
+  let 
+    link = "http://www.vpro.nl/programma/deavonden/afleveringen/34639264/items/35915764/media/35915897/";
+    vpro = "http://www.vpro.nl/programma/deavonden/afleveringen/34639264/items/35915764/";
+  in
+    header("Lava bij de VPRO");
+    p {
+     thumbnail("images/radio.jpg");
+     echo "Hoofdredacteur van Lava, Xavier van Leeuwe, was te gast bij
+radioprogramma De Avonden van VPRO-Radio. Klik <a(href=vpro) 'hier> om de VPRO-site te 
+bezoeken. De bijdrage in het radioprogramma 'live' beluisteren? Klik
+dan <a(href=link) 'hier>.";
+    }
+  end
+  
+end
+
+
+def nieuws
+  header("Literair nieuws");
+  let 
+   link = "http://feed2js.org///feed2js.php?src=http%3A%2F%2Fwww.nrcboeken.nl%2Frss.xml&amp;num=10&amp;targ=y&amp;utf=y";
+  in
+    script(language='JavaScript, src=link, type="text/javascript");
+    noscript a(href=link) "View RSS Feed";
+  end
+end
+
+def banners
+    swfobject("banners/banner_deux.swf", 300, 200, 'deux);
+    a(href="http://www.woordheks.nl") swfobject("banners/banner468X60.swf", 300, 60, 'woordheks);
+end module utils
+
+def header(text, link)
+  if (link)
+    vlam-h1 a(href=link) text;
+  else
+    vlam-h1 text;
+end
+
+def vlam-h1
+  h1 {
+   img.vlam(src="images/vlamgroot-inv.jpg", alt="lava vlam");
+   yield;
+  }
+end
+
+def css(url, media)
+  link(rel="stylesheet", href=url, type="text/css", media=media);
+end
+
+def abonnement 
+ p a(href="abonnement.html") em "Abonnement op ons tijdschrift?";
+end
+
+def layout
+  html(xmlns='http://www.w3.org/1999/xhtml) {
+    head {
+     title "Literair Tijdschrift Lava &mdash; Brandende Pen";
+     meta(http-equiv="content-type", content="text/html; charset=utf-8");
+     meta(name="keywords", content="kopij insturen, kort verhaal, korte verhalen, literatuur, literair tijdschrift, publiceren, schrijven, schrijfcursus, debuteren, debutant, brandende pen, lava, deadline, literaire prijs, schrijfwedstrijd");
+     meta(name="description", content="Literair tijdschrift Lava; organizator literaire prijs voor het korte verhaal De Brandende Pen");
+     meta(name="language", content="NL");
+     css("css/blueprint/screen.css", "screen, projection");
+     css("css/blueprint/print.css", "print");
+     comment "[if IE]>";
+     css("css/blueprint/ie.css", "screen, projection");
+     comment "<![endif]";
+     css("css/lava.css", "screen");
+   }
+   body {
+    div.container {
+      div.span-3.prepend-1 {
+        img(src="images/lavalogo.gif", width=110, alt="Lava Literair"); 
+        hr.space;
+        menu;
+      }
+      yield;
+    }
+    // Google analytics code
+    script(type="text/javascript") {
+      echo "
+var gaJsHost = ((\"https:\" == document.location.protocol) ? \"https://ssl.\" : \"http://www.\");
+document.write(unescape(\"%3Cscript src='\" + gaJsHost + \"google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E\"));
+";
+    }
+    echo "
+";
+    script(type="text/javascript") {
+      echo "
+var pageTracker = _gat._getTracker(\"UA-5156287-1\");
+pageTracker._initData();
+pageTracker._trackPageview();
+";  }
+
+   }
+  }
+end
+
+def menu
+ div#button ul.menu {
+   li a("bla") "Lava Voorpagina";
+   li a(href="brandende%20pen.html") "Brandende Pen";
+   li a(href="verhalen.html") "Korte verhalen";
+   li a(href="overlava.html") "Over Lava";
+   li a(href="kopij.html") "Kopij insturen";
+   li a(href="abonnementen.html") "Abonnementen";
+ };
+ input:submit$submit(value = "Submit!");
+end
+
+def thumbnail(image) 
+  img.thumb(src=image,alt="thumbnail");
+end
+
+def single-column
+ div.span-16.last {
+   yield;
+ }
+end
+
+
+def swfobject(url, width, height, id)
+  object(classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000, width=width, height=height) {
+    param$movie(url);
+    param$quality('high);
+    param$bgcolor('#fffce6);
+    comment "[if !IE]>";
+    object(type='application/x-shockwave-flash, data=url, width=width, height=height) {
+      param$quality('high);
+      param$bgcolor('#fffce6);
+      comment "<![endif]";
+      comment "[if !IE]>";
+    }      
+    comment "<![endif]";
+  }
+end
+
+
+def bp-2009
+  header("Literaire prijs de Brandende Pen 2009");
+
+  p "Literair tijdschrift Lava nodigt schrijvers uit korte verhalen in
+te sturen voor literaire prijs de Brandende Pen 2009.  De jury bestaat
+dit jaar uit schrijver <em "Zeger van Herwaarden">,
+Volkskrant-journaliste <em "Wilma de Rek">, schrijver en
+literatuurrecensent <em "Micha&euml;l Zeeman"> en Lava-hoofdredacteur
+<em "Xavier van Leeuwe">.";
+
+  p "De jury accepteert nog niet gepubliceerde verhalen van maximaal
+2.000 woorden die voor 15 oktober 2008 zijn gestuurd naar
+<a(href="mailto:brandendepen@lavaliterair.nl")
+"brandendepen@lavaliterair.nl">. De beste inzendingen worden in Lava
+gepubliceerd en de winnaar wordt in januari 2009 bekendgemaakt tijdens
+de feestelijke prijsuitreiking.";
+
+  p "Winnaar van de vorige Brandende Pen was Joost Vandecasteele. Na
+  de bekroning van zijn verhaal heeft hij een contract gesloten met de
+  Arbeiderspers voor een debuutroman en een verhalenbundel die begin
+  2009 uitkomt.";
+end)

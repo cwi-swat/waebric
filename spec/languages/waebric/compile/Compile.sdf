@@ -1,0 +1,245 @@
+module languages/waebric/compile/Compile
+
+imports languages/waebric/syntax/Waebric
+	languages/waebric/compile/IdConversion
+	languages/java-15/syntax/Java-15
+	containers/Set[IdCon]
+	utilities/Annotations[IdCon IdCon BoolCon]
+	basic/BoolCon
+	basic/Strings
+	basic/Integers
+	utilities/Parsing[Expression]
+	utilities/Parsing[Directory]
+	utilities/Parsing[FileName]
+
+
+hiddens
+context-free start-symbols CompilationUnit
+
+exports
+
+context-free syntax
+
+	compile(IdCon, Module*) -> CompilationUnit
+
+	compile-funcs(Module*, ClassBodyDec*) -> ClassBodyDec*
+		{traversal(top-down, break, accu)}
+	compile-funcs(FunctionDef, ClassBodyDec*) -> ClassBodyDec*
+		{traversal(top-down, break, accu)}
+
+	collect-mappings(Module*, Mappings) -> Mappings
+		{traversal(top-down, break, accu)}
+	collect-mappings(Mapping, Mappings) -> Mappings
+		{traversal(top-down, break, accu)}
+
+	mappings-to-jstats(Mappings) -> BlockStm*
+
+	path-to-stringliteral(Path) -> StringLiteral
+
+	func-interfaces(Integer) -> TypeDec*
+	func-interface-dec(Integer) -> TypeDec
+	natcon-to-formal(Id, NatCon) -> FormalParam
+	func-formals(NatCon) -> {FormalParam ","}*
+	
+	defined(Module*, Set[[IdCon]]) -> Set[[IdCon]] {traversal(top-down, break, accu)}
+	defined(FunctionDef, Set[[IdCon]]) -> Set[[IdCon]] {traversal(top-down, break, accu)}
+
+	annotate(Module*, Set[[IdCon]]) -> Module*
+		{traversal(top-down, continue, trafo)}
+	annotate(Designator, Set[[IdCon]]) -> Designator
+		{traversal(top-down, continue, trafo)}
+
+	is-defined(Designator) -> BoolCon
+
+	func-to-method(FunctionDef) -> ClassBodyDec*
+
+
+	stat-to-jstats(Statement) -> BlockStm*
+	stats-to-jstats(Statement*) -> BlockStm*
+	markup-to-jstats(Markup) -> BlockStm*
+	markup-to-jstats(Markup, BlockStm*) -> BlockStm*
+   	embedding-to-jstats(Embedding) -> BlockStm*
+	embed-to-jstats(Embed) -> BlockStm*
+	markups-to-jstats(Markup+, BlockStm*) -> BlockStm*
+
+	markup-to-call(Designator, Arguments, block:Expr) -> BlockStm*
+	markup-to-output(Designator, Arguments, block:BlockStm*) -> BlockStm*
+
+	assignments-to-jstats(Assignment+) -> BlockStm*
+	assignment-to-jstats(Assignment) -> BlockStm*
+
+	args-to-exprs({Argument ","}*) -> {Expr ","}*
+	args-to-jstats({Argument ","}*) -> BlockStm*
+	sim-args-to-jstats(IdCon, {Argument ","}*) -> BlockStm*
+	remove-args-for-id(IdCon, {Argument ","}*) -> {Argument ","}*
+	attributes-to-jstats(Attribute*) -> BlockStm*
+	attributes-to-args(Attribute*) -> {Argument ","}*
+
+	idcon-to-text(IdCon) -> Text
+	natcon-to-text(NatCon) -> Text
+
+	stream-type() -> Type
+
+	make-empty-element(IdCon, BlockStm*) -> BlockStm*
+
+	start-with-designator(Designator, Arguments) -> BlockStm*
+	end-with-designator(Designator) -> BlockStm*
+	empty-with-designator(Designator, Arguments) -> BlockStm*
+
+	start-tag(IdCon, BlockStm*) -> BlockStm*
+
+	block-exp-to-jstats(BlockExpression) -> BlockStm*
+	
+	exp-to-jexp(Expression) -> Expr
+	pred-to-jexp(Predicate) -> Expr
+	exp-to-jstring(Expression) -> Expr
+
+	natcon-to-stringliteral(NatCon) -> StringLiteral
+	symbol-to-stringliteral(SymbolCon) -> StringLiteral
+	idcon-to-stringliteral(IdCon) -> StringLiteral
+	strcon-to-stringliteral(StrCon) -> StringLiteral
+	text-to-stringliteral(Text) -> StringLiteral
+	
+	pre-to-stringliteral(PreText) -> StringLiteral
+	post-to-stringliteral(PostText) -> StringLiteral
+	mid-to-stringliteral(MidText) -> StringLiteral
+	tail-to-jstats(TextTail) -> BlockStm*
+
+	arity(Formals) -> Integer
+	func-interface(Formals) -> FormalParam
+	formals-to-formalparams(Formals) -> {FormalParam ","}* 
+	formals-to-exprs(Formals) -> {Expr ","}*
+
+	"!" IdCon -> Designator 
+	"?" IdCon -> Designator 
+
+	make-markup(BlockStm*) -> Expr
+
+	subst(Statement*, Designator, Designator) -> Statement* {traversal(bottom-up, continue, trafo)}
+	subst(Designator, from:Designator, to:Designator) -> Designator {traversal(bottom-up, continue, trafo)}
+
+	stag(IdCon) -> StringLiteral
+	etag(IdCon) -> StringLiteral
+
+	entity-ref-to-stringliteral(TextEntityRef) -> StringLiteral
+	char-ref-to-stringliteral(TextCharRef) -> StringLiteral
+
+hiddens
+
+variables
+ "&id*"[0-9\']* -> {IdCon ","}*
+ "&set"[0-9\']* -> Set[[IdCon]]
+  
+ "&classbodydec*"[0-9\']* -> ClassBodyDec*
+ "&jstat*"[0-9\']* -> BlockStm*
+ "&jstat+"[0-9\']* -> BlockStm+
+ "&jstat"[0-9\']* -> BlockStm
+ "&jexp"[0-9\']* -> Expr
+ "&jexp*"[0-9\']* -> {Expr ","}*
+ "&strcon"[0-9\']* -> StrCon
+ "&jid"[0-9\']* -> Id
+ "#jid"[0-9\']* -> Id
+ "&natcon"[0-9\']* -> NatCon
+ "&typedec"[0-9\']* -> TypeDec
+ "&typedec*"[0-9\']* -> TypeDec*
+ "&typedec+"[0-9\']* -> TypeDec+
+
+
+variables
+  %% Waebric
+
+  "&path"[0-9\']* -> Path
+  "&dirname"[0-9\']* -> DirName
+  "&dir"[0-9\']* -> Directory
+  "&filename"[0-9\']* -> FileName
+
+  "&mapping"[0-9\']* -> Mapping
+  "&mapping*"[0-9\']* -> {Mapping ";"}*
+
+  "&arg" [0-9\']*         -> Argument             
+  "&arg*" [0-9\']*        -> {Argument ","}*      
+  "&arg+" [0-9\']*        -> {Argument ","}+      
+  "&pred" [0-9\']*        -> Predicate            
+  "&type" [0-9\']*        -> Type                 
+  "&exp" [0-9\']*         -> Expression           
+  "&exp*" [0-9\']*        -> {Expression ","}*    
+  "&exp+" [0-9\']*        -> {Expression ","}+    
+  "&des" [0-9\']*         -> Designator           
+  "&attribute" [0-9\']*   -> Attribute            
+  "&attribute*" [0-9\']*  -> Attribute*           
+  "&attribute+" [0-9\']*  -> Attribute+
+  "&stat" [0-9\']*        -> Statement            
+  "&stat+" [0-9\']*       -> Statement+           
+  "&stat*" [0-9\']*       -> Statement*           
+  "&no-else" [0-9\']*     -> NoElseMayFollow      
+  "&sym" [0-9\']*         -> SymbolCon            
+  "&var" [0-9\']*         -> Var                  
+  "&var*" [0-9\']*        -> {Var ","}*           
+  "&args" [0-9\']*        -> Arguments            
+  "&args?" [0-9\']*       -> Arguments?           
+  "&func" [0-9\']*        -> IdCon                
+  "&id" [0-9\']*          -> IdCon                
+  "#id" [0-9\']*          -> IdCon                
+  "&formals" [0-9\']*     -> Formals              
+  "&func-def" [0-9\']*    -> FunctionDef          
+  "&func-def?" [0-9\']*   -> FunctionDef?         
+  "&markup" [0-9\']*      -> Markup               
+  "&markup?" [0-9\']*     -> Markup?              
+  "&var" [0-9\']*         -> Var                  
+  "&mod-elt+" [0-9\']*    -> ModuleElement+       
+  "&mod-elt*" [0-9\']*    -> ModuleElement*       
+  "&module*" [0-9\']*     -> Module*              
+  "&module" [0-9\']*      -> Module               
+  "&mod-id" [0-9\']*      -> ModuleId             
+  "&mod-id*" [0-9\']*     -> ModuleId*            
+  "&import" [0-9\']*      -> Import               
+  "&key-val" [0-9\']*     -> KeyValuePair         
+  "&key-val*" [0-9\']*    -> {KeyValuePair ","}*  
+  "&text" [0-9\']*        -> Text                 
+  "&pre" [0-9\']*         -> PreText              
+  "&post" [0-9\']*        -> PostText             
+  "&mid" [0-9\']*         -> MidText              
+  "&tail" [0-9\']*        -> TextTail             
+  "&assignments" [0-9\']* -> Assignments          
+  "&assignment" [0-9\']* -> Assignment          
+  "&assignment+" [0-9\']* -> Assignment+    
+  "&markup+" [0-9\']* -> Markup+    
+
+  "&embed" [0-9\']*        -> Embed
+  "&embedding" [0-9\']*        -> Embedding
+
+lexical variables
+  "&d" [0-9\']*                -> [0-9]   
+  "&d+" [0-9\']* -> [0-9]+
+  "&xd" [0-9\']*                -> [0-9a-fA-F]   
+  "&xd+" [0-9\']* -> [0-9a-fA-F]+
+  "&ehead"[0-9\']* -> [a-zA-Z\_\:] 
+  "&etail"[0-9\']* ->  [a-zA-Z0-9\.\-\_\:]
+  "&etail*"[0-9\']* ->  [a-zA-Z0-9\.\-\_\:]*
+
+  "&textchar*" [0-9\']*    -> TextChar*                                 
+  "&textchar" [0-9\']*     -> TextChar                                  
+  "&strchar*" [0-9\']*     -> StrChar*                                  
+  "&strchar" [0-9\']*      -> StrChar                                   
+  "&both" [0-9\']*         -> ~[\0-\31\n\t\"\\] /\ (~[\0-\31\&\"\<\128-\255] \/ [\n\r\t])
+  "&amp"[0-9\']* -> [\&]
+  "&nl"[0-9\']* -> [\n]
+  "&cr"[0-9\']* -> [\r]
+  "&quote"                 -> EscQuote                                  
+  "&symchar" [0-9\']*      -> SymbolChar                                
+  "&symchar*" [0-9\']*     -> SymbolChar*                               
+  "&str-sym-char" [0-9\']* -> ~[\)\ \t\n\r\;\,\>] /\ ~[\0-\31\n\t\"\\]  
+  "&text-sym-char" [0-9\']* -> ~[\0-\31\)\ \t\n\r\;\,\>\127-\255] /\ (~[\0-\31\&\"\<\128-\255] \/ [\n\r\t])
+  "&idhead"[0-9\']* -> [a-zA-Z]
+  "&idtail"[0-9\']* -> [a-zA-Z\-0-9]
+  "&idtail+"[0-9\']* -> [a-zA-Z\-0-9]+
+  "&idtail*"[0-9\']* -> [a-zA-Z\-0-9]*
+  "&jstr-char"[0-9\']* -> ~[\"\\\n\13] 
+  "&strcon-jstr-char"[0-9\']* -> ~[\0-\31\n\t\"\\] /\ ~[\"\\\n\13]
+  "&string-part*"[0-9\']* -> StringPart*
+  "&jhead"[0-9\']* -> [A-Za-z\_\$]
+  "&jtail"[0-9\']* -> [A-Za-z0-9\_\$]
+  "&jtail*"[0-9\']* -> [A-Za-z0-9\_\$]*
+  "&text-jstr-char"[0-9\']* -> ~[\"\\\n\13] /\ (~[\0-\31\&\"\<\128-\255] \/ [\n\r\t])
+  "&string-chars"[0-9\']* -> StringChars
+  "&string-char*"[0-9\']* -> ~[\"\\\n\13]+

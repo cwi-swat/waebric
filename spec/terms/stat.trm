@@ -1,0 +1,16 @@
+eval-markup(layout(title), [<title, "Bye">], module layout
+
+def page()
+  layout(title) {
+    p.alert "Hallo";
+  }
+end
+
+def layout(title)
+   html {
+    head title "Hello world!";
+    body.main (href="bla", "avalue") {
+      yield;
+    }
+  }
+end)

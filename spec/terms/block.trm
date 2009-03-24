@@ -1,0 +1,13 @@
+
+eval-stat(
+layout "bla";
+,
+new-table,
+,
+
+module layout
+def layout
+  h1 yield;
+end
+
+)

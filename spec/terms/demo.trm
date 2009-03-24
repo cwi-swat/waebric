@@ -1,0 +1,24 @@
+module Hello
+
+site
+  hello.html: main()
+end
+
+def main
+  layout("Hello") {
+    let 
+      title = "hello";
+    in
+      h1 "Hello World!";
+      pq "Home";
+    end
+  }
+end
+
+def layout(title)
+  html {
+    head title title;
+    body yield;
+    p "Hallo";
+  }
+end

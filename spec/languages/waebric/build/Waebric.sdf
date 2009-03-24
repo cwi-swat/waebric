@@ -1,0 +1,46 @@
+module languages/waebric/build/Waebric
+
+imports
+	languages/waebric/run/Eval
+	languages/waebric/run/Markup2XML
+	languages/waebric/import/Resolve
+        utilities/Parsing[FileName]
+        utilities/Parsing[Directory]
+        utilities/Parsing[Document]
+
+hiddens
+context-free start-symbols
+  Module Summary Document
+
+exports
+
+context-free syntax
+  build-site(Module) -> Summary
+  build-site(ImportResults) -> Summary
+  build-site(Module*, {Error ","}*, Module*) -> {Error ","}* {traversal(bottom-up, break, accu)}
+  build-site(Mapping, {Error ","}*, Module*) -> {Error ","}* {traversal(bottom-up, break, accu)}
+
+hiddens
+context-free syntax
+  errors-for-write(filename:StrCon, Write) -> {Error ","}* 
+  generate-file(StrCon, Markup, Module*) -> {Error ","}*
+
+variables
+  "$module" [0-9\']*   -> Module    
+  "$module*" [0-9\']*  -> Module*   
+  "$elt*" [0-9\']*     -> Element*  
+  "$document" [0-9\']* -> Document  
+  "$bytes" [0-9\']*    -> Bytes     
+  "$strcon" [0-9\']*   -> StrCon    
+  "$natcon" [0-9\']*   -> NatCon    
+  "$idcon" [0-9\']*   -> IdCon
+  "$error*"[0-9\']* -> {Error ","}*
+  "$error"[0-9\']* -> Error
+  "$value*"[0-9\']* -> {Value ","}*
+  "$value"[0-9\']* -> Value
+  "$imp-results"[0-9\']* -> ImportResults
+  "$markup"[0-9\']* -> Markup
+  "$filename"[0-9\']* -> FileName
+  "$path"[0-9\']* -> Path
+  "$dir"[0-9\']* -> Directory
+  "$subject*"[0-9\']* -> {Subject ","}*

@@ -1,0 +1,64 @@
+equations
+
+[main]	start(Module, $module) = start(Document, run($module, main, ))
+
+equations
+
+[run-1]	run($imp-results, $strcon) = 
+		run-import-results($imp-results, $strcon, )
+
+[run-2]	run($imp-results, $strcon, $value) = 
+		run-import-results($imp-results, $strcon, $value)
+
+[run-3]	run($imp-results, $strcon, $value1, $value2) = 
+		run-import-results($imp-results, $strcon, $value1, $value2)
+
+[run-4]	run($imp-results, $strcon, $value1, $value2, $value3) = 
+		run-import-results($imp-results, $strcon, $value1, $value2, $value3)
+
+[run-5]	run($imp-results, $strcon, $value1, $value2, $value3, $value4) = 
+		run-import-results($imp-results, $strcon, $value1, $value2, $value3, $value4)
+
+[run-6]	run($imp-results, $strcon, $value1, $value2, $value3, $value4, $value5) = 
+		run-import-results($imp-results, $strcon, $value1, $value2, $value3, $value4, $value5)
+
+
+equations
+
+[run-top]
+	run($module, $idcon, $value*) = 
+		run-import-results(import($module), $idcon, $value*)
+
+equations
+
+[run-import-results-top]
+	run-import-results(<$module*, $error*>, $idcon, $value*) = 
+		run-modules($module*, $idcon, $value*)
+
+equations
+
+[run-import-results-string]
+	$idcon := strcon-to-designator($strcon)
+	===
+	run-import-results($imp-results, $strcon, $value*) =
+		run-import-results($imp-results, $idcon, $value*)
+
+equations
+
+[run-modules-top]
+	$elt* := eval($idcon, $value*, $module*),
+	$document := markup-to-xhtml($elt*)
+	===
+	run-modules($module*, $idcon, $value*) = $document
+
+equations
+
+[strcon-to-designator-1]
+	$bytes := string-to-bytes($strcon),
+	parse-tree($bytes1, $idcon, $bytes2, $natcon) := parse-bytes($bytes)
+	===
+	strcon-to-designator($strcon) = $idcon
+
+[default-strcon-to-designator-2]
+	strcon-to-designator($strcon) = INVALID-IDENTIFIER
+

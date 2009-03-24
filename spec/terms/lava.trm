@@ -1,0 +1,273 @@
+module lava
+
+site
+ index.html: index;
+ brandende.html: brandende-pen
+end
+
+def header(text, link)
+  if (link)
+    vlam-h1 a(href=link) text;
+  else
+    vlam-h1 text;
+end
+
+
+def main
+  index;
+end
+
+def index
+ layout("Hallo Bas") two-column();
+end
+
+def brandende-pen
+ layout single-column {
+    p "<em 'UTRECHT> - De Vlaamse schrijver <em "Joost Vandecasteele"> heeft afgelopen
+	  zaterdag literatuurprijs De Brandende Pen gewonnen. Zijn tekst
+	  &quot;Nooit meer vrede&quot; werd bekroond tot het beste korte verhaal van
+	  2007 door jury-leden <em "Hanneke Groenteman">, schrijver <em "Christiaan
+	    Weijts">, Contactredacteur <em "Erna Staal">, Lava-hoofdredacteur <em "Xavier van
+	    Leeuwe"> en literair agent <em "Paul Sebes">.";
+    p "&quot;Het is een lekker vlerkerig verhaal vol humor. De dialogen zijn
+	  pakkend en de tekst roept sterke, filmische beelden op. Met zijn
+	  krachtige en vettige proza bereikt de auteur een idiote vaart die doet
+	  denken aan zijn landgenoot Herman Brusselmans. We gaan nog veel van
+	  hem horen&quot;, aldus de jury. Vandecasteele won een masterclass literair
+	  debuteren ter waarde van 1350 euro. De 27-jarige Vlaming is naast
+	  schrijver ook theatermaker en treedt op als stand-up comedian.";
+    p "De redactie van Lava, initiatiefnemer van de Brandende Pen, ontving
+	  meer dan 300 inzendingen. De beste twintig korte verhalen zijn
+	  gepubliceerd in het dubbeldikke winternummer, Lava 13.3 dat
+	  verkrijgbaar is in de betere boekhandel. Het literaire tijdschrift
+	  heeft deze prijs voor het beste korte verhaal in het leven geroepen
+	  vanwege de groeiende belangstelling voor het genre.";
+    p "Vorig jaar won publicist <em "Martin Pieterse"> De Brandende Pen. Juryleden
+	  <em "Abdelkader Benali">, <em "Elsbeth Etty"> en <em "Arieke Kroes"> gaven schrijfster
+	  <em "Anneloes Timmerije"> in 2006 een eervolle vermelding.";
+    p "De redactie van literair tijdschrift Lava beoogt de belangstelling
+	  voor het Nederlandstalige korte verhaal en haar schrijvers te
+	  stimuleren. Wij publiceren al dertien jaar de beste teksten van de
+	  nieuwste generatie auteurs. Voor meer informatie: 
+           <a(href="http://www.lavaliterair.nl") 'http://www.lavaliterair.nl>.";
+    brandende-pen-2007-fotos;
+
+    header("Uitreiking Brandende Pen 2006 in de pers", "");
+    p "Klik op een afbeelding voor een vergroting.";
+    brandende-pen-2006-pers;
+    header("Uitreiking Brandende Pen 2006 in foto's", "");
+    brandende-pen-2006-fotos();
+  }; // TODO
+end
+
+def brandende-pen-2006-pers
+  let
+     td(img, thumb, medium, date) = td { 
+       a(target='_blank, href=img) 
+        img@139%100(border=0, src=thumb, align='left, alt=medium);
+        echo medium; br; echo date;
+      }
+  in
+             
+  table(border='0, width='800, summary="Brandende Pen 2006 in de pers") {
+    tr {
+      td('images/brpen06_pub_nrcnext.jpg, 'images/brpen06_pubthumb_nrcnext.jpg,
+		  "NRC Next", "8 november 2006");
+      td('images/brpen06_pub_telegraaf.jpg, 'images/brpen06_pubthumb_telegraaf.jpg,
+		  "De Telegraaf", "");
+      td('images/brpen06_pub_volkskrant.jpg, 'images/brpen06_pubthumb_volkskrant.jpg,
+		  "De Volkskrant", "");
+    }
+    tr {
+      td('images/brpen06_pub_nl30.jpg, 'images/brpen06_pubthumb_nl30.jpg,
+		  "NL30", "");
+      td('images/brpen06_pub_literaireprijzen.jpg, 'images/brpen06_pubthumb_literaireprijzen.jpg,
+		  "literaireprijzen.nl", "");
+      td('images/brpen06_pub_8weekly.jpg, 'images/brpen06_pubthumb_8weekly.jpg,
+		  "8 Weekly", "");  
+    }
+  }
+  end
+end
+
+def brandende-pen-2006-fotos
+  let 
+    td(width, img) = td(width=width, align='center) img(border=0, src=img, width=width, height=223, alt="Brandende Pen");
+  in
+   table(border=0,cellpadding=4, cellspacing=4, width=567, summary="Foto's Brandende Pen 2006") {
+    tr {
+      td(343, 'images/brpen06_christiaanweijts.jpg);
+      td(220, 'images/brpen06_christiaanfloorarieke.jpg);
+    }
+    tr {
+      td(343, 'images/brpen06_martinpietersechristiaanweijts.jpg);
+      td(220, 'images/brpen06_ministers.jpg);
+    }
+    tr {
+      td(343, 'images/brpen06_publiek.jpg);
+      //td(width='220, align='center);
+    }
+   }
+  end
+end
+
+def brandende-pen-2007-fotos
+  let 
+    td(width, img) = td(width=width, align='center) img(border=0, src=img, width=width, height=223, alt="Brandende Pen");
+  in
+   table(border='0, cellpadding='4, cellspacing='4, width='567, summary="Brandende Pen 2007") {
+    tr {
+      td('343, 'images/brpen07_04.jpg); td('220, 'images/brpen07_02.jpg);
+    }
+    tr {
+      td('343, 'images/brpen07_01.jpg); td('220, 'images/brpen07_03.jpg);
+    }
+    tr {
+      td('343, 'images/brpen07_05.jpg); td('220, 'images/brpen07_06.jpg);
+    }
+   }
+  end
+end
+
+def single-column
+ div.span-16#bas@300%200.last {
+   yield;
+ }
+end
+
+def css(url, media)
+  link(rel="stylesheet", href=url, type="text/css", media=media);
+end
+
+def two-column
+  div.span-7.colborder {
+    casteele;
+    vpro;
+  }
+  div.span-8.last {
+    banners;
+    nieuws;
+  }
+end
+
+def banners
+    swfobject("http://www.lavaliterair.nl/banners/banner_deux.swf", 300, 200, 'deux);
+    swfobject("http://www.lavaliterair.nl/banners/banner468X60.swf", 300, 60, 'woordheks);
+end
+
+def layout(title)
+  html(xmlns='http://www.w3.org/1999/xhtml) {
+    head {
+     title title;
+     meta(http-equiv="content-type", content="text/html; charset=utf-8");
+     css("css/blueprint/screen.css", "screen, projection");
+     css("css/blueprint/print.css", "print");
+     css("css/lava.css", "screen");
+   }
+   body {
+    div.container {
+      div.span-5 {
+        img(src="images/lavalogo.gif", alt="Lava Literair"); 
+        hr.space;
+        menu;
+      }
+      yield;
+    }
+   }
+  }
+end
+
+def nieuws
+  header("Literair nieuws", "");
+  let 
+   link = "http://feed2js.org///feed2js.php?src=http%3A%2F%2Fwww.nrcboeken.nl%2Frss.xml&amp;num=10&amp;targ=y&amp;utf=y";
+  in
+    script(language='JavaScript, src=link, type="text/javascript");
+    noscript a(href=link) "View RSS Feed";
+  end
+end
+
+def menu
+ div#button ul.menu {
+   li a(href="index.html") "Lava Voorpagina";
+   li a(href="brandende.html") "Brandende Pen";
+   li a(href="verhalen.html") "Korte verhalen";
+   li a(href="overlava.html") "Over Lava";
+   li a(href="kopij.html") "Kopij insturen";
+   li a(href="abonnementen.html") "Abonnementen";
+ }; // TODO: should be unneeded!
+end
+
+def vlam-h1
+  h1 {
+   img.vlam(src="images/vlamgroot-inv.jpg", alt="lava vlam");
+   yield;
+  }
+end
+
+def thumbnail(image) 
+  img.thumb(src=image,alt="thumbnail");
+end
+
+
+def swfobject(url, width, height, id)
+  object(classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000, width=width, height=height) {
+    param$movie(url);
+    param$quality('high);
+    param$bgcolor('#fffce6);
+    comment "[if !IE]>";
+    object(type='application/x-shockwave-flash, data=url, width=width, height=height) {
+      param$quality('high);
+      param$bgcolor('#fffce6);
+      comment "<![endif]";
+      comment "[if !IE]>";
+    }      
+    comment "<![endif]";
+  }
+end
+
+
+def vpro
+  let 
+    link = "http://www.vpro.nl/programma/deavonden/afleveringen/34639264/items/35915764/media/35915897/";
+    vpro = "http://www.vpro.nl/programma/deavonden/afleveringen/34639264/items/35915764/";
+  in
+    header("Lava bij de VPRO", "");
+    p {
+     thumbnail("images/radio.jpg");
+     echo "Hoofdredacteur van Lava, Xavier van Leeuwe, was te gast bij
+radioprogramma De Avonden van VPRO-Radio. Klik <a(href=vpro) 'hier> om de VPRO-site te 
+bezoeken. De bijdrage in het radioprogramma 'live' beluisteren? Klik
+dan <a(href=link) 'hier>.";
+    }
+  end
+  
+end
+
+def casteele
+  header("Two-book deal voor Brusselse theatermaker Vandecasteele",
+	'http://www.sebes.nl);
+  p {
+   thumbnail("images/brpen06_beeldthumb.jpg");
+   echo "De Vlaamse golf zet door bij Amsterdamse uitgevers: nadat Joost
+Vandecasteele (1979, schrijver, standup komiek en theatermaker bij het
+gezelschap Abattoir Ferm&eacute;) de Brandende Pen 2007 van <em "Lava Literair"> had
+gewonnen, werd hij door de Amsterdamse literair agent Paul Sebes
+benaderd om eens te praten over zijn werk. Sebes: 'Wat hij schrijft
+vond ik steengoed, keihard, hyperrealistisch en vaak erg grappig.'
+Vandecasteele bleek vergevorderd met de verhalenbundel <em "Brulletje">. De
+meerderheid van deze verhalen was reeds gepubliceerd in literaire
+tijdschrijften als <em "De Revisor">, <em "Lava Literair">, <em "Deus ex Machina"> en <em "De
+Brakke Hond">. Maar ook een roman, <em "De Slag om Neo-Sparta"> genaamd, was
+reeds in de maak. Met dit materiaal is Sebes uitgeverijen gaan
+benaderen. De vijf belangrijkste literaire huizen in Amsterdam toonden
+interesse, maar Peter Nijssen van de Arbeiderspers wist Vandecasteele
+en Sebes met zijn enthousiasme en een contractvoorstel voor zowel de
+bundel als de roman te overtuigen. Nijssen: 'Het talent spat van de
+pagina's. We gaan <em "Brulletje"> meteen in 2009 brengen.' Vandecasteele,
+die met zijn bundel en ambitieuze roman iets nieuws probeert te
+cre&euml;ren binnen de Nederlandstalige literatuur, is zeer verheugd met de
+deal en het vertrouwen van de <a(href="http://www.arbeiderspers.nl") "Arbeiderspers">.";
+ }
+end
+

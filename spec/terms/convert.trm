@@ -1,0 +1,8 @@
+markup-to-xhtml(
+ html () {
+ p (clas = "Alert") { "this is an &amp; emphasized " em () { "\"this\"" } " \n     element " h2 () { "\"title\"" } " ab cd " em () { "\"bla\"" } "" } 
+p () { "[]" }
+
+}
+
+)

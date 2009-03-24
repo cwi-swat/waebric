@@ -1,0 +1,54 @@
+module languages/xml/format/Format
+
+imports languages/box/syntax/Box
+	languages/xml/syntax/XML[Element => XMLElement]
+	basic/BoolCon
+	utilities/Parsing[CharData]
+
+hiddens
+context-free start-symbols Document
+
+exports
+context-free syntax
+	format-xml(Content) -> Content {traversal(bottom-up, trafo, continue)}
+	format-xml(Attribute) -> Attribute {traversal(bottom-up, trafo, continue)}
+	format-xml(Attribute*) -> Attribute* {traversal(bottom-up, trafo, continue)}
+
+	format-attrs(Attribute*) -> Attribute*
+	format-contents(Content*) -> Content*
+	format-element(Element) -> Element
+
+	"<" Box ">" -> Content* {from-box}
+	"<" Box ">" -> Content {from-box}
+	"<" Box ">" -> Document {from-box}
+	"<" Box ">" -> Attribute {from-box}
+	"<" Box ">" -> Attribute* {from-box}
+
+
+	"[" Content* "]" -> Box* {to-box}
+	"[" Name "]" -> Box {to-box}
+	"[" Prolog "]" -> Box {to-box}
+	"[" AttValue "]" -> Box {to-box}
+	"[" Attribute* "]" -> Box* {to-box}
+	"[" Attribute "]" -> Box {to-box}
+
+	"&is-block-level" "(" Content ")" -> BoolCon
+	"&is-block-level" "(" Name ")" -> BoolCon
+
+
+hiddens
+variables
+ "$document"[0-9\']* -> Document
+ "$prolog"[0-9\']* -> Prolog
+ "$element"[0-9\']* -> XMLElement 
+ "$pi*"[0-9\']* -> PI*
+ "$chardata"[0-9\']* -> CharData
+ "$content"[0-9\']* -> Content
+ "$content*"[0-9\']* -> Content*
+ "$content+"[0-9\']* -> Content+
+ "$name"[0-9\']* -> Name
+ "$attvalue"[0-9\']* -> AttValue
+ "$attr*"[0-9\']* -> Attribute*
+ "$attr+"[0-9\']* -> Attribute+
+ "$attr"[0-9\']* -> Attribute
+ "$strcon"[0-9\']* -> StrCon

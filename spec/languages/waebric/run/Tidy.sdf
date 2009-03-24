@@ -1,0 +1,25 @@
+module languages/waebric/run/Tidy
+
+imports languages/xml/syntax/XML
+		[Element => XMLElement]
+        utilities/Files
+        utilities/Parsing[Document]
+
+
+exports
+
+%% This must be a public start symbol
+%% Otherwise we couldn't parse Documents.
+%%context-free start-symbols Document
+
+sorts Parsetree[[Document]]
+
+context-free syntax
+  tidy(Document) -> Document  
+
+hiddens
+variables
+  "$document" [0-9\']* -> Document  
+  "$bytes" [0-9\']*    -> Bytes     
+  "$strcon" [0-9\']*   -> StrCon    
+  "$natcon" [0-9\']*   -> NatCon    

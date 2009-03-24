@@ -1,0 +1,129 @@
+module languages/waebric/format/Format-Module
+
+imports languages/waebric/syntax/Waebric
+        languages/box/syntax/Box
+        basic/BoolCon
+
+hiddens
+context-free start-symbols Module Box
+
+exports
+context-free syntax
+  "<" Box ">"                 -> Argument            {from-box} 
+  "<" Box ">"                 -> Expression          {from-box} 
+  "<" Box ">"                 -> {Expression ","}*   {from-box} 
+  "<" Box ">"                 -> Designator          {from-box} 
+  "<" Box ">"                 -> Attribute           {from-box} 
+  "<" Box ">"                 -> Statement*          {from-box} 
+  "<" Box ">"                 -> Statement           {from-box} 
+  "<" Box ">"                 -> SymbolCon           {from-box} 
+  "<" Box ">"                 -> {Argument ","}*     {from-box} 
+  "<" Box ">"                 -> {Var ","}*          {from-box} 
+  "<" Box ">"                 -> FunctionDef         {from-box} 
+  "<" Box ">"                 -> BlockExpression     {from-box} 
+  "<" Box ">"                 -> Markup              {from-box} 
+  "<" Box ">"                 -> Var                 {from-box} 
+  "<" Box ">"                 -> ModuleId            {from-box} 
+  "<" Box ">"                 -> Module              {from-box} 
+  "<" Box ">"                 -> ModuleElement       {from-box} 
+  "<" Box ">"                 -> ModuleElement*      {from-box} 
+  "<" Box ">"                 -> Import              {from-box} 
+  "<" Box ">"                 -> Predicate           {from-box} 
+  "<" Box ">"                 -> Type                {from-box} 
+  "<" Box ">"                 -> KeyValuePair        {from-box} 
+  "<" Box ">"                 -> {KeyValuePair ","}* {from-box} 
+  "<" Box ">"                 -> Text                {from-box} 
+  "<" Box ">"                 -> PreText             {from-box} 
+  "<" Box ">"                 -> PostText            {from-box} 
+  "<" Box ">"                 -> MidText             {from-box} 
+  "<" Box ">"                 -> TextTail            {from-box} 
+  "<" Box ">"                 -> Assignment          {from-box} 
+  "<" Box ">"                 -> {Assignment ";"}+   {from-box} 
+  "[" Argument "]"            -> Box                 {to-box}   
+  "[" Expression "]"          -> Box                 {to-box}   
+  "[" {Expression ","}* "]"   -> Box                 {to-box}   
+  "[" Designator "]"          -> Box                 {to-box}   
+  "[" Attribute "]"           -> Box                 {to-box}   
+  "[" Attribute* "]"          -> Box                 {to-box}   
+  "[" Statement* "]"          -> Box                 {to-box}   
+  "[" Statement "]"           -> Box                 {to-box}   
+  "[" SymbolCon "]"           -> Box                 {to-box}   
+  "[" {Argument ","}* "]"     -> Box                 {to-box}   
+  "[" {Var ","}* "]"          -> Box*                 {to-box}   
+  "[" FunctionDef "]"         -> Box                 {to-box}   
+  "[" BlockExpression "]"     -> Box                 {to-box}   
+  "[" Markup "]"              -> Box                 {to-box}   
+  "[" Var "]"                 -> Box                 {to-box}   
+  "[" ModuleId "]"            -> Box                 {to-box}   
+  "[" Module "]"              -> Box                 {to-box}   
+  "[" ModuleElement "]"       -> Box                 {to-box}   
+  "[" ModuleElement* "]"      -> Box*                 {to-box}   
+  "[" Import "]"              -> Box                 {to-box}   
+  "[" Predicate "]"           -> Box                 {to-box}   
+  "[" Type "]"                -> Box                 {to-box}   
+  "[" KeyValuePair "]"        -> Box                 {to-box}   
+  "[" {KeyValuePair ","}* "]" -> Box*                 {to-box}   
+  "[" Text "]"                -> Box                 {to-box}   
+  "[" PreText "]"             -> Box                 {to-box}   
+  "[" PostText "]"            -> Box                 {to-box}   
+  "[" MidText "]"             -> Box                 {to-box}   
+  "[" TextTail "]"            -> Box                 {to-box}   
+  "[" Assignment "]"          -> Box                 {to-box}   
+  "[" Assignment+ "]"   -> Box*                 {to-box}   
+
+hiddens
+
+context-free syntax
+  no-curlies(Statement) -> BoolCon
+
+variables
+  %% Waebric
+
+  "$arg" [0-9\']*         -> Argument             
+  "$arg*" [0-9\']*        -> {Argument ","}*      
+  "$arg+" [0-9\']*        -> {Argument ","}*      
+  "$pred" [0-9\']*        -> Predicate            
+  "$type" [0-9\']*        -> Type                 
+  "$exp" [0-9\']*         -> Expression           
+  "$exp*" [0-9\']*        -> {Expression ","}*    
+  "$exp+" [0-9\']*        -> {Expression ","}+    
+  "$des" [0-9\']*         -> Designator           
+  "$attribute" [0-9\']*   -> Attribute            
+  "$attribute*" [0-9\']*  -> Attribute*           
+  "$attribute+" [0-9\']*  -> Attribute+           
+  "$stats" [0-9\']*       -> Statements           
+  "$stat" [0-9\']*        -> Statement            
+  "$stat+" [0-9\']*       -> Statement+           
+  "$stat*" [0-9\']*       -> Statement*           
+  "$no-else" [0-9\']*     -> NoElseMayFollow      
+  "$sym" [0-9\']*         -> SymbolCon            
+  "$var" [0-9\']*         -> Var                  
+  "$var*" [0-9\']*        -> {Var ","}*           
+  "$args" [0-9\']*        -> Arguments            
+  "$args?" [0-9\']*       -> Arguments?           
+  "$func" [0-9\']*        -> IdCon                
+  "$id" [0-9\']*          -> IdCon                
+  "$formals" [0-9\']*     -> Formals              
+  "$func-def" [0-9\']*    -> FunctionDef          
+  "$func-def?" [0-9\']*   -> FunctionDef?         
+  "$block-exp" [0-9\']*   -> BlockExpression      
+  "$markup" [0-9\']*      -> Markup               
+  "$markup?" [0-9\']*     -> Markup?              
+  "$var" [0-9\']*         -> Var                  
+  "$mod-elt+" [0-9\']*    -> ModuleElement+       
+  "$mod-elt*" [0-9\']*    -> ModuleElement*       
+  "$module*" [0-9\']*     -> Module*              
+  "$module" [0-9\']*      -> Module               
+  "$mod-id" [0-9\']*      -> ModuleId             
+  "$mod-id*" [0-9\']*     -> ModuleId*            
+  "$import" [0-9\']*      -> Import               
+  "$key-val" [0-9\']*     -> KeyValuePair         
+  "$key-val*" [0-9\']*    -> {KeyValuePair ","}*  
+  "$key-val+" [0-9\']*    -> {KeyValuePair ","}+
+  "$text" [0-9\']*        -> Text                 
+  "$pre" [0-9\']*         -> PreText              
+  "$post" [0-9\']*        -> PostText             
+  "$mid" [0-9\']*         -> MidText              
+  "$tail" [0-9\']*        -> TextTail             
+  "$assignments" [0-9\']* -> Assignments          
+  "$assignment+" [0-9\']* -> Assignment+    

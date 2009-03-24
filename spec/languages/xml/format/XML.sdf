@@ -1,0 +1,10 @@
+module languages/xml/format/XML
+
+imports languages/xml/format/Format
+
+hiddens
+context-free start-symbols Document
+
+variables
+  "&doc"[0-9\']* -> Document
+

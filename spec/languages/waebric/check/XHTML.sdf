@@ -1,0 +1,23 @@
+module languages/waebric/check/XHTML
+
+imports containers/Sets-and-Relations
+	basic/RStores
+
+exports
+context-free syntax
+	xhtml-elements() -> RElem
+	xhtml-deprecated() -> RElem
+	xhtml-no-end-tags() -> RElem
+ 	xhtml-attributes() -> RElem
+
+hiddens
+
+context-free start-symbols RElem
+
+imports 	basic/Comments
+
+variables
+  "$relem"[0-9\']* -> RElem
+  "$relem*"[0-9\']* -> {RElem ","}*
+
+

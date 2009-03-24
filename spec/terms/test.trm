@@ -1,0 +1,36 @@
+create table posts (
+  id integer not null primary key,
+  title char(255),
+  content char(1024)
+)
+
+def /
+    latest = select max(id) from posts;
+    post = select * from posts where id = :latest;
+    return post[name];
+    return [1, 2, 3, [23,3]];
+    x = 4 + x * 5;
+    show(post);
+end
+
+def show(post)
+  return 
+    page {
+      h1 post[title];
+      for (c : post[comments]) {
+        comment c;
+      }
+    };
+end
+
+def page
+  html {
+    head title "My Blagh"; 
+    body div.container yield;
+   }
+end
+
+def /comment/(id)
+ pass;
+end
+

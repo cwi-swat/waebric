@@ -1,0 +1,24 @@
+module languages/waebric/run/IntermediateMarkup
+
+imports 
+	basic/StrCon
+	basic/IdentifierCon
+	basic/NatCon
+	basic/BoolCon
+
+exports
+
+sorts Constant Attr Attrs Element Elements Header
+
+%% TODO: cdata
+
+context-free syntax
+	NatCon -> Constant
+	StrCon -> Constant
+	IdCon "=" Constant -> Attr
+	{Attr ","}* -> Attrs
+	IdCon "(" {Attr ","}* ")" -> Header
+	Header "{" Elements "}" -> Element
+  	Element* -> Elements
+	Constant -> Element
+

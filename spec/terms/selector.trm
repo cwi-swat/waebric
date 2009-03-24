@@ -1,0 +1,7 @@
+h1, h2, h3,
+a b[a] #a, foo|h1,
+*[hreflang|=en], [hreflang|=en]
+, .bla #ha [goobt=asdas], :lang(fr-be) > q,
+span[hello="CLASA"] + a[goodbye="Columbus"],
+
+remove .new

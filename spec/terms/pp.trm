@@ -1,0 +1,5 @@
+module bla
+
+def pp
+  if (x) {p "sds"; } else {}
+end

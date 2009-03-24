@@ -1,0 +1,12 @@
+module languages/waebric/all/Waebric
+
+imports
+	languages/waebric/open/Waebric
+	languages/waebric/run/Waebric
+	languages/waebric/check/Waebric
+	languages/waebric/compile/Waebric
+	languages/waebric/extract/Waebric
+	languages/waebric/format/Waebric
+
+hiddens
+context-free start-symbols Module

@@ -1,0 +1,1 @@
+str-to-content("ab\nc \\\t<d>")

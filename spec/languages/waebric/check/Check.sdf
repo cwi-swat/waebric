@@ -1,0 +1,120 @@
+module languages/waebric/check/Check
+
+imports languages/waebric/extract/Summarize
+        languages/waebric/import/Resolve
+        languages/waebric/check/XHTML
+        utilities/Parsing[NatCon]
+        utilities/Parsing[Var]
+        containers/Set[Var]
+        utilities/PosInfo[Var]
+        basic/Strings
+
+hiddens
+context-free start-symbols
+  Module Summary
+
+exports
+context-free syntax
+  check(Module)                       -> Summary  
+  check-import-results(ImportResults) -> Summary  
+  errors-for-modules(Module*) -> {Error ","}*
+
+hiddens
+context-free syntax
+  extract(Module*, RStore)                        -> RStore         {traversal(top-down, break, accu)} 
+  extract(Module, RStore)                         -> RStore         {traversal(top-down, break, accu)} 
+  errors-for-modules(RStore)                      -> {Error ","}*                                      
+  errors-for-duplicate-definitions(RElem, RStore) -> {Error ","}*                                      
+  errors-for-mismatched-arities(RElem, RStore)    -> {Error ","}*                                      
+  errors-for-undefined-elements(RElem)    -> {Error ","}*                                      
+  errors-for-deprecated-elements(RElem)    -> {Error ","}*                                      
+  errors-for-forbidden-attributes(RElem) -> {Error ","}*
+  subjects-for-definitions(RElem)                 -> {Subject ","}*                                    
+
+  errors-for-filenames(RElem, RStore) -> {Error ","}*
+  subjects-for-locations(StrCon, RElem) -> {Subject ","}*
+
+  errors-for-undefined-vars(Module*, {Error ","}*, Set[[Var]]) -> {Error ","}*
+		{traversal(top-down, break, accu)}
+  errors-for-undefined-vars(FunctionDef, {Error ","}*, Set[[Var]]) -> {Error ","}*
+		{traversal(top-down, break, accu)}
+  errors-for-undefined-vars(Statement, {Error ","}*, Set[[Var]]) -> {Error ","}*
+		{traversal(top-down, break, accu)}
+  errors-for-undefined-vars(Statement*, {Error ","}*, Set[[Var]]) -> {Error ","}*
+		{traversal(top-down, break, accu)}
+  errors-for-undefined-vars(Expression, {Error ","}*, Set[[Var]]) -> {Error ","}*
+		{traversal(top-down, break, accu)}
+
+  vars(Assignment+, Set[[Var]]) -> Set[[Var]] {traversal(bottom-up, accu, break)}
+  vars(Var, Set[[Var]]) -> Set[[Var]] {traversal(bottom-up, accu, break)}
+
+
+variables
+  "$strcon" [0-9\']*  -> StrCon        
+  "$bytes" [0-9\']*   -> Bytes         
+  "$natcon" [0-9\']*  -> NatCon        
+  "$boolcon" [0-9\']* -> BoolCon       
+  "$error" [0-9\']*   -> Error         
+  "$error*" [0-9\']*  -> {Error ","}*  
+  "$summary" [0-9\']* -> Summary       
+  "$rstore" [0-9\']*  -> RStore        
+  "$set" [0-9\']*     -> RElem         
+  "$rel" [0-9\']*     -> RElem         
+  "$def" [0-9\']*     -> RElem         
+  "$use" [0-9\']*     -> RElem         
+  "$names" [0-9\']*   -> RElem         
+  "$arities" [0-9\']* -> RElem         
+  "$relem*" [0-9\']*  -> {RElem ","}*  
+  "$name" [0-9\']*    -> StrCon        
+  "$loc" [0-9\']*     -> Location      
+
+variables
+  %% Waebric
+
+  "$arg" [0-9\']*        -> Argument             
+  "$arg*" [0-9\']*       -> {Argument ","}*      
+  "$arg+" [0-9\']*       -> {Argument ","}*      
+  "$pred" [0-9\']*       -> Predicate            
+  "$type" [0-9\']*       -> Type                 
+  "$exp" [0-9\']*        -> Expression           
+  "$exp*" [0-9\']*       -> {Expression ","}*    
+  "$exp+" [0-9\']*       -> {Expression ","}+    
+  "$assignment" [0-9\']*        -> Assignment
+  "$assignment*" [0-9\']*       -> Assignment*    
+  "$assignment+" [0-9\']*       -> Assignment+    
+  "$des" [0-9\']*        -> Designator           
+  "$attribute" [0-9\']*  -> Attribute            
+  "$attribute*" [0-9\']* -> Attribute*           
+  "$stat" [0-9\']*       -> Statement            
+  "$stat+" [0-9\']*      -> Statement+           
+  "$stat*" [0-9\']*      -> Statement*           
+  "$no-else" [0-9\']*    -> NoElseMayFollow      
+  "$sym" [0-9\']*        -> SymbolCon            
+  "$var" [0-9\']*        -> Var                  
+  "$var*" [0-9\']*       -> {Var ","}*           
+  "$args" [0-9\']*       -> Arguments            
+  "$args?" [0-9\']*      -> Arguments?           
+  "$func" [0-9\']*       -> IdCon                
+  "$id" [0-9\']*         -> IdCon                
+  "$formals" [0-9\']*    -> Formals              
+  "$func-def" [0-9\']*   -> FunctionDef          
+  "$func-def?" [0-9\']*  -> FunctionDef?         
+  "$markup" [0-9\']*     -> Markup               
+  "$markup?" [0-9\']*    -> Markup?              
+  "$var" [0-9\']*        -> Var                  
+  "$mod-elt+" [0-9\']*   -> ModuleElement+       
+  "$mod-elt*" [0-9\']*   -> ModuleElement*       
+  "$module*" [0-9\']*    -> Module*              
+  "$module" [0-9\']*     -> Module               
+  "$mod-id" [0-9\']*     -> ModuleId             
+  "$mod-id*" [0-9\']*    -> {ModuleId ","}*      
+  "$import" [0-9\']*     -> Import               
+  "$key-val" [0-9\']*    -> KeyValuePair         
+  "$key-val*" [0-9\']*   -> {KeyValuePair ","}*  
+  "$text" [0-9\']*       -> Text                 
+  "$pre" [0-9\']*        -> PreText              
+  "$post" [0-9\']*       -> PostText             
+  "$mid" [0-9\']*        -> MidText              
+  "$tail" [0-9\']*       -> TextTail             
+
+

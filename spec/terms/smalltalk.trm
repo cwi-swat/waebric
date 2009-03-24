@@ -1,0 +1,12 @@
+SimpleSwitchMorph subclass: #SBECell
+	instanceVariableNames: 'mouseAction'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'SBE--Quinto'
+
+SBECell>>add: x to: y
+ "add x to y"
+  |a b|
+  a := true.
+  true ifTrue: [ self print. ] ifFalse: [self doit].
+  self add: y.

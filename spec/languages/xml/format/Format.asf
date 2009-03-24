@@ -1,0 +1,127 @@
+equations
+
+[format-top]
+	$prolog $element $pi* = <V [[$prolog] [format-xml($element)] [$pi*]]>
+
+equations
+
+[format-xml-element-1]
+	<$name $attr+>$content*</$name> := $content,
+	&is-block-level($name) == true
+	===
+	format-xml($content) = <V [ Hhs=0["<" H hs=1 [[$name] H hs=0 [[$attr+] ">"]]] I is=2[Hhs=0[[$content*]]] Hhs=0["</" [$name] ">"]]>
+
+[format-xml-element-2]
+	<$name>$content*</$name> := $content,
+	&is-block-level($name) == true
+	===
+	format-xml($content) = <V [Hhs=0["<" [$name] ">"] I is=2[Hhs=0[[$content*]]]  Hhs=0["</" [$name] ">"]]>
+
+[format-xml-element-1]
+	<$name $attr+>$content*</$name> := $content,
+	&is-block-level($name) == false
+	===
+	format-xml($content) = <Hhs=0 [ Hhs=0["<" H hs=1 [[$name] H hs=0 [[$attr+] ">"]]] Hhs=0[[$content*]] Hhs=0["</" [$name] ">"]]>
+
+[format-xml-element-2]
+	<$name>$content*</$name> := $content,
+	&is-block-level($name) == false
+	===
+	format-xml($content) = <Hhs=0[Hhs=0["<" [$name] ">"] Hhs=0[[$content*]]  Hhs=0["</" [$name] ">"]]>
+
+
+[format-xml-empty-element-1]
+	<$name $attr+/>:= $content
+	===
+	format-xml($content) = <H hs=0 ["<" H hs=1 [[$name] H hs=0 [[$attr+] " />"]]]>
+
+[format-xml-empty-element-2]
+	<$name/>:= $content
+	===
+	format-xml($content) = <H hs=0 ["<" [$name] " />"]>
+
+[format-xml-chardata]
+	format-xml($chardata) = <$strcon>  when $strcon := unparse-to-string($chardata)
+
+
+[format-xml-attribute]
+	format-xml($name = $attvalue) = <H hs=0 [[$name] "=" [$attvalue]]>
+
+
+
+equations
+
+[]	$content+ $element $content* = <V [Hhs=0[[$content+]] [$element] Hhs=0[[$content*]]]>
+		when &is-block-level($element) == true
+
+[]	$content* $element $content+ = <V [Hhs=0[[$content*]] [$element] Hhs=0[[$content+]]]>
+		when &is-block-level($element) == true
+
+[]	$content+ $element $content* = <H hs=0 [[$content+] [$element] [$content*]]>
+		when &is-block-level($element) == false
+
+[]	$content* $element $content+ = <H hs=0 [[$content*] [$element] [$content+]]>
+		when &is-block-level($element) == false
+
+
+equations
+
+[b1]	<$name>$content*</$name> := $content
+	===
+	&is-block-level($content) = &is-block-level($name)
+		
+
+[b2]	&is-block-level(<$name/>) = &is-block-level($name)
+
+equations
+
+[]	&is-block-level(address) = true
+[]	&is-block-level(blockquote) = true
+[]	&is-block-level(center) = true
+[]	&is-block-level(dir) = true
+[]	&is-block-level(div) = true
+[]	&is-block-level(dl) = true
+[]	&is-block-level(fieldset) = true
+[]	&is-block-level(form) = true
+[]	&is-block-level(h1) = true
+[]	&is-block-level(h2) = true
+[]	&is-block-level(h3) = true
+[]	&is-block-level(h4) = true
+[]	&is-block-level(h5) = true
+[]	&is-block-level(h6) = true
+[]	&is-block-level(hr) = true
+[]	&is-block-level(isindex) = true
+[]	&is-block-level(menu) = true
+[]	&is-block-level(noframes) = true
+[]	&is-block-level(noscript) = true
+[]	&is-block-level(ol) = true
+[]	&is-block-level(p) = true
+[]	&is-block-level(pre) = true
+[]	&is-block-level(table) = true
+[]	&is-block-level(ul) = true
+[]	&is-block-level(dd) = true
+[]	&is-block-level(dt) = true
+[]	&is-block-level(frameset) = true
+[]	&is-block-level(li) = true
+[]	&is-block-level(tbody) = true
+[]	&is-block-level(td) = true
+[]	&is-block-level(tfoot) = true
+[]	&is-block-level(th) = true
+[]	&is-block-level(thead) = true
+[]	&is-block-level(tr) = true
+[]	&is-block-level(applet) = true
+[]	&is-block-level(button) = true
+[]	&is-block-level(del) = true
+[]	&is-block-level(iframe) = true
+[]	&is-block-level(ins) = true
+[]	&is-block-level(map) = true
+[]	&is-block-level(object) = true
+[]	&is-block-level(script) = true
+
+[]	&is-block-level(html) = true
+[]	&is-block-level(body) = true
+[]	&is-block-level(head) = true
+[]	&is-block-level(title) = true
+
+[default-b]
+	&is-block-level($name) = false

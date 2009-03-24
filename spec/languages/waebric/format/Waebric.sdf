@@ -1,0 +1,10 @@
+module languages/waebric/format/Waebric
+
+imports languages/xml/format/Format
+	languages/waebric/format/Format-Module
+
+hiddens
+context-free start-symbols Document Module
+
+variables
+ "&mod"[0-9\']* -> Module

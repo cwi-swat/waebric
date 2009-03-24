@@ -1,0 +1,8 @@
+collect-singletons(
+module Bla
+exports context-free syntax
+A B C -> D {left}
+"a" -> A {left}
+"c" "e" -> C {left}
+"e" -> E {left}
+,) 

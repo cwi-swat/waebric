@@ -1,0 +1,54 @@
+module layout
+
+site
+ test/index.html: page("Dit is een test");
+ test/index2.html: page("Dit is de tweede test")
+end
+
+def main
+  page("Dit is een test");
+end
+
+def page(title)
+  let
+    link = 'http://example.com/home.html;
+    menu = [{label: 'Main, url: link}, {label: 'Sub, items: [{label: 'Test, url: link}]}]
+  in
+    layout(title, menu)  {
+      h1 "Hallo wereld";
+      hr;
+      a(href=link) "Klik hier";
+    }
+  end
+end
+
+def layout(title, menu)
+   html {
+     head title title;
+     body {
+       menu(menu);
+       yield;
+     }
+   }
+end
+
+def menu-item(item) 
+  li {
+    if (item.items) {
+     echo item.label;
+     menu(item.items);
+    }
+    else
+     a(href=item.url) item.label;
+  }
+end
+
+def menu(items)
+  ul {
+    each (i: items) {
+      menu-item(i);
+    }
+  }
+end
+
+

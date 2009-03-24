@@ -1,0 +1,6 @@
+
+module bla
+
+def bla
+  p();
+end

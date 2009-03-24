@@ -1,0 +1,108 @@
+
+
+create table todos (
+  id integer not null primary key,
+  action char(255) not null,
+  due date not null,
+  done boolean default 'f'
+)
+
+def get /
+  todos = select * from todos 
+            where done = 'f' 
+            order by due desc;
+  render list_of_todos(todos);
+end
+
+def post /done(id)
+  update todos set done = 't' 
+    where id = :id;
+  redirect /;
+end
+
+def post /create(action, due)
+  id = (select max(id) from todos) + 1;
+  insert into todos values(:id, :action, :due);
+  redirect /;
+end
+
+def get /new
+  render new_todo();
+end
+
+def new_todo
+  layout {
+   form(action=/create, method=post) {
+     input$action:text("action");
+     input$due:text("due date");
+     input:submit("Submit");
+   }
+  }
+end
+
+def list_of_todos(todos)
+  layout {
+    table {
+      th { td "Todo"; td "Due date"; td "Done"; }
+      for (t: todos) {
+       tr { td t[action]; td t[due]; td done_button(t[id]); }
+      }
+    }
+    new_button();
+  }
+end
+
+def done_button(todo_id)
+  form(action=/,method=post) {
+    input:submit("Done");
+  }
+end
+
+
+
+
+def get /
+  latest_id = select max(id) from posts;
+  latest = select * from posts where id = :latest_id limit 1;
+  comments = select * from comments where post_id = :latest_id;
+  return show_post(latest, comments);
+end
+
+def post(post)
+  id = post[id];
+  div.post(id=id) {
+    h2 a(href=/show/:id) post[title];
+    p.body post[body];
+    p.date small post[created_at];
+  }
+end
+
+def comments(comments)
+  div.comments {
+   for (c: comments) {
+     h3 c[created_at];
+     p.comment c[body];
+   }
+  }
+end
+
+def show_post(post, comments)
+  id = post[id];
+  layout {
+    post(post);
+    br();
+    comments(comments);
+    a(href=/posts/edit/:id) "Edit" ;
+    a(href=/posts) "Back";
+  }
+end
+
+def layout
+  html {
+    head title "My Blagh"; 
+    body div.container yield;
+  }
+end
+
+
+

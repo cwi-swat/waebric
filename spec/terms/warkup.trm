@@ -1,0 +1,28 @@
+form!/posts/1 {
+ input$bas:text("Basten")
+
+ layout {
+
+
+
+ %javascript {
+   if (bla) {
+    alert("Hello")
+   }
+ }
+   
+ }
+ 
+ s.a 
+
+ p@onClick{if (bla) { alert('Hello')}}
+ 
+ p.alert#bla {
+  span.alert "Hallo dit is een paragraaf" 
+ } 
+  
+ i "Hallo"
+
+ p "Para"
+ 
+}

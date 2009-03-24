@@ -1,0 +1,10 @@
+module languages/waebric/open/Waebric
+
+imports languages/waebric/syntax/Waebric
+	languages/xml/syntax/XML[Element => XMLElement]
+	languages/waebric/compile/Compile
+
+
+hiddens
+context-free start-symbols Module Document CompilationUnit
+

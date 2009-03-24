@@ -1,0 +1,102 @@
+module languages/waebric/run/Markup2XML
+
+imports languages/waebric/run/Markup
+        languages/xml/syntax/XML [Element => XMLElement]
+
+hiddens
+context-free start-symbols
+  Document
+
+exports
+context-free syntax
+  markup-to-xhtml(Elements) -> Document  
+
+hiddens
+sorts GT LT QContent
+
+lexical syntax
+  %% Needed because follow restriction on "<"
+
+  [\>] -> GT  
+  [\<] -> LT  
+
+context-free syntax
+  GT Content* LT                   -> QContent    
+  id-to-name(IdCon)                -> Name        
+  text-to-attvalue(Text)          -> AttValue    
+  markup-to-content(Elements)      -> QContent    
+  markup-to-content(Element)       -> QContent    
+  attrs-to-attributes({Attr ","}*) -> Attribute*  
+  text-to-content(Text) -> QContent
+  strcon-to-xcomment(StrCon) -> XComment
+
+variables
+  "$strcon"[0-9\']* -> StrCon
+  "$text" [0-9\']*     -> Text
+  "$idcon" [0-9\']*      -> IdCon            
+  "$id" [0-9\']*         -> IdCon            
+  "$elt" [0-9\']*        -> Element          
+  "$elt*" [0-9\']*       -> Element*         
+  "$elt+" [0-9\']*       -> Element+         
+  "$attr" [0-9\']*       -> Attr             
+  "$attr*" [0-9\']*      -> {Attr ","}*      
+  "$attr+" [0-9\']*      -> {Attr ","}+      
+  "$chardata" [0-9\']*   -> CharData         
+  "$content" [0-9\']*    -> Content          
+  "$content*" [0-9\']*   -> Content*         
+  "$ref" [0-9\']*        -> Reference        
+  "$stag" [0-9\']*       -> STag             
+  "$etag" [0-9\']*       -> ETag             
+  "$name" [0-9\']*       -> Name             
+  "$attvalue" [0-9\']*   -> AttValue         
+  "$attribute" [0-9\']*  -> Attribute        
+  "$attribute*" [0-9\']* -> Attribute*       
+  "$empty-tag" [0-9\']*  -> EmptyElementTag  
+
+lexical variables
+  "$d" [0-9\']*                -> [0-9]
+  "$text-chardata-char"[0-9\']*  -> ~[\<\&] /\ (~[\0-\31\&\"\<\128-\255] \/ [\n\r\t] )                                
+  "$text-char"[0-9\']* -> TextChar
+  "$text-char*"[0-9\']* -> TextChar*
+  "$amp"[0-9\']* -> [\&]
+	
+  "$text-attvalue-char"[0-9\']* -> ~[\<\&\"] /\ (~[\0-\31\&\"\<\128-\255] \/ [\n\r\t] )  
+
+
+  "$d+"[0-9\']* -> [0-9]+
+  "$h+"[0-9\']* -> [0-9a-fA-F]+
+  "$name-head"[0-9\']* -> [a-zA-Z\_\:]
+  "$name-tail*"[0-9\']* -> [a-zA-Z0-9\.\-\_\:]*
+
+
+  "$both-char" [0-9\']*        -> ~[\0-\31\n\t\"\\] /\ ~[\<\&]          
+  "$cd-char" [0-9\']*          -> ~[\<\&]                               
+  "$cd-char+" [0-9\']*         -> ~[\<\&]+                              
+  "$cd-char*" [0-9\']*         -> ~[\<\&]*                              
+  "$non-gt-amp" [0-9\']*       -> ~[\<\&]                               
+  "$non-gt-amp*" [0-9\']*      -> ~[\<\&]*                              
+  "$non-gt-amp+" [0-9\']*      -> ~[\<\&]+                              
+  "$id-head" [0-9\']*          -> [A-Za-z]                              
+  "$id-tail" [0-9\']*          -> [A-Za-z\-0-9]                         
+  "$id-tail*" [0-9\']*         -> [A-Za-z\-0-9]*                        
+  "$name-head" [0-9\']*        -> [a-zA-Z\_\:]                          
+  "$name-tail" [0-9\']*        -> [a-zA-Z0-9\.\-\_\:]                   
+  "$name-tail*" [0-9\']*       -> [a-zA-Z0-9\.\-\_\:]*                  
+  "$both-head" [0-9\']*        -> [A-Za-z]                              
+  "$both-tail" [0-9\']*        -> [a-zA-Z0-9\.\-\_\:] /\ [A-Za-z\-0-9]  
+  "$str-and-att-char" [0-9\']* -> ~[\<\&\"] /\ ~[\0-\31\n\t\"\\]        
+  "$att-value-char" [0-9\']*   -> AttValueCharDouble                    
+  "$att-value-char*" [0-9\']*  -> AttValueCharDouble*                   
+  "$charref" [0-9\']*          -> CharRef                               
+  "$entityref" [0-9\']*        -> EntityRef          
+
+
+ "$xcomment-char"[0-9\']* -> XCommentChar
+ "$xcomment-char*"[0-9\']* -> XCommentChar*
+ "$x-str-char"[0-9\']* -> ~[\-] /\ ~[\0-\31\n\t\"\\]
+ "$minus"[0-9\']* -> Minus
+ "$minus-char"[0-9\']* -> [\-]
+ "$non-minus-char"[0-9\']* -> ~[\-]
+ "$strchar"[0-9\']* -> StrChar
+ "$strchar*"[0-9\']* -> StrChar*
+

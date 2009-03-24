@@ -1,0 +1,112 @@
+equations
+
+[import-only-top]
+	<$module*, $error*> := import($module)
+	===
+	import-only($module) = $module*
+
+equations
+
+[check-import-top]
+	<$module*, $error*> := import($module)
+	===
+	check-import($module) = summary("Waebric", "Waebric", [$error*])
+
+equations
+
+[import-top] /* This assumes module id are same as basename of file */
+	module $mod-id $mod-elt* := $module
+	===
+	import($module) = fix-resolve-imports(<$module, >, {$mod-id})
+
+equations
+
+[fix-resolve-imports-1]
+	collect-imports($module*, $done) == <$module*, $done>
+	===
+	fix-resolve-imports(<$module*, $error*>, $done) = <$module*, $error*>
+
+[default-fix-resolve-imports-2]
+	<$module*', $done'> := collect-imports($module*, $done),
+	<$module*'', $error*'> := resolve-imports(difference($done', $done), <,>)
+	===
+	fix-resolve-imports(<$module*, $error*>, $done) = 
+		fix-resolve-imports(<$module*' $module*'', $error*', $error*>, union($done, $done'))
+
+equations
+
+[collect-imports-top]
+	collect-imports($mod-elt*1 import $mod-id $mod-elt*2, $done) =
+		<$mod-elt*1 $mod-elt*2, union({$mod-id}, $done)>
+
+
+equations
+
+[resolve-imports-top]
+	$strcon := path-for-module-id($mod-id),
+	execute-command("test -f " || $strcon) == 0, 
+         $module-pt := parse-file-pos($strcon)
+	===
+	resolve-imports($mod-id, $import-results) = 
+		handle-parse-result($mod-id, $module-pt, $import-results)
+
+[default-resolve-imports-2]
+	$strcon := path-for-module-id($mod-id)
+	===
+	resolve-imports($mod-id, <$module*, $error*>) =
+		<$module*, error("file does not exist", [subject($strcon)]), $error*>
+		
+
+equations
+
+[path-for-module-id-top]
+	$strcon1 := module-id-to-strcon($mod-id),
+	$strcon2 := subst(".", "/", $strcon1) || ".wae"
+	===
+	path-for-module-id($mod-id) = $strcon2
+
+equations
+
+[handle-parse-result-error]
+	handle-parse-result($mod-id, parse-error(summary($strcon1, $strcon2, [$error*'])), <$module*, $error*>) =
+		<$module*, $error*', $error*>
+
+[handle-parse-result-tree]
+	$error*' := check-module-id($mod-id, $module)
+	===
+	handle-parse-result($mod-id, parse-tree($bytes1, $module, $bytes2, $natcon), <$module*, $error*>) =
+		<$module $module*, $error*, $error*'>
+
+equations
+
+[check-module-id-mismatch]
+	basename($mod-id') != $mod-id,
+	$strcon := module-id-to-strcon($mod-id),
+	$loc := get-location($mod-id)
+	===
+	check-module-id($mod-id', module $mod-id $mod-elt+) =
+		error("modulename does not match filename",
+			[localized($strcon, $loc)])
+
+[default-check-module-id-other]
+	check-module-id($mod-id, $module) = 
+
+equations
+
+[module-id-to-strcon-1]
+	module-id-to-strcon($id) = unparse-to-string($id)
+
+[module-id-to-strcon-2]
+	$strcon := module-id-to-strcon($id) || "." || module-id-to-strcon($id+)
+	===
+	module-id-to-strcon($id . $id+) = $strcon
+
+equations
+
+[basename1]
+	basename($id) = $id
+
+
+[basename-2]
+	basename($id+ . $id) = $id
+

@@ -1,0 +1,11 @@
+module languages/waebric/run/Result[X]
+
+imports basic/Errors
+
+exports
+
+sorts Result
+
+context-free syntax
+	<X, {Error ","}*> -> Result[[X]]
+

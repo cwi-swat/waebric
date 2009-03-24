@@ -1,0 +1,57 @@
+equations
+
+[start] start(Module, $module) = start(Summary, build-site($module))
+
+equations
+
+[build-site-main]
+	build-site($module) = build-site(import($module))
+
+equations
+
+[build-site-top]
+	$error*'' := build-site($module*, , $module*)
+	===
+	build-site(<$module*, $error*>) = 
+		summary("Site", "Site", [$error*''])
+
+equations
+
+[build-site-mapping-1]
+	$strcon := unparse-to-string($filename)
+	===
+	build-site($filename : $markup, $error*, $module*) = 
+		$error*,
+		generate-file($strcon, $markup, $module*)
+
+[build-site-mapping-1]
+	$strcon1 := unparse-to-string($filename),
+	$strcon2 := unparse-to-string($dir),
+	$strcon3 := "mkdir -p " || $strcon2,
+	execute-command($strcon3) == 0,
+	$strcon4 := $strcon2 || "/" || $strcon1
+	===
+	build-site($dir/$filename : $markup, $error*, $module*) = 
+		$error*,
+		generate-file($strcon4, $markup, $module*)
+
+equations
+
+[generate-file-top]
+	$elt* := eval-markup($markup, new-table, , $module*),
+	$document := markup-to-xhtml($elt*)
+	===
+	generate-file($strcon, $markup, $module*) =
+		errors-for-write($strcon, unparse-to-file($strcon, $document))
+
+equations
+
+[errors-for-write-success]
+	errors-for-write($strcon, written) = 
+		info("success", [subject($strcon)])
+
+[errors-for-write-error]
+	error($strcon', [$subject*]) := $error,
+	$error' := error($strcon', [$subject*, subject($strcon)])
+	===
+	errors-for-write($strcon, write-error(summary($strcon1, $strcon2, [$error]))) = $error'
