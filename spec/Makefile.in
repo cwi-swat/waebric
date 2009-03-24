@@ -179,7 +179,7 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 
-bin_PROGRAMS = Compile-Waebric Run-Waebric
+bin_PROGRAMS = Compile-Waebric Check-Waebric Run-Waebric
 
 pkgdata_DATA = Waebric.trm.tbl
 
@@ -192,6 +192,10 @@ Compile_Waebric_CPPFLAGS = -DASF_MAIN $(ASC_SUPPORT_CFLAGS)
 Compile_Waebric_SOURCES = Compile-Waebric.c
 Compile_Waebric_LDADD = $(ASC_SUPPORT_LIBS)
 
+Check_Waebric_CPPFLAGS = -DASF_MAIN $(ASC_SUPPORT_CFLAGS)
+Check_Waebric_SOURCES = Check-Waebric.c
+Check_Waebric_LDADD = $(ASC_SUPPORT_LIBS)
+
 Run_Waebric_CPPFLAGS = -DASF_MAIN $(ASC_SUPPORT_CFLAGS)
 Run_Waebric_SOURCES = Run-Waebric.c
 Run_Waebric_LDADD = $(ASC_SUPPORT_LIBS)
@@ -199,9 +203,14 @@ subdir = ./spec
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_CLEAN_FILES =
-bin_PROGRAMS = Compile-Waebric$(EXEEXT) Run-Waebric$(EXEEXT)
+bin_PROGRAMS = Compile-Waebric$(EXEEXT) Check-Waebric$(EXEEXT) \
+	Run-Waebric$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
 
+am_Check_Waebric_OBJECTS = Check_Waebric-Check-Waebric.$(OBJEXT)
+Check_Waebric_OBJECTS = $(am_Check_Waebric_OBJECTS)
+Check_Waebric_DEPENDENCIES =
+Check_Waebric_LDFLAGS =
 am_Compile_Waebric_OBJECTS = Compile_Waebric-Compile-Waebric.$(OBJEXT)
 Compile_Waebric_OBJECTS = $(am_Compile_Waebric_OBJECTS)
 Compile_Waebric_DEPENDENCIES =
@@ -214,7 +223,8 @@ Run_Waebric_LDFLAGS =
 DEFAULT_INCLUDES =  -I. -I$(srcdir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
-@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/Compile_Waebric-Compile-Waebric.Po \
+@AMDEP_TRUE@DEP_FILES = ./$(DEPDIR)/Check_Waebric-Check-Waebric.Po \
+@AMDEP_TRUE@	./$(DEPDIR)/Compile_Waebric-Compile-Waebric.Po \
 @AMDEP_TRUE@	./$(DEPDIR)/Run_Waebric-Run-Waebric.Po
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -223,11 +233,12 @@ LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) \
 CCLD = $(CC)
 LINK = $(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-DIST_SOURCES = $(Compile_Waebric_SOURCES) $(Run_Waebric_SOURCES)
+DIST_SOURCES = $(Check_Waebric_SOURCES) $(Compile_Waebric_SOURCES) \
+	$(Run_Waebric_SOURCES)
 DATA = $(pkgdata_DATA)
 
 DIST_COMMON = $(srcdir)/Makefile.in Makefile.am
-SOURCES = $(Compile_Waebric_SOURCES) $(Run_Waebric_SOURCES)
+SOURCES = $(Check_Waebric_SOURCES) $(Compile_Waebric_SOURCES) $(Run_Waebric_SOURCES)
 
 all: all-am
 
@@ -267,6 +278,9 @@ clean-binPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
+Check-Waebric$(EXEEXT): $(Check_Waebric_OBJECTS) $(Check_Waebric_DEPENDENCIES) 
+	@rm -f Check-Waebric$(EXEEXT)
+	$(LINK) $(Check_Waebric_LDFLAGS) $(Check_Waebric_OBJECTS) $(Check_Waebric_LDADD) $(LIBS)
 Compile-Waebric$(EXEEXT): $(Compile_Waebric_OBJECTS) $(Compile_Waebric_DEPENDENCIES) 
 	@rm -f Compile-Waebric$(EXEEXT)
 	$(LINK) $(Compile_Waebric_LDFLAGS) $(Compile_Waebric_OBJECTS) $(Compile_Waebric_LDADD) $(LIBS)
@@ -280,6 +294,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Check_Waebric-Check-Waebric.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Compile_Waebric-Compile-Waebric.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Run_Waebric-Run-Waebric.Po@am__quote@
 
@@ -315,6 +330,39 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/$*.Plo' tmpdepfile='$(DEPDIR)/$*.TPlo' @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ `test -f '$<' || echo '$(srcdir)/'`$<
+
+Check_Waebric-Check-Waebric.o: Check-Waebric.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Check_Waebric_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT Check_Waebric-Check-Waebric.o -MD -MP -MF "$(DEPDIR)/Check_Waebric-Check-Waebric.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o Check_Waebric-Check-Waebric.o `test -f 'Check-Waebric.c' || echo '$(srcdir)/'`Check-Waebric.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/Check_Waebric-Check-Waebric.Tpo" "$(DEPDIR)/Check_Waebric-Check-Waebric.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/Check_Waebric-Check-Waebric.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='Check-Waebric.c' object='Check_Waebric-Check-Waebric.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/Check_Waebric-Check-Waebric.Po' tmpdepfile='$(DEPDIR)/Check_Waebric-Check-Waebric.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Check_Waebric_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o Check_Waebric-Check-Waebric.o `test -f 'Check-Waebric.c' || echo '$(srcdir)/'`Check-Waebric.c
+
+Check_Waebric-Check-Waebric.obj: Check-Waebric.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Check_Waebric_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT Check_Waebric-Check-Waebric.obj -MD -MP -MF "$(DEPDIR)/Check_Waebric-Check-Waebric.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o Check_Waebric-Check-Waebric.obj `if test -f 'Check-Waebric.c'; then $(CYGPATH_W) 'Check-Waebric.c'; else $(CYGPATH_W) '$(srcdir)/Check-Waebric.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/Check_Waebric-Check-Waebric.Tpo" "$(DEPDIR)/Check_Waebric-Check-Waebric.Po"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/Check_Waebric-Check-Waebric.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='Check-Waebric.c' object='Check_Waebric-Check-Waebric.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/Check_Waebric-Check-Waebric.Po' tmpdepfile='$(DEPDIR)/Check_Waebric-Check-Waebric.TPo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Check_Waebric_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o Check_Waebric-Check-Waebric.obj `if test -f 'Check-Waebric.c'; then $(CYGPATH_W) 'Check-Waebric.c'; else $(CYGPATH_W) '$(srcdir)/Check-Waebric.c'; fi`
+
+Check_Waebric-Check-Waebric.lo: Check-Waebric.c
+@am__fastdepCC_TRUE@	if $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Check_Waebric_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT Check_Waebric-Check-Waebric.lo -MD -MP -MF "$(DEPDIR)/Check_Waebric-Check-Waebric.Tpo" \
+@am__fastdepCC_TRUE@	  -c -o Check_Waebric-Check-Waebric.lo `test -f 'Check-Waebric.c' || echo '$(srcdir)/'`Check-Waebric.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/Check_Waebric-Check-Waebric.Tpo" "$(DEPDIR)/Check_Waebric-Check-Waebric.Plo"; \
+@am__fastdepCC_TRUE@	else rm -f "$(DEPDIR)/Check_Waebric-Check-Waebric.Tpo"; exit 1; \
+@am__fastdepCC_TRUE@	fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='Check-Waebric.c' object='Check_Waebric-Check-Waebric.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	depfile='$(DEPDIR)/Check_Waebric-Check-Waebric.Plo' tmpdepfile='$(DEPDIR)/Check_Waebric-Check-Waebric.TPlo' @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Check_Waebric_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o Check_Waebric-Check-Waebric.lo `test -f 'Check-Waebric.c' || echo '$(srcdir)/'`Check-Waebric.c
 
 Compile_Waebric-Compile-Waebric.o: Compile-Waebric.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(Compile_Waebric_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT Compile_Waebric-Compile-Waebric.o -MD -MP -MF "$(DEPDIR)/Compile_Waebric-Compile-Waebric.Tpo" \
@@ -587,18 +635,28 @@ uninstall-am: uninstall-binPROGRAMS uninstall-info-am \
 	uninstall-binPROGRAMS uninstall-info-am uninstall-pkgdataDATA
 
 
+compile-specs: table dump-check dump-run dump-compile  asfc-check asfc-run asfc-compile
+
 table:
 	pt-dump -m languages/waebric/syntax/Waebric -o Waebric.trm.tbl
 
-compile-spec: dump asfc
+dump-check:
+	eqs-dump -m languages/waebric/check/Waebric -o Check-Waebric.eqs
 
-dump:
-	eqs-dump -m languages/waebric/compile/Waebric -o Compile-Waebric.eqs
+dump-run:
 	eqs-dump -m languages/waebric/run/Waebric -o Run-Waebric.eqs
 
-asfc:
-	asfc -p Waebric.trm.tbl -i Compile-Waebric.eqs -o Compile-Waebric.c -v
+dump-compile:
+	eqs-dump -m languages/waebric/compile/Waebric -o Compile-Waebric.eqs
+
+asfc-check: 
+	asfc -p Waebric.trm.tbl -i Check-Waebric.eqs -o Check-Waebric.c -v
+
+asfc-run: 
 	asfc -p Waebric.trm.tbl -i Run-Waebric.eqs -o Run-Waebric.c -v
+
+asfc-compile: 
+	asfc -p Waebric.trm.tbl -i Compile-Waebric.eqs -o Compile-Waebric.c -v
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
