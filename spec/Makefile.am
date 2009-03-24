@@ -2,7 +2,7 @@
 
 bin_PROGRAMS = Compile-Waebric Import-Waebric Check-Waebric Run-Waebric
 
-pkgdata_DATA = Waebric.trm.tbl
+pkgdata_DATA = Waebric.trm.tbl $(wildcard *.eqs)
 
 EXTRA_DIST = \
 	$(wildcard *.tbl) \

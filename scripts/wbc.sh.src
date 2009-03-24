@@ -1,13 +1,12 @@
 #! /bin/sh
 
-#INSTALL=/ufs/jurgenv/drafts/WaebricHG/spec/scripts
-INSTALL=/Users/tvdstorm/Code/WaebricHG/spec/scripts
+BINDIR=__BINDIR__
+DATADIR=__DATA_DIR__
 BUILD=build
-IMP=${INSTALL}/import-waebric
-CHECK=${INSTALL}/check-waebric
-W2J=${INSTALL}/waebric2java
-W2JEQS=${INSTALL}/waebric2java.eqs
-TBL=${INSTALL}/waebric.trm.tbl
+IMP=${BINDIR}/Import-Waebric
+CHECK=${BINDIR}/Check-Waebric
+W2J=${BINDIR}/Compile-Waebric
+TBL=${DATADIR}/Waebric.trm.tbl
 WBEXT=.wae
 
 INPUT=$1
@@ -47,11 +46,13 @@ apply-function -f compile -s CompilationUnit -i .${MOD}.imported.pt \
 #indent ${MOD}.java  2>&1 > /dev/null
 
 mkdir -p ${BUILD}
-echo "Compiling ${MOD}.java..."
+echo "Compiling ${MOD}.java... (output to ./build)"
 javac -d ${BUILD} ${MOD}.java
 
-echo "Running main in ${MOD}.class..."
-java -cp ${BUILD} ${MOD}
+echo "To run main in ${MOD}.class:"
+echo "    java -cp ${BUILD} ${MOD}"
+
+rm -f .${MOD}.pt
 
 echo "Done."
 

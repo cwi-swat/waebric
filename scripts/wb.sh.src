@@ -1,0 +1,23 @@
+#! /bin/sh
+
+BINDIR=__BINDIR__
+DATADIR=__DATA_DIR__
+BUILD=build
+EQS=${DATADIR}/Run-Waebric.eqs
+TBL=${DATADIR}/Waebric.trm.tbl
+WBEXT=.wae
+
+INPUT=$1
+
+
+if [ "a${INPUT}" = "a" ]; then
+    echo "Use: wb <filename>"
+    exit 1
+fi
+
+MOD=`basename ${INPUT} ${WBEXT}`
+
+sglr -p ${TBL} -i ${INPUT} -s Module \
+    | addPosInfo -p ${INPUT} \
+    | asfe -e ${EQS} | unparsePT
+
