@@ -45,7 +45,7 @@ equations
 [resolve-imports-top]
 	$strcon := path-for-module-id($mod-id),
 	execute-command("test -f " || $strcon) == 0, 
-         $module-pt := parse-file-pos($strcon)
+          $module-pt := parse-file-pos($strcon)
 	===
 	resolve-imports($mod-id, $import-results) = 
 		handle-parse-result($mod-id, $module-pt, $import-results)

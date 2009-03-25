@@ -7,6 +7,8 @@ IMP=${BINDIR}/Import-Waebric
 CHECK=${BINDIR}/Check-Waebric
 W2J=${BINDIR}/Compile-Waebric
 EQS=${DATADIR}/Compile-Waebric.eqs
+CHECK_EQS=${DATADIR}/Check-Waebric.eqs
+IMPORT_EQS=${DATADIR}/Import-Waebric.eqs
 TBL=${DATADIR}/Waebric.trm.tbl
 JAVA_TBL=${DATADIR}/Java-15.trm.tbl
 WBEXT=.wae
@@ -43,9 +45,8 @@ sglr -p ${TBL} -i ${INPUT} -s Module \
     > ${TEMPFILE}
 
 echo "Resolving imports..." 
-apply-function -f import -s ImportResults -i ${TEMPFILE} | \
-    ${IMP} -o ${IMPORT_TEMPFILE}
-
+apply-function -f import -s ImportResults -i ${TEMPFILE} \
+    | ${IMP} -o ${IMPORT_TEMPFILE}
 
 #TODO: make this optional with a commandline flag
 echo "Checking modules..."
@@ -54,12 +55,12 @@ apply-function -f check-import-results -s Summary -i ${IMPORT_TEMPFILE} \
     | unparsePT \
     | trmcat
 
-
 echo "Compiling ${INPUT} to ${MOD}.java..."
 apply-function -f compile -s CompilationUnit -i ${IMPORT_TEMPFILE} \
-    | ${W2J} \
-    | restorebrackets -p ${JAVA_TBL} \
-    | unparsePT -o ${MOD}.java
+   | ${W2J} \
+   | restorebrackets -p ${JAVA_TBL} \
+   | unparsePT -o ${MOD}.java
+
 
 
 

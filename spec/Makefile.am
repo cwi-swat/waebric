@@ -17,11 +17,11 @@ Check_Waebric_SOURCES = Check-Waebric.c
 Check_Waebric_LDADD = $(ASC_SUPPORT_LIBS)
 
 Import_Waebric_CPPFLAGS = -DASF_MAIN $(ASC_SUPPORT_CFLAGS)
-Import_Waebric_SOURCES = Check-Waebric.c
+Import_Waebric_SOURCES = Import-Waebric.c
 Import_Waebric_LDADD = $(ASC_SUPPORT_LIBS)
 
 Build_Waebric_CPPFLAGS = -DASF_MAIN $(ASC_SUPPORT_CFLAGS)
-Build_Waebric_SOURCES = Check-Waebric.c
+Build_Waebric_SOURCES = Build-Waebric.c
 Build_Waebric_LDADD = $(ASC_SUPPORT_LIBS)
 
 Run_Waebric_CPPFLAGS = -DASF_MAIN $(ASC_SUPPORT_CFLAGS)
@@ -35,6 +35,9 @@ table:
 
 java-table:
 	pt-dump -m languages/java-15/syntax/Java-15 -o Java-15.trm.tbl
+
+import-table:
+	pt-dump -m languages/waebric/import/Waebric -o Import-Waebric.trm.tbl
 
 dump-import:
 	eqs-dump -m languages/waebric/import/Waebric -o Import-Waebric.eqs
@@ -52,20 +55,19 @@ dump-compile:
 	eqs-dump -m languages/waebric/compile/Waebric -o Compile-Waebric.eqs
 
 
-# NB: -a option for annotation preservation
 asfc-import: 
-	asfc -a -p Waebric.trm.tbl -i Import-Waebric.eqs -o Import-Waebric.c -v
+	asfc -p Import-Waebric.trm.tbl -i Import-Waebric.eqs -o Import-Waebric.c -v
 
 asfc-check: 
-	asfc -a -p Waebric.trm.tbl -i Check-Waebric.eqs -o Check-Waebric.c -v
+	asfc -i Check-Waebric.eqs -o Check-Waebric.c -v
 
 asfc-build: 
-	asfc -p Waebric.trm.tbl -i Build-Waebric.eqs -o Build-Waebric.c -v
+	asfc -i Build-Waebric.eqs -o Build-Waebric.c -v
 
 asfc-run: 
-	asfc -p Waebric.trm.tbl -i Run-Waebric.eqs -o Run-Waebric.c -v
+	asfc -i Run-Waebric.eqs -o Run-Waebric.c -v
 
 asfc-compile: 
-	asfc -p Waebric.trm.tbl -i Compile-Waebric.eqs -o Compile-Waebric.c -v
+	asfc -i Compile-Waebric.eqs -o Compile-Waebric.c -v
 
 

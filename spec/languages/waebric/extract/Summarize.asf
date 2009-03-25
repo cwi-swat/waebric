@@ -51,6 +51,7 @@ equations
 	===
 	add-use-site($id, $attribute*, $args, $rstore) = $rstore5
 
+
 equations
 
 [add-attributes-args]
@@ -100,16 +101,24 @@ equations
 	add-attributes($loc, $ $id $attribute*, $rstore) = 
 		add-attributes($loc, $attribute*, $rstore'')
 
+[add-attributes-attrs-cons-5]
+	$rstore' := insert($rstore, Attributes, $loc, "width"),
+	$rstore'' := insert($rstore', Attributes, $loc, "height"),
+	$rstore''' := inc($rstore'', Statistics, "#width"),
+	$rstore'''' := inc($rstore''', Statistics, "#height")
+	===
+	add-attributes($loc, @$natcon1 % $natcon2 $attribute*, $rstore) = 
+		add-attributes($loc, $attribute*, $rstore'''')
+
+[add-attributes-attrs-cons-5]
+	$rstore' := insert($rstore, Attributes, $loc, "width"),
+	$rstore'' := inc($rstore', Statistics, "#width")
+	===
+	add-attributes($loc, @$natcon $attribute*, $rstore) = 
+		add-attributes($loc, $attribute*, $rstore'')
 
 equations
 
-[summarize-3]
-	summarize($id $attribute* $args, $rstore) = 
-		add-use-site($id, $attribute*, $args, $rstore)
-
-/*[summarize-4]
-	summarize($id $attribute* $markup, $rstore) = 
-		add-use-site($id, $attribute*, (), $rstore) */
 
 [summarize-5]
 	summarize($id $attribute*, $rstore) = 
@@ -118,15 +127,6 @@ equations
 [summarize-6]
 	summarize($id $attribute* $args , $rstore) = 
 		add-use-site($id, $attribute*, $args, $rstore)
-
-/*[summarize-7]
-	summarize($id $attribute* { $stat* }, $rstore) = 
-		add-use-site($id, $attribute*, (), $rstore) 
-
-[summarize-8]
-	summarize($id $attribute* $args { $stat* }, $rstore) = 
-		add-use-site($id, $attribute*, $args, $rstore)
-*/
 
 
 

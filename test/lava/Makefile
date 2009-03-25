@@ -1,0 +1,3 @@
+
+all:
+	waebricb lava.wae
