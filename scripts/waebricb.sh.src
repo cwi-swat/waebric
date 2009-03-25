@@ -1,0 +1,40 @@
+#! /bin/sh
+
+BINDIR=__BINDIR__
+DATADIR=__DATA_DIR__
+WBEXT=.wae
+
+COMPILER=${BINDIR}/waebricc
+
+PROGRAM=waebricb
+
+INPUT=$1
+
+set -e
+
+if [ "a${INPUT}" = "a" ]; then
+    echo "Use: ${PROGRAM} <filename>"
+    exit 1
+fi
+
+MOD=`basename ${INPUT} ${WBEXT}`
+
+TEMPWAEBRIC=`basename $0`
+BUILD=`mktemp -d -t ${TEMPWAEBRIC}`
+if [ $? -ne 0 ]; then
+    echo "$0: Can't create temp directory, exiting..."
+    exit 1
+fi
+
+${COMPILER} ${INPUT}
+
+echo "Compiling ${MOD}.java..."
+javac -d ${BUILD} ${MOD}.java
+
+# TODO: make optional with commandline flag
+echo "Running main in ${MOD}.class."
+java -cp ${BUILD} ${MOD}
+
+echo "Done."
+
+

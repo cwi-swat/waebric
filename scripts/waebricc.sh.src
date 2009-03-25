@@ -1,0 +1,66 @@
+#! /bin/sh
+
+BINDIR=__BINDIR__
+DATADIR=__DATA_DIR__
+BUILD=build
+IMP=${BINDIR}/Import-Waebric
+CHECK=${BINDIR}/Check-Waebric
+W2J=${BINDIR}/Compile-Waebric
+EQS=${DATADIR}/Compile-Waebric.eqs
+TBL=${DATADIR}/Waebric.trm.tbl
+JAVA_TBL=${DATADIR}/Java-15.trm.tbl
+WBEXT=.wae
+
+PROGRAM=waebricc
+
+INPUT=$1
+
+set -e
+
+if [ "a${INPUT}" = "a" ]; then
+    echo "Use: ${PROGRAM} <filename>"
+    exit 1
+fi
+
+MOD=`basename ${INPUT} ${WBEXT}`
+
+TEMPWAEBRIC=`basename $0`
+TEMPFILE=`mktemp -t ${TEMPWAEBRIC}`
+if [ $? -ne 0 ]; then
+    echo "$0: Can't create temp directory, exiting..."
+    exit 1
+fi
+
+IMPORT_TEMPFILE=`mktemp -t ${TEMPWAEBRIC}`
+if [ $? -ne 0 ]; then
+    echo "$0: Can't create temp directory, exiting..."
+    exit 1
+fi
+
+echo "Parsing ${INPUT}..."
+sglr -p ${TBL} -i ${INPUT} -s Module \
+    | addPosInfo -p ${INPUT} \
+    > ${TEMPFILE}
+
+echo "Resolving imports..." 
+apply-function -f import -s ImportResults -i ${TEMPFILE} | \
+    ${IMP} -o ${IMPORT_TEMPFILE}
+
+
+#TODO: make this optional with a commandline flag
+echo "Checking modules..."
+apply-function -f check-import-results -s Summary -i ${IMPORT_TEMPFILE} \
+    | ${CHECK} \
+    | unparsePT \
+    | trmcat
+
+
+echo "Compiling ${INPUT} to ${MOD}.java..."
+apply-function -f compile -s CompilationUnit -i ${IMPORT_TEMPFILE} \
+    | ${W2J} \
+    | restorebrackets -p ${JAVA_TBL} \
+    | unparsePT -o ${MOD}.java
+
+
+
+echo "Done."

@@ -7,11 +7,12 @@ EQS=${DATADIR}/Run-Waebric.eqs
 TBL=${DATADIR}/Waebric.trm.tbl
 WBEXT=.wae
 
+PROGRAM=waebric
 INPUT=$1
 
 
 if [ "a${INPUT}" = "a" ]; then
-    echo "Use: wb <filename>"
+    echo "Use: ${PROGRAM} <filename>"
     exit 1
 fi
 
