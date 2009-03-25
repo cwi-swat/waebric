@@ -1,10 +1,10 @@
 
 
-bin_SCRIPTS	= waebric waebricc waebricb
+bin_SCRIPTS	= preproc-waebric waebric waebricc waebricb
 
 EXTRA_DIST	= $(wildcard *.sh.src)
 
-CLEANFILES	= waebric waebricc waebricb
+CLEANFILES	= preproc-waebric waebric waebricc waebricb
 
 % : %.sh.src 
 	sed "s@__PREFIX__@$(prefix)@g;\

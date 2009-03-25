@@ -2,11 +2,8 @@
 
 BINDIR=__BINDIR__
 DATADIR=__DATA_DIR__
-BUILD=build
 EQS=${DATADIR}/Run-Waebric.eqs
-TBL=${DATADIR}/Waebric.trm.tbl
-WBEXT=.wae
-
+PREPROC=${BINDIR}/preproc-waebric
 PROGRAM=waebric
 INPUT=$1
 
@@ -16,9 +13,9 @@ if [ "a${INPUT}" = "a" ]; then
     exit 1
 fi
 
-MOD=`basename ${INPUT} ${WBEXT}`
+${PREPROC} ${INPUT} \
+    | apply-function -f run -s Document \
+    | asfe -e ${EQS} \
+    | unparsePT
 
-sglr -p ${TBL} -i ${INPUT} -s Module \
-    | addPosInfo -p ${INPUT} \
-    | asfe -e ${EQS} | unparsePT
 

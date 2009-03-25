@@ -4,6 +4,9 @@ equations
 
 equations
 
+[run-0]	run($imp-results) = 
+		run-import-results($imp-results, main, )
+
 [run-1]	run($imp-results, $strcon) = 
 		run-import-results($imp-results, $strcon, )
 

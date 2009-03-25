@@ -16,6 +16,7 @@ context-free start-symbols
 exports
 context-free syntax
   %% To be called from commandline using apply-func
+  run(ImportResults) -> Document
   run(ImportResults, StrCon) -> Document
   run(ImportResults, StrCon, Value) -> Document
   run(ImportResults, StrCon, Value, Value) -> Document

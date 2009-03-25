@@ -1,0 +1,56 @@
+#! /bin/sh
+
+BINDIR=__BINDIR__
+DATADIR=__DATA_DIR__
+IMP=${BINDIR}/Import-Waebric
+CHECK=${BINDIR}/Check-Waebric
+TBL=${DATADIR}/Waebric.trm.tbl
+WBEXT=.wae
+
+PROGRAM=preproc-waebric
+
+INPUT=$1
+
+set -e
+
+if [ "a${INPUT}" = "a" ]; then
+    echo "Use: ${PROGRAM} <filename>"
+    exit 1
+fi
+
+MOD=`basename ${INPUT} ${WBEXT}`
+
+TEMPWAEBRIC=`basename $0`
+TEMPFILE=`mktemp -t ${TEMPWAEBRIC}`
+if [ $? -ne 0 ]; then
+    echo "$0: Can't create temp file, exiting..."
+    exit 1
+fi
+
+IMPORT_TEMPFILE=`mktemp -t ${TEMPWAEBRIC}`
+if [ $? -ne 0 ]; then
+    echo "$0: Can't create temp file, exiting..."
+    exit 1
+fi
+
+echo "Parsing ${INPUT}..." 1>&2
+sglr -p ${TBL} -i ${INPUT} -s Module \
+    | addPosInfo -p ${INPUT} \
+    > ${TEMPFILE}
+
+echo "Resolving imports..." 1>&2
+apply-function -f import -s ImportResults -i ${TEMPFILE} \
+    | ${IMP} -o ${IMPORT_TEMPFILE}
+
+#TODO: make this optional with a commandline flag
+echo "Checking modules..." 1>&2
+apply-function -f check-import-results -s Summary -i ${IMPORT_TEMPFILE} \
+    | ${CHECK} \
+    | unparsePT \
+    | trmcat 1>&2
+
+cat ${IMPORT_TEMPFILE}
+
+
+
+
