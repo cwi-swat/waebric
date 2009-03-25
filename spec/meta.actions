@@ -1,0 +1,3 @@
+configuration([
+   editor("Waebric", "languages/waebric/syntax/Waebric", ".wae")
+])

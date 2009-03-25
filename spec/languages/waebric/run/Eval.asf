@@ -61,6 +61,10 @@ equations
 	eval-stat($markup+ $exp;, $env, $block, $module*) =
 		eval-markups($markup+, $env, $block', $module*)
 
+[eval-stat-2-1]
+	eval-stat($markup+ $embedding;, $env, $block, $module*) =
+		eval-markups($markup+, $env, eval-embedding($embedding, $env, $module*), $module*)
+
 [eval-stat-2-2]
 	$block' := eval-stat($stat, $env, $block, $module*)
 	===

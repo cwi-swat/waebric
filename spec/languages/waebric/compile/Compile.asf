@@ -261,6 +261,11 @@ equations
 [stat-to-jstats-8]
 	stat-to-jstats(&markup+ &exp ;) = 
 		markups-to-jstats(&markup+, stat-to-jstats(echo &exp;))
+
+[stat-to-jstats-8]
+	stat-to-jstats(&markup+ &embedding;) = 
+		markups-to-jstats(&markup+, embedding-to-jstats(&embedding))
+
 [stat-to-jstats-8]
 	stat-to-jstats(&markup+ &markup ;) = 
 		markups-to-jstats(&markup+, markup-to-jstats(&markup))
@@ -339,6 +344,17 @@ equations
 []	tail-to-jstats(&post) = $out.write(post-to-stringliteral(&post));
 
 
+equations
+
+[]	embed-to-jstats(&exp) = stat-to-jstats(echo &exp;)
+
+[]	embed-to-jstats(&markup+ &exp) = 
+		markups-to-jstats(&markup+, stat-to-jstats(echo &exp;))
+
+[]	embed-to-jstats(&markup) = markup-to-jstats(&markup)
+
+[]	embed-to-jstats(&markup+ &markup) = 
+		markups-to-jstats(&markup+, markup-to-jstats(&markup))
 
 
 equations

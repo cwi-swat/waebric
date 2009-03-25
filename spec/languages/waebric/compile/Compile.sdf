@@ -87,8 +87,6 @@ context-free syntax
 	empty-with-designator(Designator, Arguments) -> BlockStm*
 
 	start-tag(IdCon, BlockStm*) -> BlockStm*
-
-	block-exp-to-jstats(BlockExpression) -> BlockStm*
 	
 	exp-to-jexp(Expression) -> Expr
 	pred-to-jexp(Predicate) -> Expr
@@ -200,7 +198,6 @@ variables
   "&post" [0-9\']*        -> PostText             
   "&mid" [0-9\']*         -> MidText              
   "&tail" [0-9\']*        -> TextTail             
-  "&assignments" [0-9\']* -> Assignments          
   "&assignment" [0-9\']* -> Assignment          
   "&assignment+" [0-9\']* -> Assignment+    
   "&markup+" [0-9\']* -> Markup+    

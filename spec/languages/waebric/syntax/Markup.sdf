@@ -26,6 +26,7 @@ context-free priorities
   Markup ";" -> Statement
   Markup+ Markup ";" -> Statement
   Markup+ Expression ";" -> Statement
+  Markup+ Embedding ";" -> Statement
   }
 
 context-free priorities

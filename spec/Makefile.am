@@ -51,11 +51,13 @@ dump-run:
 dump-compile:
 	eqs-dump -m languages/waebric/compile/Waebric -o Compile-Waebric.eqs
 
+
+# NB: -a option for annotation preservation
 asfc-import: 
-	asfc -p Waebric.trm.tbl -i Import-Waebric.eqs -o Import-Waebric.c -v
+	asfc -a -p Waebric.trm.tbl -i Import-Waebric.eqs -o Import-Waebric.c -v
 
 asfc-check: 
-	asfc -p Waebric.trm.tbl -i Check-Waebric.eqs -o Check-Waebric.c -v
+	asfc -a -p Waebric.trm.tbl -i Check-Waebric.eqs -o Check-Waebric.c -v
 
 asfc-build: 
 	asfc -p Waebric.trm.tbl -i Build-Waebric.eqs -o Build-Waebric.c -v

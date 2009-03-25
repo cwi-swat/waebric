@@ -31,7 +31,6 @@ variables
   "&des" [0-9\']*        -> Designator           
   "&attribute" [0-9\']*  -> Attribute            
   "&attribute*" [0-9\']* -> Attribute*           
-  "&stats" [0-9\']*      -> Statements           
   "&stat" [0-9\']*       -> Statement            
   "&stat+" [0-9\']*      -> Statement+           
   "&stat*" [0-9\']*      -> Statement*           
@@ -48,7 +47,6 @@ variables
   "&formals" [0-9\']*    -> Formals              
   "&func-def" [0-9\']*   -> FunctionDef          
   "&func-def?" [0-9\']*  -> FunctionDef?         
-  "&block-exp" [0-9\']*  -> BlockExpression      
   "&markup" [0-9\']*     -> Markup               
   "&markup?" [0-9\']*    -> Markup?              
   "&var" [0-9\']*        -> Var                  
