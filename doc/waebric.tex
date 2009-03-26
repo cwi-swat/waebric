@@ -1,10 +1,16 @@
 \documentclass[a4paper]{article}
-%\usepackage{utopia}
-%\usepackage[adobe-utopia]{mathdesign}
+\usepackage[T1]{fontenc}
+%\usepackage{times, mathptm}
+\usepackage[scaled]{luximono}
+\usepackage{utopia}
+\usepackage[adobe-utopia]{mathdesign}
 \usepackage{a4wide}
 \usepackage{comment}
 \usepackage{bcprules}
+\usepackage{waebric}
+\usepackage{sdf}
 \usepackage{xspace}
+\usepackage{url}
 \usepackage{float}
 \usepackage{epsfig}
 \usepackage{listings}
@@ -19,9 +25,10 @@
 \def\waebric{\textsc{Waebric}\xspace}
 \def\Waebric{\textsc{Waebric}\xspace}
 \def\V#1{\ensuremath{\mbox{\textit{#1}}}}
-\def\concat{\ensuremath{\;\text{+\hspace{-0.6ex}+}\;}}
-\def\hescape#1{\ensuremath{\lfloor #1\rfloor}}
-\def\tostring#1{\ensuremath{\llbracket #1 \rrbracket}}
+\def\concat{+}
+%\def\concat{\ensuremath{\;\text{+\hspace{-0.6ex}+}\;}}
+\def\tostring#1{\ensuremath{\lfloor #1\rfloor}}
+%\def\tostring#1{\ensuremath{\llbracket #1 \rrbracket}}
 
 \def\asfsdf{\asf+\-\sdf}
 \def\asf{\textsc{Asf}}
@@ -42,7 +49,7 @@
 
 \floatstyle{boxed}
 \newfloat{semantics}{thp}{lop}
-\floatname{semantics}{Semantics}
+\floatname{semantics}{Figure}
 
 
 \begin{document}
@@ -82,84 +89,203 @@
 
 \subsection{What \waebric offers}
 
-\section{A Taste of  \waebric}
+\waebric is a small programming language to factor web pages in
+reusable, function building blocks. Concretely, this amounts to the
+following:
+\begin{itemize}
+\item A \waebric program consists of a number of function
+  declarations. A function may accept a number of parameters and
+  produces a piece of markup. Functions can be recursive.
+\item Markup is produced using (pre-defined) ``function calls''
+  corresponding to the tags that are part of XHTML 1.1. Keyword
+  parameters to these functions correspond to XML attributes of the
+  tag in question.
+\item The builtin operators \textbf{echo}, \textbf{comment},
+  \textbf{cdata} are used to produces text content, XML comments, and
+  CDATA sections respectively.
+\item Limited control flow is provided through the
+  \textbf{if}/\textbf{else} and the \textbf{each} iteration
+  construct. Both these constructs operate on expressions (i.e. data,
+  \textit{not} markup).
+\item The special statement \textbf{yield} is provided to parameterize
+  functions with additional markup. Markup arguments to a function
+  invokation will be output where (one or more) \textbf{yield} is
+  encountered. This mechanism is similar to (but weaker than) how Ruby
+  block arguments are used in Markaby\footnote{\url{http://markaby.rubyforge.org/}}.
+\item \waebric provides special syntax for common attributes in XHTML,
+  such as ``class'' and ``id''. This is inspired by
+  \textsc{Haml}\footnote{\url{http://haml.hamptoncatlin.com/}}.
+\end{itemize}
 
-The basic \Waebric\ program consists of a number function definitions,
-possibly partitioned over a number of modules, together with a site
-definition which maps \Waebric\ markup expressions to XHTML files. A
-simple \Waebric\ example is displayed below:
+In the design of \waebric, explicit care is taken that \textit{data}
+can be output as markup, but markup can \textit{never} act as
+data. Thus it is not possible to ``compute'' with generated
+markup. Furthermore, to enforce strict model-view separation,
+computation with data is limited to testing the type or presence of
+data and looping through data using \textit{each}.
+
+
+\section{Syntax}
+
+\subsection{A Simple Example}
+
+A \waebric file always starts with the keyword \textbf{module}
+followed by an identifier that should correspond to the basename of
+the file. A typical  \waebric program looks as follows:
 \begin{quote}
-\begin{tabbing}
-\Def\=\ main\\
-\>layout("Hello") \{ h1 "Hello World!"; p "Home"; \}\\
-\End\\
-\Def\=\ layout(\Var{title})\\
-\>htm\=l \{ head title \Var{title}; body \Yield; \}\\
-\End
-\end{tabbing}
+\begin{lstlisting}[language=waebric]
+module homepage
+
+site 
+  index.html: home("Hello World!")
+end
+
+def home(msg)
+  html {
+    head title msg;
+    body echo msg;
+  }
+end
+\end{lstlisting}
+\end{quote}
+This program should be in a file called \texttt{homepage.wae}. This
+module contains one site definition that states that
+\texttt{index.html} should contain the output of evaluating the
+function \texttt{home} with a single, string-valued argument.
+
+If we look at the \texttt{home} function, we see that it constructs a
+standard HTML document containing a header with a title element and a
+body. Both the contents of the title element and the body will be the
+value passed in as \texttt{msg}. Since \texttt{html} is not defined in
+this module and since it is not imported either, \waebric assumes it
+is part of XHTML 1.1 and will output the corresponding tags. Within
+those tags, it will generate the output of the statements enclosed in
+curly braces. 
+
+The \texttt{html, head, title, body} elements in the example are
+called \textit{markup} statements (or just \textit{markup}). Markup
+can be nested by juxtaposing function calls and/or standard element
+names. For instance, the title element (containing msg) will be
+contained in the head element. The last item in a sequence of markups
+can be a statement or an expression. An example of the former is the
+block enclosed in curly braces which is passed into the html
+element. The nesting of msg in the title element is an example of the
+latter.
+
+
+Some notes are in order with respect to how markup juxtaposition is
+parsed in \waebric. Basically, it boils down to the following two
+observations. First, an single identifier interpolated in a string is
+parsed as an expression whereas a single identifier in a statement
+context is parsed as markup (e.g. a function call or an XHTML element
+construction). Secondly, an identifier in the last position of a
+markup chain/spine is parsed as a variable (not as markup). The
+following examples illustrate these rules:
+\begin{quote}
+\begin{lstlisting}[language=waebric]
+p;              // markup
+p p;            // markup, variable
+p p();          // markup, markup
+echo "<p>";     // variable
+echo "<p()>";   // markup
+echo "<p p>";   // markup, variable
+echo "<p p()>"; // markup, markup
+\end{lstlisting}
+\end{quote}
+As the example shows, parentheses can be used to force the parser to
+see an identifier as markup.
+
+
+\subsection{Data}
+
+It is not possible to compute with data in \waebric, however, you can
+create and inspect data to a certain extent. \waebric contains literal
+syntax for numbers, strings, symbols, lists and records (inspired by
+JSON\footnote{\url{http://www.json.org/}}). Some examples are listed below:
+\begin{quote}
+\begin{lstlisting}[language=waebric]
+123 // a number
+"abc" // a string
+'sym // a symbol
+[123, "abc", 'sym] // a list
+{ name : "John Smith", age: 30 }  // a record
+\end{lstlisting}
 \end{quote}
 
+The inspection of data is limited to testing whether an expression is
+of list or record type using $x$.list? and $x$.record? respectively,
+and obtaining a field of a record the using the dot-notation
+$x.y$. Testing the type of an expression can only occur in the
+condition of an if-statement. Finally,  lists can be iterated through
+using the \textbf{each} statement.
 
-Running this program produces a single XHTML document which consists of
-the markup generated by the function main. The main function calls
-another function, called layout, which receives an string argument
-``Hello''. Additionally, a block (enclosed in curly braces) is passed
-to layout. This block will be evaluated wherever the statement
-\textbf{yield} occurs within the implementation body of layout. The
-block itself consists of two ``function calls'', to h1 and p. Since no
-definition exists for h1, this will produce a XHTML ``h1'' element with
-the string ``Hello World!'' as content. Subsequently a paragraph is
-rendered containing the string ``Home''.
+\subsection{Yield}
 
-The layout function defines a skeleton page framework that can be
-reused across different pages. In the example it sets up a basic XHTML
-document with header and title; the body of a page is obtained from
-the block passed into it. Note how nesting of elements along a single
-spine in the document tree requires no curly braces (as can be seen
-from how the title element is included in the head element).
+In the example above, the html markup-invocation receives a block
+enclosed in curly braces that will be the content of the
+\verb!<html></html>! element. Users can define functions that exhibit
+the same behaviour using yield. Consider the following refactoring of
+the example above:
+\begin{quote}
+\begin{lstlisting}[language=waebric]
+def home(msg)
+  layout(msg) echo msg;
+end
 
-Running this example will produce the following (XHTML) markup:
-\begin{quote}\small
-$<$html$>$
- $<$head$>$$<$title$>$Hello$<$/title$>$$<$/head$>$
- $<$body$>$
-  $<$h1$>$\\Hello World!$<$/h1$>$
-  $<$p$>$Home$<$/p$>$
- $<$/body$>$
-$<$/html$>$
+def layout(title)
+  html {
+    head title title;
+    body yield;
+  }
+end
+\end{lstlisting}
 \end{quote}
+The home function now calls an auxiliar function (layout) which
+receives the statement \texttt{\textbf{echo} msg} as
+block-argument. The layout function inturn sets up a basic HTML
+skeleton (with the title argument as title) passes the
+\texttt{\textbf{yield}} statement to the body-tag. This has the effect
+that in the invocation of layout above, the output of
+\texttt{\textbf{yield}} will be equal to the output of
+\texttt{\textbf{echo} msg}.
 
-In addition to the basic markup generating function calls, as
-illustrated by the example, \Waebric\ contains an if-then-else
-statement, an each statement, for iterating over sequences of values,
-a let construct for the introduction of local variables and local
-redefinition of functions and string interpolation syntax (for
-embedding markup directly in text).
+Although the input-output behaviour of \texttt{home} is exactly the
+same as it was before, the page-skeleton as embodied in the layout
+function can now be reused in the generation other pages.
+
+
+\subsection{Attributes}
+
+
+
+Shorthands
+
+\subsection{Recursive Menus}
 
 \begin{figure}
+\begin{quote}
 \begin{minipage}{0.6\linewidth}
-\begin{tabbing}
-\Def\=\ menu(\Var{menu})\\
-\>\Echo\ \Var{menu}.title;\\
-\>ul\=\ \{\\
-\>\>\Each\=\ (kid: menu.kids)\\
-\>\>\>menu-item(kid); \\
-\>\}\\
-\End\\
-\\
-\Def\ menu-item(\Var{item})\\
-\>\If\=\ (\Var{item}.kids) \\
-\>\>li menu(\Var{item});\\
-\>\Else\\
-\>\>li a(\Var{href}=\Var{item}.link) \Var{item}.title;\\
-\End
-\end{tabbing}
+\begin{lstlisting}[language=waebric]
+def menu(menu)
+  echo menu.title;
+  ul each (kid: menu.kids) 
+       menu-item(kid);
+end
+
+def menu-item(item)
+  if (item.kids)
+    li menu(item);
+  else
+    li a(href=item.link) item.title;
+end
+\end{lstlisting}
 \end{minipage}
 \begin{minipage}[b]{0.4\linewidth}
 \begin{center}
 \fbox{\epsfig{file=Generated-Menu,width=0.5\linewidth}}
 \end{center}
 \end{minipage}
+\end{quote}
 \caption{Recursive menus in \Waebric\ and the possible
   output\label{FIG:menus}}
 \end{figure}
@@ -181,20 +307,6 @@ of item to its URL. The result of an invocation (with the appropriate
 data for the \textit{menu} parameter) of menu could look like the
 screen shot next to the source code.
 
-\section{Syntax}
-
-
-
-\subsection{Corner cases}
-
-\begin{itemize}
-\item An identifier interpolated in a string is parsed as an
-  expression whereas an identifier as a statement is parsed as markup
-  (e.g. a function call or an XHTML element construction).
-\item An identifier in that last position of a markup chain/spine is
-  parsed as an expression (not as markup). 
-\end{itemize}
-
 \section{Semantics}
 
 
@@ -202,56 +314,53 @@ screen shot next to the source code.
 
 See Figure~\ref{FIG:abstract-syntax}.
 
+\def\NT#1{\ensuremath{\mathsf{#1}}}
 \begin{figure}
-\begin{minipage}[t]{0.33\linewidth}
+\begin{minipage}[t]{0.33\linewidth}\small
 \[
 \begin{array}{rcl}
-S & ::= & \text{\textbf{echo} }E \\
-& | & \text{\textbf{comment} }E \\
-& | & \text{\textbf{cdata} }E\\
+S_i \in \NT{S} & ::= & \text{\textbf{echo} }\NT{E} \\
+& | & \text{\textbf{comment} }\NT{E} \\
+& | & \text{\textbf{cdata} }\NT{E}\\
 & | & \text{\textbf{yield}}\\
-& | & \text{\textbf{if} }(P)\;S \text{ \textbf{else} }S\\
-& | & \text{\textbf{if} }(P)\;S \\
-& | & \text{\textbf{each} }(X: E)\;S\\
-& | & \text{\textbf{let} }B\text{ \textbf{in} }S\text{ \textbf{end}}\\
-& | & S; S\\
-& | & M\; S\\
-& | & M\; E\\
-& | & M
+& | & \text{\textbf{if} }(\NT{P})\;\NT{S} \text{ \textbf{else} }\NT{S}\\
+& | & \text{\textbf{each} }(x: \NT{E})\;\NT{S}\\
+& | & \text{\textbf{let} }\NT{B}\text{ \textbf{in} }\NT{S}\text{ \textbf{end}}\\
+& | & \NT{S}; \NT{S}\\
+& | & \NT{M}\; \NT{S}\\
+& | & \NT{M}\; \NT{E}\\
+& | & \NT{M}
 \end{array}
 \]
 \end{minipage}
-\begin{minipage}[t]{0.33\linewidth}
+\begin{minipage}[t]{0.33\linewidth}\small
 \[
 \begin{array}{rcl}
-M & ::= & M\;M\\
-& | & f\\
-& | & f(A)\\
-A & ::= & E\\
-& | &X = E\\
-& | & A, A\\
-E & ::= & X \\
-& | & I \\
-& | & [\overline{E}]\\
-& | & \{ \overline{X : E}\}\\
-I & ::= & \V{String} \langle M\; E \rangle I\\
-  & | & \V{String} \langle E \rangle I\\
+M_i \in\NT{M} & ::= & \NT{M}\;\NT{M}\\
+& | & f_n(\NT{E}_1,...,\NT{E}_n)\\
+& | & t_n(x_1 = \NT{E}_1,...,x_n =\NT{E}_n)\\
+e_i \in \NT{E} & ::= & x \\
+& | & \V{String} \\
+& | & [\NT{E}_1,...,\NT{E}_n]\\
+& | & \{x_1: \NT{E}_1, ..., x_n: \NT{E}_n\}\\
+I_i\in \NT{I} & ::= & \V{String} \langle \NT{M}\; \NT{E} \rangle \NT{I}\\
+  & | & \V{String} \langle \NT{E} \rangle \NT{I}\\
   & | & \V{String}
 \end{array}
 \]
 \end{minipage}
-\begin{minipage}[t]{0.33\linewidth}
+\begin{minipage}[t]{0.33\linewidth}\small
 \[
 \begin{array}{rcl}
-B & ::= & X = E \\
-& | & f(\overline{X}) = S\\
-& | & B ; B\\
-P & ::= & E\\
-& | & E.\text{record?}\\
-& | & E.\text{list?}\\
-& | & !P \\
-& | & P\; \&\&\; P\\
-& | & P\; ||\; P\\
+B_i\in \NT{B} & ::= & x = \NT{E} \\
+& | & f_n(x_1, ..., x_n) = \NT{S}\\
+& | & \NT{B} ; \NT{B}\\
+p_i \in \NT{P} & ::= & \NT{E}\\
+& | & \NT{E}.\text{\textbf{record?}}\\
+& | & \NT{E}.\text{\textbf{list?}}\\
+& | & !\NT{P} \\
+& | & \NT{P}\; \&\&\; \NT{P}\\
+& | & \NT{P}\; ||\; \NT{P}\\
 \end{array}
 \]
 \end{minipage}
@@ -260,35 +369,30 @@ P & ::= & E\\
 
 \subsection{Semantics}
 
-Figure~\ref{FIG:semantics} shows a natural semantics of \waebric.
 
-\subsubsection{Escaping}
-\waebric programs produce XHTML.  The following rules with respect to
-escaping should be observed:
-\begin{itemize}
-\item Any string literal occurring in a \waebric program should
-  observe XML escaping rules; this is enforced by the \waebric
-  parser. 
-\item Data coming from the outside (the model) should be properly
-  escaped upon interpolation. An interpreter for \waebric should
-  detect data from the outside (tainted data) and apply the proper
-  escaping. The locations where an interpreter \textit{must} check if
-  a value is tainted or not (and perform escaping if so) are indicated
-  with the \hescape{} function.
-\item For comments and CDATA sections special escaping rules apply
-  (TODO: to be determined).
-\end{itemize}
+Semantic domains
 
-\begin{comment}
+Values:
 \[
 \begin{array}{rcl}
-\text{\textbf{if}} (p)\; S &\equiv& \text{\textbf{if} } (p)\; S \text{ \textbf{else} \textbf{echo} } \text{``''}\\
+v_i \in \NT{V} &::=& \mathbb{N} \;|\; \V{String} 
+\;|\; [\NT{V}_1, ..., \NT{V}_n] \;|\; \{x_1: \NT{V}_1, ..., x_n: \NT{V}_n\}\\
+c_n \in \NT{F} &::=& \lambda x_1,...,x_n\; \NT{S}\\
+C_i \in \NT{C} &:& \NT{VE} \times\NT{FE} \times\NT{F}\\
+\Gamma \in \NT{VE} &:& \NT{X}\rightarrow\NT{V}\\
+\Lambda \in \NT{FE} &:& \NT{X}\rightarrow\NT{C}\\
 \end{array}
 \]
-\end{comment}
 
 
-\begin{semantics}\footnotesize
+\[
+\tostring{\_}: \NT{V} \rightarrow \V{String}
+\]
+
+
+Figure~\ref{FIG:semantics} shows a natural semantics of \waebric.
+
+\begin{semantics}\small
 \begin{mathpar}
 \inferrule*[right=Var]{
 \Gamma(x) = v
@@ -296,36 +400,40 @@ escaping should be observed:
 \Gamma, \Lambda \vdash_E x \rightarrow v
 }
 
-\inferrule*[right=Literal]{ 
+\inferrule*[right=Atom]{ 
 }{
-\Gamma, \Lambda \vdash_E L \rightarrow L
+\Gamma, \Lambda \vdash_E a \rightarrow \llbracket a\rrbracket
+}
+
+\inferrule*[right=List]{ 
+1 \leq i \leq n\\
+\Gamma, \Lambda \vdash_E e_i \rightarrow v_i
+}{
+\Gamma, \Lambda \vdash_E [e_1,...,e_n] \rightarrow 
+[v_1, ..., v_n]
+}
+
+\inferrule*[right=Record]{ 
+1 \leq i \leq n\\
+\Gamma, \Lambda \vdash_E e_i \rightarrow v_i
+}{
+\Gamma, \Lambda \vdash_E \{x_1: e_1,...,x_n: e_n\} \rightarrow 
+\{x_1: v_1, ..., x_n: v_n\}
 }
 
 \inferrule*[right=Lookup]{ 
-\Gamma, \Lambda \vdash_E e \rightarrow v\\
-v \in \text{\textsf{Record}}\\
- (x : v) \in v
+1 \leq i \leq n\\
+\Gamma, \Lambda \vdash_E e \rightarrow \{x_1: v_1, ...,x_n: v_n\}
 }{
-\Gamma, \Lambda \vdash_E e.x \rightarrow v
+\Gamma, \Lambda \vdash_E e.x_i \rightarrow v_i
 }
 
-\inferrule*[right=Interpolate-1]{
-\Gamma \vdash_{E} \V{e} \rightarrow v\\
-\Gamma, \Lambda \vdash_E \V{I} \rightarrow s_2
-}{
-\Gamma, \Lambda \vdash_E s_1 \langle e \rangle \V{I} \rightarrow
-s_1 \concat \hescape{v} \concat s_2
-}
+\end{mathpar}
+\caption{Semantics of expressions\label{SEM:expression}}
+\end{semantics}
 
-\inferrule*[right=Interpolate-2]{
-\Gamma \vdash_{E} \V{e} \rightarrow v\\
-\Gamma, \Lambda, \hescape{v} \vdash_M \V{M} \rightarrow s_2\\
-\Gamma, \Lambda \vdash_E \V{I} \rightarrow s_3
-}{
-\Gamma, \Lambda \vdash_E s_1 \langle M\; e \rangle \V{I} \rightarrow
-s_1 \concat s_2 \concat s_3
-}
-
+\begin{semantics}\small
+\begin{mathpar}
 \inferrule*[right=Defined]{
 \Gamma, \Lambda \vdash_E e \rightarrow v
 }{
@@ -333,17 +441,15 @@ s_1 \concat s_2 \concat s_3
 }
 
 \inferrule*[right=IsList]{
-\Gamma, \Lambda \vdash_E e \rightarrow v\\
-v\in \text{\textsf{List}}
+\Gamma, \Lambda \vdash_E e \rightarrow [v_1,...,v_n]
 }{
-\Gamma, \Lambda \vdash_P e.\text{list?}
+\Gamma, \Lambda \vdash_P e.\text{\textbf{list?}}
 }
 
 \inferrule*[right=IsRecord]{
-\Gamma, \Lambda \vdash_E e \rightarrow v\\
-v \in \text{\textsf{Record}}
+\Gamma, \Lambda \vdash_E e \rightarrow \{x_1: v_1,...,x_n: v_n\}
 }{
-\Gamma, \Lambda \vdash_P e.\text{record?}
+\Gamma, \Lambda \vdash_P e.\text{\textbf{record?}}
 }
 
 \inferrule*[right=Or-1]{
@@ -370,18 +476,17 @@ v \in \text{\textsf{Record}}
 }{
 \Gamma, \Lambda \vdash_P \;!p
 }
+\end{mathpar}
+\caption{Semantics of predicates\label{SEM:predicates}}
+\end{semantics}
 
-%\end{mathpar}
-%\caption{Semantics of expressions and predicates\label{SEM:expressions}}
-%\end{semantics}
 
-
-%\begin{semantics}\footnotesize
-%\begin{mathpar}
+\begin{semantics}\small
+\begin{mathpar}
 \inferrule*[right=echo]{
 \Gamma, \Lambda \vdash_E e \rightarrow v
 }{
-\Gamma, \Lambda, \beta \vdash_S \text{\textbf{echo} }e \rightarrow \hescape{v}
+\Gamma, \Lambda, \beta \vdash_S \text{\textbf{echo} }e \rightarrow \tostring{v}
 }
 
 
@@ -395,14 +500,14 @@ v \in \text{\textsf{Record}}
 \Gamma, \Lambda \vdash_E e \rightarrow v
 }{
 \Gamma, \Lambda, \beta \vdash_S \text{\textbf{comment} }e \rightarrow
-\text{``$<$!$-$$-$''} \concat \tostring{v}\backslash\text{``$-$$-$$>$''} \concat \text{``$-$$-$$>$''}
+\text{``$<$!$-$$-$''} \concat \tostring{v} \concat \text{``$-$$-$$>$''}
 }
 
 \inferrule*[right=CData]{
 \Gamma, \Lambda \vdash_E e \rightarrow v
 }{
 \Gamma, \Lambda, \beta \vdash_S \text{\textbf{cdata} }e \rightarrow
-\text{``$<$![CDATA[''} \concat \tostring{v}\backslash\text{``]]$>$''} \concat \text{``]]$>$''}
+\text{``$<$![CDATA[''} \concat \tostring{v} \concat \text{``]]$>$''}
 }
 
 \inferrule*[right=If-1]{
@@ -457,7 +562,7 @@ v \in \text{\textsf{Record}}
 
 \inferrule*[right=Markup-2]{
 \Gamma, \Lambda  \vdash_E e \rightarrow v\\
-\Gamma, \Lambda, \hescape{v} \vdash_M M \rightarrow s'
+\Gamma, \Lambda, \tostring{v} \vdash_M M \rightarrow s'
 }{
 \Gamma, \Lambda, \beta \vdash_S M \; e \rightarrow s'
 }
@@ -468,8 +573,12 @@ v \in \text{\textsf{Record}}
 \Gamma, \Lambda, \beta \vdash_S M \rightarrow s
 }
 
+\end{mathpar}
+\caption{Semantics of statements\label{SEM:statements}}
+\end{semantics}
 
-
+\begin{semantics}\small
+\begin{mathpar}
 \inferrule*[right=Bindings]{
 \Gamma, \Lambda \vdash_B B_1 \rightarrow\langle \Gamma_1, \Lambda_1\rangle\\
 \Gamma_1, \Lambda_1 \vdash_B B_2 \rightarrow\langle \Gamma_2, \Lambda_2\rangle
@@ -490,6 +599,13 @@ C = \langle\Gamma, \Lambda, \lambda x_1, ..., x_n\;S\rangle\\
 \langle\Gamma, \Lambda[f/C]\rangle
 }
 
+
+\end{mathpar}
+\caption{Semantics of bindings\label{SEM:bindings}}
+\end{semantics}
+
+\begin{semantics}\small
+\begin{mathpar}
 \inferrule*[right=Nest]{
 \Gamma, \Lambda, \beta \vdash_M M_2 \rightarrow \beta'\\
 \Gamma, \Lambda, \beta' \vdash_M M_1 \rightarrow s 
@@ -506,14 +622,15 @@ f \not\in \text{dom}(\Lambda)\\
 
 
 \inferrule*[right=Element]{
-f \not\in \text{dom}(\Lambda)\\
-1 \leq i \leq n+1\\
+t_n \not\in \text{dom}(\Lambda)\\
+n > 0\\
+1 \leq i \leq n\\
 \Gamma, \Lambda \vdash_E e_i\rightarrow v_i\\
-s =\sum^{n+1}_{i = 1} \text{``\textvisiblespace''} \concat \tostring{x_i}
-\concat \text{``$\backslash$"''} \concat \hescape{v_i} \concat \text{``$\backslash$"''}
+s =\sum^{n}_{i = 1} \text{``\textvisiblespace''} \concat \tostring{x_i}
+\concat \text{``=''}\concat \text{``$\backslash$"''} \concat \tostring{v_i} \concat \text{``$\backslash$"''}
 }
 {
-\Gamma, \Lambda, \beta \vdash_M f(x_1 = e_1, ..., x_{n+1} = e_{n+1}) \rightarrow
+\Gamma, \Lambda, \beta \vdash_M t_n(x_1 = e_1, ..., x_{n} = e_{n}) \rightarrow
 \text{``$<$''} \concat \tostring{\V{f}}\; \concat s \concat \text{``$>$''}\concat \beta\concat
 \text{``$<$/''} \concat \tostring{\V{f}} \concat \text{``$>$''}
 }
@@ -524,72 +641,401 @@ s =\sum^{n+1}_{i = 1} \text{``\textvisiblespace''} \concat \tostring{x_i}
 \Gamma, \Lambda \vdash_E e_i \rightarrow v_i\\
 \Gamma[x_1/v_1]...[x_n/v_n],\Lambda, \beta \vdash_S S \rightarrow s
 }{
-\Gamma, \Lambda, \beta \vdash_M f(e_1,...,e_n) \rightarrow  s
+\Gamma, \Lambda, \beta \vdash_M f_n(e_1,...,e_n) \rightarrow  s
 }
-
-
 \end{mathpar}
-\caption{Semantics of statements and markup forms\label{FIG:semantics}}
+\caption{Semantics of markup forms\label{SEM:markup}}
 \end{semantics}
+\end{document}
 
+\newpage
+\section*{Appendix: grammar in SDF}
+\label{SECT:sdfgrammar}
+
+\begin{lstlisting}[language=sdf]
+definition
+module languages/waebric/syntax/Waebric
+
+imports 
+	languages/waebric/syntax/Comments
+	languages/waebric/syntax/Modules
+
+
+hiddens
+context-free start-symbols Module
+module languages/waebric/syntax/Comments
+
+exports
+
+sorts Comment CommentChar Asterisk
+
+lexical syntax
+    "/*" CommentChar* "*/" -> Comment {category("Comment")}
+    ~[\*] -> CommentChar
+    Asterisk -> CommentChar
+    Comment -> LAYOUT
+    [\*] -> Asterisk
+    "//" ~[\n]* [\n] -> Comment {category("Comment")}
+
+lexical restrictions
+    Asterisk -/- [\/]
+
+context-free restrictions
+    LAYOUT? -/- [\/].[\/]
+    LAYOUT? -/- [\/].[\*]
+module basic/Whitespace
+
+exports
+  lexical syntax
+    [\ \t\n\r]	-> LAYOUT {cons("whitespace")}
+
+  context-free restrictions
+    LAYOUT? -/- [\ \t\n\r]
+module languages/waebric/syntax/Statements
+
+imports languages/waebric/syntax/Expressions
+        languages/waebric/syntax/Predicates
+        languages/waebric/syntax/Markup
+        basic/StrCon
+
+hiddens
+context-free start-symbols
+  Statement
+
+exports
+sorts Statement Assignment Formals
+
+context-free syntax 
+  "if" "(" Predicate ")" Statement NoElseMayFollow  -> Statement  
+  "if" "(" Predicate ")" Statement "else" Statement -> Statement  
+  "each" "(" Var ":" Expression ")" Statement       -> Statement  
+  "let" Assignment+ "in" Statement* "end"           -> Statement  
+  "{" Statement* "}"     -> Statement  
+
+context-free syntax
+  "comment" StrCon ";"   -> Statement  
+  "echo" Expression ";"  -> Statement  
+  "echo" Embedding ";"  -> Statement  
+  "cdata" Expression ";" -> Statement  
+  "yield" ";"            -> Statement  
+
+context-free priorities
+
+context-free syntax
+  Var "=" Expression ";" -> Assignment  
+
+context-free syntax
+  "if"      -> IdCon {reject} 
+  "comment" -> IdCon {reject} 
+  "echo"    -> IdCon {reject} 
+  "cdata"   -> IdCon {reject} 
+  "each"    -> IdCon {reject} 
+  "let"     -> IdCon {reject} 
+  "yield"   -> IdCon {reject} 
+
+sorts NoElseMayFollow
+
+context-free syntax
+   -> NoElseMayFollow  
+
+context-free restrictions
+  NoElseMayFollow -/- [e].[l].[s].[e]
+
+context-free syntax
+  "(" {Var ","}* ")"          -> Formals   
+  IdCon Formals "=" Statement -> Assignment  
+  
+
+module languages/waebric/syntax/Expressions
+
+imports basic/Whitespace
+        basic/NatCon
+        basic/IdentifierCon
+        languages/waebric/syntax/Text
+
+exports
+sorts SymbolCon SymbolChar Expression Var KeyValuePair
+
+lexical syntax
+  "'" SymbolChar*                    -> SymbolCon   
+  ~[\0-\31\)\ \t\n\r\;\,\>\127-\255] -> SymbolChar  
+
+lexical restrictions
+  SymbolCon -/- ~[\)\ \t\n\r\;\,\>]
+
+context-free syntax
+  Text -> Expression  
+
+context-free syntax
+  IdCon -> Var {category("MetaVariable")} 
+
+context-free syntax
+  Var                  -> Expression  
+  SymbolCon            -> Expression  
+  NatCon               -> Expression  
+  Expression "." IdCon -> Expression  
+
+context-free syntax
+  "[" {Expression ","}* "]"   -> Expression    
+  "{" {KeyValuePair ","}* "}" -> Expression    
+  IdCon ":" Expression        -> KeyValuePair  
+
+module languages/waebric/syntax/Embedding
+
+imports languages/waebric/syntax/Markup
+	languages/waebric/syntax/Text
+
+exports
+
+sorts PreText PostText MidText TextTail Embed Embedding
+
+lexical syntax
+  "\"" TextChar* "<" -> PreText   
+  ">" TextChar* "\"" -> PostText  
+  ">" TextChar* "<"  -> MidText   
+
+context-free syntax
+  PostText                -> TextTail  
+  MidText Embed TextTail -> TextTail 
+  PreText Embed TextTail -> Embedding
+
+context-free syntax
+  Markup* Expression -> Embed
+
+context-free priorities
+  Markup* Markup -> Embed
+  >
+  Designator -> Markup
+module languages/waebric/syntax/Markup
+
+imports languages/waebric/syntax/Expressions
+        languages/waebric/syntax/Statements
+        languages/waebric/syntax/Embedding
+
+hiddens
+context-free start-symbols Markup
+
+exports
+sorts Markup Designator Attribute Arguments Argument
+
+context-free syntax
+  "(" {Argument ","}* ")" -> Arguments  
+  Var "=" Expression -> Argument  
+  Expression         -> Argument  
+
+context-free syntax
+  Designator Arguments -> Markup
+  Designator -> Markup
+
+context-free priorities
+  Markup+ Statement -> Statement {non-assoc}
+  >
+  {
+  Markup ";" -> Statement
+  Markup+ Markup ";" -> Statement
+  Markup+ Expression ";" -> Statement
+  Markup+ Embedding ";" -> Statement
+  }
+
+context-free priorities
+  Markup+ Markup ";" -> Statement
+  >
+  Designator -> Markup
+
+context-free syntax
+  IdCon Attribute* -> Designator  
+
+context-free syntax
+  "#" IdCon                 -> Attribute  
+  "." IdCon                 -> Attribute  
+  "$" IdCon                 -> Attribute  
+  ":" IdCon                 -> Attribute 
+  "@" w:NatCon "%" h:NatCon -> Attribute
+  "@" w:NatCon              -> Attribute
+
+
+module basic/IdentifierCon
+
+exports
+
+sorts IdCon
+
+lexical syntax
+
+head:[A-Za-z] tail:[A-Za-z\-0-9]* -> IdCon {cons("default")}
+
+lexical restrictions
+
+IdCon -/- [A-Za-z\-0-9]
+module basic/NatCon
+
+exports
+
+sorts NatCon
+
+lexical syntax
+  
+ [0-9]+ -> NatCon {cons("digits")}
+
+lexical restrictions
+
+ NatCon -/- [0-9]
+module languages/waebric/syntax/Modules
+
+imports 
+	languages/waebric/syntax/Functions
+	languages/waebric/syntax/Sites
+
+exports
+
+sorts ModuleId Import ModuleElement Module Modules
+
+context-free syntax
+  {IdCon "."}+ -> ModuleId
+  "import" ModuleId  -> Import
+
+  FunctionDef -> ModuleElement
+  Import -> ModuleElement
+  Site -> ModuleElement
+  "module" ModuleId ModuleElement* -> Module
+   
+  Module* -> Modules
+
+context-free syntax
+  "module" -> IdCon {reject}
+  "import" -> IdCon {reject}
+  "def" -> IdCon {reject}
+  "end" -> IdCon {reject}
+  "site" -> IdCon {reject}
+module languages/waebric/syntax/Text
+
+hiddens
+context-free start-symbols
+  Text
+
+exports
+
+sorts Text TextChar EscQuote Amp TextCharRef TextEntityRef
+
+lexical syntax
+  "\"" TextChar* "\"" -> Text 
+  ~[\0-\31\&\"\<\128-\255] \/ [\n\r\t]  -> TextChar
+  [\\][\"] -> EscQuote
+  [\&] -> Amp
+  Amp -> TextChar
+  EscQuote -> TextChar
+  TextCharRef -> TextChar {category("Constant")}
+  TextEntityRef -> TextChar {category("Constant")}
+ 
+
+  %% Copied from XML grammar
+  "&#" [0-9]+ ";"        -> TextCharRef    
+  "&#x" [0-9a-fA-F]+ ";" -> TextCharRef    
+  "&" [a-zA-Z\_\:] [a-zA-Z0-9\.\-\_\:]* ";"   -> TextEntityRef  
+  
+
+lexical restrictions
+  Amp -/- [\#0-9a-zA-Z\_\:]
+module languages/waebric/syntax/Sites
+
+imports languages/waebric/syntax/Markup
+
+exports
+sorts Mapping Mappings FileName DirName Site Path FileExt Directory PathElement
+
+context-free syntax
+  "site" Mappings "end" -> Site      
+  Path ":" Markup       -> Mapping   
+  DirName "/" FileName  -> Path      
+  FileName              -> Path      
+  Directory             -> DirName   
+  {Mapping ";"}*        -> Mappings  
+
+context-free syntax %%priorities
+  Path ":" Markup -> Mapping %%>
+  %%Expression -> Markup
+
+context-free restrictions
+  DirName -/- ~[\/]
+  "/" -/- [\ \t\n\r\.\/\\]
+
+lexical syntax
+  ~[\ \t\n\r\.\/\\]+      -> PathElement  
+  [a-zA-Z0-9]+            -> FileExt      
+  {PathElement "/"}+      -> Directory    
+  PathElement "." FileExt -> FileName     
+
+lexical restrictions
+  FileExt -/- [a-zA-Z0-9]
+module basic/StrCon
+
+exports
+
+sorts StrCon StrChar
+
+lexical syntax
+    "\\n"                      -> StrChar {cons("newline")}
+    "\\t"                      -> StrChar {cons("tab")}
+    "\\\""                     -> StrChar {cons("quote")}
+    "\\\\"                     -> StrChar {cons("backslash")}
+    "\\" a:[0-9]b:[0-9]c:[0-9] -> StrChar {cons("decimal")}
+    ~[\0-\31\n\t\"\\]          -> StrChar {cons("normal")}
+
+    [\"] chars:StrChar* [\"]   -> StrCon  {cons("default")}
+module languages/waebric/syntax/Functions
+
+imports languages/waebric/syntax/Statements
+
+exports
+
+sorts FunctionDef
+
+context-free syntax
+  "def" IdCon Formals? Statement* "end" -> FunctionDef
+
+module languages/waebric/syntax/Predicates
+
+imports languages/waebric/syntax/Expressions
+
+exports
+
+sorts Predicate Type
+
+context-free syntax
+ "list" -> Type
+ "record" -> Type
+ "string" -> Type
+
+context-free syntax
+  Expression -> Predicate
+  Expression "." Type "?" -> Predicate
+
+context-free priorities
+  "!" Predicate -> Predicate
+  >
+  {left:
+   Predicate "&&" Predicate -> Predicate {left}
+   Predicate "||" Predicate -> Predicate {left}
+  }
+\end{lstlisting}
 
 
 \end{document}
 
 
-\inferrule*[right=Call0]{
-\Lambda(f) = \langle \Gamma', \Lambda',  S\rangle\\
-\Gamma', \Lambda', \beta \vdash_S S \rightarrow  s
+\inferrule*[right=Interpolate-1]{
+\Gamma \vdash_{E} \V{e} \rightarrow v\\
+\Gamma, \Lambda \vdash_E \V{I} \rightarrow s_2
 }{
-\Gamma, \Lambda, \beta \vdash_M f \rightarrow  s
+\Gamma, \Lambda \vdash_E s_1 \langle e \rangle \V{I} \rightarrow
+s_1 \concat \tostring{v} \concat s_2
 }
 
-
-\inferrule*[right=Implicit-1]{}{
-\vdash_I t.x \rightarrow [\text{class}/x]
-}
-
-\inferrule*[right=Implicit-2]{}{
-\vdash_I t\#x \rightarrow [\text{id}/x]
-}
-
-\inferrule*[right=Implicit-3]{}{
-\vdash_I t\$x \rightarrow [\text{name}/x]
-}
-
-
-\inferrule*[right=Implicit-4]{}{
-\vdash_I t: x \rightarrow [\text{type}/x]
-}
-
-\inferrule*[right=Implicit-5]{}{
-\vdash_I t @ x \% y \rightarrow [\text{width}/x][\text{height}/y]
-}
-
-
-\inferrule*[right=If-3]{
-\Gamma, \Lambda, \beta \vdash_S \text{\textbf{if} }(p)\; S \text{
-  \textbf{else} \textbf{echo} ``''} \rightarrow s
+\inferrule*[right=Interpolate-2]{
+\Gamma \vdash_{E} \V{e} \rightarrow v\\
+\Gamma, \Lambda, \tostring{v} \vdash_M \V{M} \rightarrow s_2\\
+\Gamma, \Lambda \vdash_E \V{I} \rightarrow s_3
 }{
-\Gamma, \Lambda, \beta \vdash_S \text{\textbf{if} }(p)\; S \rightarrow s
-}
-
-
-\inferrule*[right=Bindings]{
-n = |\overline{B}|\\
-1 \leq i \leq n\\
-\sum_{0 \leq j < i} \Gamma_j,
-\sum_{0 \leq j < i} \Lambda_j,
- \vdash_B \langle \Gamma_i, \Lambda_i\rangle\\
-}{
-\Gamma_0, \Lambda_0 \vdash_B \overline{B} \rightarrow \langle \Gamma_n, \Lambda_n\rangle
-}
-
-
-
-\inferrule*[right=Call0]{
-\Lambda(f) = \langle \Gamma', \Lambda',  S\rangle\\
-\Gamma,\Lambda, \beta \vdash_S S \rightarrow s
-}{
-\Gamma, \Lambda, \beta \vdash_M f \rightarrow s
+\Gamma, \Lambda \vdash_E s_1 \langle M\; e \rangle \V{I} \rightarrow
+s_1 \concat s_2 \concat s_3
 }

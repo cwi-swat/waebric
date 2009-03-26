@@ -1,0 +1,16 @@
+
+\ProvidesPackage{sdf}
+\RequirePackage{listings}
+
+
+
+\lstdefinelanguage{sdf}{%
+  numbers=none,%
+  morekeywords={module,hiddens,imports,definition,exports,priorities,sorts,reject,lexical,restrictions,variables,==,=,+,-,left,cons,prefer,avoid,bracket},%
+  columns=fullflexible,%
+  morestring=[b]",%
+  showstringspaces=false,%
+  basicstyle=\ttfamily,%
+  stringstyle=\ttfamily,%
+  literate={\\"}{$\backslash$''}1 {/syntax}{/syntax}1 {syntax}{\textbf{syntax}}1 {context-free}{\textbf{context-free }}1 {start-symbols}{\textbf{start-symbols }}1 {->}{{\,\,$\to$\,\,}}1
+}

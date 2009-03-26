@@ -1,0 +1,29 @@
+
+\ProvidesPackage{waebric}
+\RequirePackage{listings}
+
+\lstdefinelanguage{waebric}{%
+ numbers=left,%
+ morekeywords={module,if,then,else,import,site,end,def,each,yield,let,in,echo,comment,cdata,record?,list?},
+ sensitive=true,%
+ morecomment=[l]{//},%
+% morecomment=[s][\ttfamily]{"}{<},%
+% morecomment=[s][\ttfamily]{>}{<},%
+% morecomment=[s][\ttfamily]{>}{"},%
+% moredelim=[s][\ttfamily]{"}{"},%
+ moredelim=*[s][\sffamily]{<}{>},%
+ morestring=[b]",%
+ morecomment=[l]{//},%
+ morecomment=[s]{/*}{*/},%
+% morecomment=[n]{``}{''},%
+ commentstyle=\small\rmfamily,%
+ stringstyle=\small\itshape,%
+ keywordstyle=\bfseries,%
+ basicstyle=\small\ttfamily,%
+ showstringspaces=false,%
+ columns=fullflexible,%
+ literate={<}{$\langle$}1 {>}{$\;\rangle$}1 {-}{$\text{-}$}1
+}
+
+% listings truuks
+% lstinline!....!
