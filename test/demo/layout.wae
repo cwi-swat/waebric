@@ -1,0 +1,20 @@
+module layout
+
+site
+  index.html: main()
+end
+
+def main
+  home("Hello World!");
+end
+
+def home(msg)
+  layout(msg) p msg;
+end
+
+def layout(title)
+  html {
+    head title title;
+    body yield;
+  }
+end

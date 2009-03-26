@@ -1,0 +1,42 @@
+module menus
+
+site
+  menu.html: main()
+end
+
+def main
+  layout("Hello") {
+    h1 "Hello World!";
+  }
+end
+
+def layout(title)
+  html {
+    head title title;
+    body {
+      div.navigation the-menu();
+      div.content yield;
+   }
+  }
+end
+
+def the-menu
+  menu({title: "Menu", kids: [{title: "Home", link: "/"}, 
+           {title: "Misc", kids: 
+		[{title: "Contact", link: "contact.html"}, 
+                   {title: "Links", link: "links.html"}]}]});
+end
+
+def menu(menu)
+  echo menu.title;
+  ul
+   each (kid: menu.kids) 
+    item(kid);
+end
+
+def item(mi)
+  if (mi.kids)
+    li menu(mi);
+  else 
+    li a(href=mi.link) mi.title;
+end
