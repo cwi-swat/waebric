@@ -172,6 +172,10 @@ block enclosed in curly braces which is passed into the html
 element. The nesting of msg in the title element is an example of the
 latter.
 
+\subsection{Embedding}
+
+
+\subsection{Caveat}
 
 Some notes are in order with respect to how markup juxtaposition is
 parsed in \waebric. Basically, it boils down to the following two
@@ -256,9 +260,52 @@ function can now be reused in the generation other pages.
 
 \subsection{Attributes}
 
+\subsubsection{Introduction}
 
+Both function calls and markup elements can receive parameters. They
+come in two forms:
+\begin{enumerate}
+\item $f(x_1 = a_1,..., x_n = a_n)$: if $f$ is a tagname (for instance
+  ``div''), $x_1,...,x_n$ are interpreted as XML attributes. The
+  values are obtained from the values of the $a_1,...,a_n$
+  respectively. In the case of a function calls, the keywords are
+  ignored, and $a_1,...,a_n$ is passed as an ordinary list of
+  arguments (see 2 below).
+\item $f(a_1,..., a_n)$: if $f$ is a defined function, $a_1,...,a_n$ are its
+  arguments. In the case of markup (for instance if $f$ is actually
+  the tagname ``input''), the list $a_1,...,a_n$ is translated to the
+  the keyword parameter list $\text{value} = a_1, ..., \text{value} =
+  a_n$. In the case that $n > 1$ the value of ``value'' attribute is
+  taken to be the value of the last keyword argument.
+\end{enumerate}
 
-Shorthands
+\subsubsection{Shorthands}
+
+\waebric provides shorthand notation for common XHTML attributes
+(inspired by Haml). See Table~\ref{TBL:shorthand} for an overview of
+how this shorthand notation corresponds to regular attribute
+specification.
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|l|l|}\hline
+\textbf{Shorthand} & \textbf{Equivalent longhand} \\\hline\hline
+div.$x$ & div(class=$x$)\\\hline
+div\#$x$ & div(id=$x$)\\\hline
+input\$$x$ & input(name=$x$)\\\hline
+input:$x$ & input(type=$x$)\\\hline
+img@$w$\%$h$ & img(width=$w$, height=$h$)\\\hline
+\end{tabular}
+\end{center}
+\caption{Meaning of attribute shorthands\label{TBL:shorthand}}
+\end{table}
+
+The syntax of shorthands accepts identifiers as variable part (except
+for the @-attribute which accepts natural numbers). The height part of
+the @-attribute is optional. Shorthands can be combined. For instance:
+p\#intro.dropcaps combines the shorthands for the id and class
+attributes.
+
 
 \subsection{Recursive Menus}
 
@@ -307,6 +354,9 @@ of item to its URL. The result of an invocation (with the appropriate
 data for the \textit{menu} parameter) of menu could look like the
 screen shot next to the source code.
 
+
+\begin{comment}
+
 \section{Semantics}
 
 
@@ -320,7 +370,7 @@ See Figure~\ref{FIG:abstract-syntax}.
 \[
 \begin{array}{rcl}
 S_i \in \NT{S} & ::= & \text{\textbf{echo} }\NT{E} \\
-& | & \text{\textbf{comment} }\NT{E} \\
+& | & \text{\textbf{comment} }\V{String} \\
 & | & \text{\textbf{cdata} }\NT{E}\\
 & | & \text{\textbf{yield}}\\
 & | & \text{\textbf{if} }(\NT{P})\;\NT{S} \text{ \textbf{else} }\NT{S}\\
@@ -340,12 +390,12 @@ M_i \in\NT{M} & ::= & \NT{M}\;\NT{M}\\
 & | & f_n(\NT{E}_1,...,\NT{E}_n)\\
 & | & t_n(x_1 = \NT{E}_1,...,x_n =\NT{E}_n)\\
 e_i \in \NT{E} & ::= & x \\
-& | & \V{String} \\
+& | & \V{Text} \\
 & | & [\NT{E}_1,...,\NT{E}_n]\\
 & | & \{x_1: \NT{E}_1, ..., x_n: \NT{E}_n\}\\
-I_i\in \NT{I} & ::= & \V{String} \langle \NT{M}\; \NT{E} \rangle \NT{I}\\
-  & | & \V{String} \langle \NT{E} \rangle \NT{I}\\
-  & | & \V{String}
+I_i\in \NT{I} & ::= & \V{Text} \langle \NT{M}\; \NT{E} \rangle \NT{I}\\
+  & | & \V{Text} \langle \NT{E} \rangle \NT{I}\\
+  & | & \V{Text}
 \end{array}
 \]
 \end{minipage}
@@ -497,10 +547,9 @@ Figure~\ref{FIG:semantics} shows a natural semantics of \waebric.
 
 
 \inferrule*[right=Comment]{
-\Gamma, \Lambda \vdash_E e \rightarrow v
 }{
-\Gamma, \Lambda, \beta \vdash_S \text{\textbf{comment} }e \rightarrow
-\text{``$<$!$-$$-$''} \concat \tostring{v} \concat \text{``$-$$-$$>$''}
+\Gamma, \Lambda, \beta \vdash_S \text{\textbf{comment} }s \rightarrow
+\text{``$<$!$-$$-$''} \concat \tostring{s} \concat \text{``$-$$-$$>$''}
 }
 
 \inferrule*[right=CData]{
@@ -646,7 +695,8 @@ s =\sum^{n}_{i = 1} \text{``\textvisiblespace''} \concat \tostring{x_i}
 \end{mathpar}
 \caption{Semantics of markup forms\label{SEM:markup}}
 \end{semantics}
-\end{document}
+
+\end{comment}
 
 \newpage
 \section*{Appendix: grammar in SDF}
