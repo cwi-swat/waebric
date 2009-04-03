@@ -13,14 +13,14 @@ lexical syntax
   ">" TextChar* "<"  -> MidText   
 
 context-free syntax
-  PostText                -> TextTail  
-  MidText Embed TextTail -> TextTail 
-  PreText Embed TextTail -> Embedding
+  PostText                -> TextTail {cons("post")}
+  MidText Embed TextTail -> TextTail {cons("mid")}
+  PreText Embed TextTail -> Embedding {cons("pre")}
 
 context-free syntax
-  Markup* Expression -> Embed
+  Markup* Expression -> Embed {cons("exp-embedding")}
 
 context-free priorities
-  Markup* Markup -> Embed
+  Markup* Markup -> Embed {cons("markup-embedding")}
   >
   Designator -> Markup

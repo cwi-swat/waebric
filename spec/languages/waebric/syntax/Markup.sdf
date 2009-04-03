@@ -11,37 +11,37 @@ exports
 sorts Markup Designator Attribute Arguments Argument
 
 context-free syntax
-  "(" {Argument ","}* ")" -> Arguments  
-  Var "=" Expression -> Argument  
-  Expression         -> Argument  
+  "(" {Argument ","}* ")" -> Arguments {cons("args")} 
+  IdCon "=" Expression -> Argument  {cons("attr")}
+  Expression         -> Argument 
 
 context-free syntax
-  Designator Arguments -> Markup
+  Designator Arguments -> Markup {cons("call")}
   Designator -> Markup
 
 context-free priorities
-  Markup+ Statement -> Statement {non-assoc}
+  Markup+ Statement -> Statement {cons("markup-stat"),non-assoc}
   >
   {
-  Markup ";" -> Statement
-  Markup+ Markup ";" -> Statement
-  Markup+ Expression ";" -> Statement
-  Markup+ Embedding ";" -> Statement
+  Markup ";" -> Statement {cons("markup")}
+  Markup+ Markup ";" -> Statement {cons("markup-markup")}
+  Markup+ Expression ";" -> Statement {cons("markup-exp")}
+  Markup+ Embedding ";" -> Statement {cons("markup-embedding")}
   }
 
 context-free priorities
   Markup+ Markup ";" -> Statement
   >
-  Designator -> Markup
+  Designator -> Markup 
 
 context-free syntax
-  IdCon Attribute* -> Designator  
+  IdCon Attribute* -> Designator {cons("tag")}
 
 context-free syntax
-  "#" IdCon                 -> Attribute  
-  "." IdCon                 -> Attribute  
-  "$" IdCon                 -> Attribute  
-  ":" IdCon                 -> Attribute 
-  "@" w:NatCon "%" h:NatCon -> Attribute
-  "@" w:NatCon              -> Attribute
+  "#" IdCon                 -> Attribute {cons("id")}
+  "." IdCon                 -> Attribute {cons("class")}  
+  "$" IdCon                 -> Attribute {cons("name")}  
+  ":" IdCon                 -> Attribute {cons("type")} 
+  "@" w:NatCon "%" h:NatCon -> Attribute {cons("width-height")}
+  "@" w:NatCon              -> Attribute {cons("height")}
 

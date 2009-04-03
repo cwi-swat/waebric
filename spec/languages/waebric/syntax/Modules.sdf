@@ -6,19 +6,17 @@ imports
 
 exports
 
-sorts ModuleId Import ModuleElement Module Modules
+sorts ModuleId Import ModuleElement Module
 
 context-free syntax
-  {IdCon "."}+ -> ModuleId
-  "import" ModuleId  -> Import
+  {IdCon "."}+ -> ModuleId {cons("module-id")}
+  "import" ModuleId  -> Import {cons("import")}
 
-  FunctionDef -> ModuleElement
+  FunctionDef -> ModuleElement 
   Import -> ModuleElement
   Site -> ModuleElement
-  "module" ModuleId ModuleElement* -> Module
+  "module" ModuleId ModuleElement* -> Module {cons("module")}
    
-  Module* -> Modules
-
 context-free syntax
   "module" -> IdCon {reject}
   "import" -> IdCon {reject}

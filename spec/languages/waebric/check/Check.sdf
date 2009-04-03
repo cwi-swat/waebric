@@ -4,9 +4,9 @@ imports languages/waebric/extract/Summarize
         languages/waebric/import/Resolve
         languages/waebric/check/XHTML
         utilities/Parsing[NatCon]
-        utilities/Parsing[Var]
-        containers/Set[Var]
-        utilities/PosInfo[Var]
+        utilities/Parsing[IdCon]
+        containers/Set[IdCon]
+        utilities/PosInfo[IdCon]
         basic/Strings
 
 hiddens
@@ -34,19 +34,19 @@ context-free syntax
   errors-for-filenames(RElem, RStore) -> {Error ","}*
   subjects-for-locations(StrCon, RElem) -> {Subject ","}*
 
-  errors-for-undefined-vars(Module*, {Error ","}*, Set[[Var]]) -> {Error ","}*
+  errors-for-undefined-vars(Module*, {Error ","}*, Set[[IdCon]]) -> {Error ","}*
 		{traversal(top-down, break, accu)}
-  errors-for-undefined-vars(FunctionDef, {Error ","}*, Set[[Var]]) -> {Error ","}*
+  errors-for-undefined-vars(FunctionDef, {Error ","}*, Set[[IdCon]]) -> {Error ","}*
 		{traversal(top-down, break, accu)}
-  errors-for-undefined-vars(Statement, {Error ","}*, Set[[Var]]) -> {Error ","}*
+  errors-for-undefined-vars(Statement, {Error ","}*, Set[[IdCon]]) -> {Error ","}*
 		{traversal(top-down, break, accu)}
-  errors-for-undefined-vars(Statement*, {Error ","}*, Set[[Var]]) -> {Error ","}*
+  errors-for-undefined-vars(Statement*, {Error ","}*, Set[[IdCon]]) -> {Error ","}*
 		{traversal(top-down, break, accu)}
-  errors-for-undefined-vars(Expression, {Error ","}*, Set[[Var]]) -> {Error ","}*
+  errors-for-undefined-vars(Expression, {Error ","}*, Set[[IdCon]]) -> {Error ","}*
 		{traversal(top-down, break, accu)}
 
-  vars(Assignment+, Set[[Var]]) -> Set[[Var]] {traversal(bottom-up, accu, break)}
-  vars(Var, Set[[Var]]) -> Set[[Var]] {traversal(bottom-up, accu, break)}
+  vars(Assignment+, Set[[IdCon]]) -> Set[[IdCon]] {traversal(bottom-up, accu, break)}
+  vars(IdCon, Set[[IdCon]]) -> Set[[IdCon]] {traversal(bottom-up, accu, break)}
 
 
 variables
@@ -90,8 +90,7 @@ variables
   "$stat*" [0-9\']*      -> Statement*           
   "$no-else" [0-9\']*    -> NoElseMayFollow      
   "$sym" [0-9\']*        -> SymbolCon            
-  "$var" [0-9\']*        -> Var                  
-  "$var*" [0-9\']*       -> {Var ","}*           
+  "$id*" [0-9\']*       -> {IdCon ","}*           
   "$args" [0-9\']*       -> Arguments            
   "$args?" [0-9\']*      -> Arguments?           
   "$func" [0-9\']*       -> IdCon                
@@ -101,7 +100,6 @@ variables
   "$func-def?" [0-9\']*  -> FunctionDef?         
   "$markup" [0-9\']*     -> Markup               
   "$markup?" [0-9\']*    -> Markup?              
-  "$var" [0-9\']*        -> Var                  
   "$mod-elt+" [0-9\']*   -> ModuleElement+       
   "$mod-elt*" [0-9\']*   -> ModuleElement*       
   "$module*" [0-9\']*    -> Module*              

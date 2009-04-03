@@ -13,23 +13,23 @@ exports
 sorts Statement Assignment Formals
 
 context-free syntax 
-  "if" "(" Predicate ")" Statement NoElseMayFollow  -> Statement  
-  "if" "(" Predicate ")" Statement "else" Statement -> Statement  
-  "each" "(" Var ":" Expression ")" Statement       -> Statement  
-  "let" Assignment+ "in" Statement* "end"           -> Statement  
-  "{" Statement* "}"     -> Statement  
+  "if" "(" Predicate ")" Statement NoElseMayFollow  -> Statement {cons("if")} 
+  "if" "(" Predicate ")" Statement "else" Statement -> Statement {cons("if-else")}
+  "each" "(" IdCon ":" Expression ")" Statement       -> Statement {cons("each")}
+  "let" Assignment+ "in" Statement* "end"           -> Statement {cons("let")}
+  "{" Statement* "}"     -> Statement  {cons("block")}
 
 context-free syntax
-  "comment" StrCon ";"   -> Statement  
-  "echo" Expression ";"  -> Statement  
-  "echo" Embedding ";"  -> Statement  
-  "cdata" Expression ";" -> Statement  
-  "yield" ";"            -> Statement  
+  "comment" StrCon ";"   -> Statement  {cons("comment")}
+  "echo" Expression ";"  -> Statement  {cons("echo")}
+  "echo" Embedding ";"  -> Statement  {cons("echo-embedding")}
+  "cdata" Expression ";" -> Statement {cons("cdata")} 
+  "yield" ";"            -> Statement {cons("yield")}
 
 context-free priorities
 
 context-free syntax
-  Var "=" Expression ";" -> Assignment  
+  IdCon "=" Expression ";" -> Assignment {cons("var-bind")}
 
 context-free syntax
   "if"      -> IdCon {reject} 
@@ -49,6 +49,5 @@ context-free restrictions
   NoElseMayFollow -/- [e].[l].[s].[e]
 
 context-free syntax
-  "(" {Var ","}* ")"          -> Formals   
-  IdCon Formals "=" Statement -> Assignment  
+  IdCon "(" {IdCon ","}* ")" "=" Statement -> Assignment {cons("func-bind")} 
   

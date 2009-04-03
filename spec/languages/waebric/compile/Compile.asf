@@ -78,15 +78,15 @@ equations
 	&jstat* := stats-to-jstats(&stat*),
 	Object &jid := Object idcon-to-id(&id)
 	===
-	func-to-method(def &id &formals &stat* end) = 
+	func-to-method(def &id (&id*) &stat* end) = 
 		private void &jid(final stream-type() $out, final Markup $markup, 
-					formals-to-formalparams(&formals)) 
+					formals-to-formalparams(&id*)) 
 			throws IOException, SQLException {
 			&jstat*
 		}
-		public void &jid(final stream-type() $out, formals-to-formalparams(&formals))
+		public void &jid(final stream-type() $out, formals-to-formalparams(&id*))
 			throws IOException, SQLException {
-			&jid($out, $nil, formals-to-exprs(&formals));
+			&jid($out, $nil, formals-to-exprs(&id*));
 		}
 
 
@@ -227,12 +227,12 @@ equations
 		}
 
 [stat-to-jstats-6]
-	Object &jid := func-interface(&formals)
+	Object &jid := func-interface(&id*)
 	===
-	stat-to-jstats(let &id &formals = &stat in &stat* end) =
+	stat-to-jstats(let &id (&id*) = &stat in &stat* end) =
 		{
 			final &jid idcon-to-id(&id) = new &jid() {
-                            	public void call(stream-type() $out, Markup $markup, formals-to-formalparams(&formals)) 
+                            	public void call(stream-type() $out, Markup $markup, formals-to-formalparams(&id*)) 
 					throws IOException, SQLException {
 					stats-to-jstats(&stat)
 				}
@@ -599,20 +599,24 @@ equations
 equations
 
 [formals-to-formalparams-0]
-	formals-to-formalparams(()) = 
+	(&id*) == ()
+	====
+	formals-to-formalparams(&id*) = 
 
 [formals-to-formalparams-1]
-	formals-to-formalparams((&id, &var*)) =
-		final Object idcon-to-id(&id), formals-to-formalparams((&var*))
+	formals-to-formalparams(&id, &id*) =
+		final Object idcon-to-id(&id), formals-to-formalparams(&id*)
 
 equations
 
 [formals-to-exprs-0]
-	formals-to-exprs(()) =
+	(&id*) == ()
+	====
+	formals-to-exprs(&id*) = 
 
 [formals-to-exprs-1]
-	formals-to-exprs((&id, &var*)) =
-		idcon-to-id(&id), formals-to-exprs((&var*))
+	formals-to-exprs(&id, &id*) =
+		idcon-to-id(&id), formals-to-exprs(&id*)
 
 equations
 
@@ -794,15 +798,17 @@ equations
 
 equations
 
-[]	&natcon := arity(&formals)
+[]	&natcon := arity(&id*)
 	===
-	func-interface(&formals) = natcon-to-formal(Func, &natcon)
+	func-interface(&id*) = natcon-to-formal(Func, &natcon)
 
 equations
 
-[]	arity(()) = 0
+[]	(&id*) == ()
+	===
+	arity(&id*) = 0
 
-[]	arity((&var, &var*)) = 1 + arity((&var*))
+[]	arity(&id, &id*) = 1 + arity(&id*)
 
 equations
 

@@ -31,7 +31,6 @@ ${COMPILER} ${INPUT}
 echo "Compiling ${MOD}.java..."
 javac -d ${BUILD} ${MOD}.java
 
-# TODO: make optional with commandline flag
 echo "Running main in ${MOD}.class."
 java -cp ${BUILD} ${MOD}
 

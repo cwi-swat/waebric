@@ -1,22 +1,26 @@
 module menus
 
 site
-  menu.html: main()
+  menus.html: main()
 end
 
 def main
-  layout("Hello") {
-    h1 "Hello World!";
+  layout("Recursive Menus") {
+    the-menu();
   }
+end
+
+def css(url, media)
+  link(rel="stylesheet", href=url, type="text/css", media=media);
 end
 
 def layout(title)
   html {
-    head title title;
-    body {
-      div.navigation the-menu();
-      div.content yield;
-   }
+    head {
+      css("blueprint.css", "screen, projection");      
+      title title;
+    }
+    body yield;
   }
 end
 
@@ -35,8 +39,8 @@ def menu(menu)
 end
 
 def item(mi)
-  if (mi.kids)
-    li menu(mi);
-  else 
-    li a(href=mi.link) mi.title;
+  li if (mi.kids)
+       menu(mi);
+     else 
+       a(href=mi.link) mi.title;
 end

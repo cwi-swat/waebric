@@ -112,9 +112,9 @@ equations
 	eval-let-bindings($id = $exp ;, $env) = $env'
 
 [eval-let-bindings-single-2]
-	$env' := store($env, $id, <$env, def $id $formals $stat end>)
+	$env' := store($env, $id, <$env, def $id ($id*) $stat end>)
 	===
-	eval-let-bindings($id $formals = $stat , $env) = $env'
+	eval-let-bindings($id ($id*) = $stat , $env) = $env'
 
 [eval-let-bindings-many]
 	$env' := eval-let-bindings($assignment, $env),
@@ -155,7 +155,8 @@ equations
 
 [eval-exp-6]
 	[$vpair*] := eval-exp($exp, $env),
-	$value := lookup([$vpair*], $id),
+	$value0 := [$vpair*],
+	$value := lookup($value0, $id),
 	$value != not-in-table
 	===
 	eval-exp($exp . $id, $env) = $value
@@ -527,7 +528,7 @@ equations
 equations
 
 [bind-formals-1]
-	bind-formals(( $var* ), $value*, $env) = bind-each-formal($env, $var*, $value*)
+	bind-formals(( $id* ), $value*, $env) = bind-each-formal($env, $id*, $value*)
 
 equations
 
@@ -536,13 +537,13 @@ equations
 	bind-each-formal($env, , $value*) = $env
 
 [bind-each-formal-cons-1]
-	bind-each-formal($env, $var, $var* , $value, $value*) = 
-		bind-each-formal(store($env, $var, $value), $var*, $value*)
+	bind-each-formal($env, $id, $id* , $value, $value*) = 
+		bind-each-formal(store($env, $id, $value), $id*, $value*)
 
 /* Absent values lead to binding of undef */
 [bind-each-formal-cons-2]
-	bind-each-formal($env, $var, $var* , ) = 
-		bind-each-formal(store($env, $var, undef), $var*, )
+	bind-each-formal($env, $id, $id* , ) = 
+		bind-each-formal(store($env, $id, undef), $id*, )
 
 
 

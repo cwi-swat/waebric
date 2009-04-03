@@ -1,0 +1,29 @@
+#! /bin/sh
+
+BINDIR=__BINDIR__
+DATADIR=__DATA_DIR__
+TBL=${DATADIR}/Waebric.trm.tbl
+WBEXT=.wae
+
+PROGRAM=waebric-ast
+
+INPUT=$1
+
+set -e
+
+if [ "a${INPUT}" = "a" ]; then
+    echo "Use: ${PROGRAM} <filename>"
+    exit 1
+fi
+
+echo "Parsing ${INPUT}..." 1>&2
+sglr -p ${TBL} -i ${INPUT} -s Module \
+    | implodePT \
+    | trmcat
+    
+echo "Done." 1>&2
+
+
+
+
+

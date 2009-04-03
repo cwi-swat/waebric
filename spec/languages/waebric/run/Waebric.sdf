@@ -27,7 +27,7 @@ context-free syntax
 
 context-free syntax
   run(Module, IdCon, {Value ","}*)                       -> Document  
-  run-modules(Modules, IdCon, {Value ","}*) -> Document
+  run-modules(Module*, IdCon, {Value ","}*) -> Document
   run-import-results(ImportResults, StrCon, {Value ","}*) -> Document  
   run-import-results(ImportResults, IdCon, {Value ","}*) -> Document  
 

@@ -36,8 +36,6 @@ variables
   "&stat*" [0-9\']*      -> Statement*           
   "&no-else" [0-9\']*    -> NoElseMayFollow      
   "&sym" [0-9\']*        -> SymbolCon            
-  "&var" [0-9\']*        -> Var                  
-  "&var*" [0-9\']*       -> {Var ","}*           
   "&args" [0-9\']*       -> Arguments            
   "&args?" [0-9\']*      -> Arguments?           
   "&func" [0-9\']*       -> IdCon                
@@ -49,7 +47,6 @@ variables
   "&func-def?" [0-9\']*  -> FunctionDef?         
   "&markup" [0-9\']*     -> Markup               
   "&markup?" [0-9\']*    -> Markup?              
-  "&var" [0-9\']*        -> Var                  
   "&mod-elt+" [0-9\']*   -> ModuleElement+       
   "&mod-elt*" [0-9\']*   -> ModuleElement*       
   "&module*" [0-9\']*    -> Module*              

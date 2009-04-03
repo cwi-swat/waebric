@@ -72,31 +72,31 @@ equations
 equations
 
 [errors-for-undefined-vars-formals]
-	errors-for-undefined-vars(def $id ($var*) $stat* end, $error*, {$var*'}) =
-		errors-for-undefined-vars($stat*, $error*, union({$var*}, {$var*'}))
+	errors-for-undefined-vars(def $id ($id*) $stat* end, $error*, {$id*'}) =
+		errors-for-undefined-vars($stat*, $error*, union({$id*}, {$id*'}))
 
 [errors-for-undefined-vars-let]
-	errors-for-undefined-vars(let $assignment+ in $stat* end, $error*, {$var*}) =
-		errors-for-undefined-vars($stat*, $error*, vars($assignment+, {$var*}))
+	errors-for-undefined-vars(let $assignment+ in $stat* end, $error*, {$id*}) =
+		errors-for-undefined-vars($stat*, $error*, vars($assignment+, {$id*}))
 
 [errors-for-undefined-vars-each]
-	errors-for-undefined-vars(each ($var : $exp) $stat, $error*, {$var*}) =
-		errors-for-undefined-vars($stat, $error*, union({$var},{$var*}))
+	errors-for-undefined-vars(each ($id : $exp) $stat, $error*, {$id*}) =
+		errors-for-undefined-vars($stat, $error*, union({$id},{$id*}))
 
 [errors-for-undefined-vars-unused]
-	echo $var; := echo $exp;,
-	$var in {$var*} == false,
-	$loc := get-location($var),
-	$strcon := unparse-to-string($var)
+	echo $id; := echo $exp;,
+	$id in {$id*} == false,
+	$loc := get-location($id),
+	$strcon := unparse-to-string($id)
 	===
-	errors-for-undefined-vars($exp, $error*, {$var*}) =	
+	errors-for-undefined-vars($exp, $error*, {$id*}) =	
 		$error*, 
 		error("undefined variable", [localized($strcon, $loc)])
 
 equations
 
 [vars-top]
-	vars($var, {$var*}) = union({$var}, {$var*})
+	vars($id, {$id*}) = union({$id}, {$id*})
 
 equations
 

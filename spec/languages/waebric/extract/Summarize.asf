@@ -21,13 +21,13 @@ equations
 equations
 
 [summarize-1]
-	$natcon := formal-arity($var*, 0),
+	$natcon := formal-arity($id*, 0),
 	$strcon := unparse-to-string($id),
 	$rstore1 := insert($rstore, Arity, $strcon, $natcon),
 	$rstore2 := insert($rstore1, Define, $strcon, get-location($id)),
 	$rstore3 := inc($rstore2, Statistics, "#defines")
 	===
-	summarize(def $id ($var*) $stat* end, $rstore) = $rstore3
+	summarize(def $id ($id*) $stat* end, $rstore) = $rstore3
 
 [summarize-2]
 	$strcon := unparse-to-string($id),
@@ -143,7 +143,7 @@ equations
 equations
 
 [arity-param-top]
-	formal-arity($var, $natcon) = $natcon + 1
+	formal-arity($id, $natcon) = $natcon + 1
 
 equations
 

@@ -36,9 +36,6 @@ table:
 java-table:
 	pt-dump -m languages/java-15/syntax/Java-15 -o Java-15.trm.tbl
 
-import-table:
-	pt-dump -m languages/waebric/import/Waebric -o Import-Waebric.trm.tbl
-
 dump-import:
 	eqs-dump -m languages/waebric/import/Waebric -o Import-Waebric.eqs
 
@@ -56,7 +53,7 @@ dump-compile:
 
 
 asfc-import: 
-	asfc -p Import-Waebric.trm.tbl -i Import-Waebric.eqs -o Import-Waebric.c -v
+	asfc -p Waebric.trm.tbl -i Import-Waebric.eqs -o Import-Waebric.c -v
 
 asfc-check: 
 	asfc -i Check-Waebric.eqs -o Check-Waebric.c -v

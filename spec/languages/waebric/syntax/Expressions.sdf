@@ -6,7 +6,7 @@ imports basic/Whitespace
         languages/waebric/syntax/Text
 
 exports
-sorts SymbolCon SymbolChar Expression Var KeyValuePair
+sorts SymbolCon SymbolChar Expression KeyValuePair
 
 lexical syntax
   "'" SymbolChar*                    -> SymbolCon   
@@ -16,18 +16,15 @@ lexical restrictions
   SymbolCon -/- ~[\)\ \t\n\r\;\,\>]
 
 context-free syntax
-  Text -> Expression  
+  Text -> Expression  {cons("text")}
 
 context-free syntax
-  IdCon -> Var {category("MetaVariable")} 
+  IdCon                -> Expression  {cons("var"), category("MetaVariable")}
+  SymbolCon            -> Expression  {cons("sym")}
+  NatCon               -> Expression  {cons("num")}
+  Expression "." IdCon -> Expression  {cons("field")}
 
 context-free syntax
-  Var                  -> Expression  
-  SymbolCon            -> Expression  
-  NatCon               -> Expression  
-  Expression "." IdCon -> Expression  
-
-context-free syntax
-  "[" {Expression ","}* "]"   -> Expression    
-  "{" {KeyValuePair ","}* "}" -> Expression    
-  IdCon ":" Expression        -> KeyValuePair  
+  "[" {Expression ","}* "]"   -> Expression  {cons("list")}
+  "{" {KeyValuePair ","}* "}" -> Expression  {cons("record")}  
+  IdCon ":" Expression        -> KeyValuePair  {cons("pair")}
