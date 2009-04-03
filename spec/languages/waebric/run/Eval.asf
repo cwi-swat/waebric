@@ -49,11 +49,11 @@ equations
 
 [eval-stat-1]
 	eval-stat($markup ;, $env, $block, $module*) = 
-		eval-markups($markup, $env, $block, $module*)
+		eval-markup($markup, $env, , $module*)
 
 [eval-stat-2]
 	eval-stat($markup+ $markup ;, $env, $block, $module*) =
-		eval-markups($markup+ $markup, $env, $block, $module*)
+		eval-markups($markup+ $markup, $env, , $module*)
 
 [eval-stat-2-1]
 	$block' := value-to-text(eval-exp($exp, $env))

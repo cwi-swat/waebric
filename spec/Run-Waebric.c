@@ -786,9 +786,9 @@ static ATerm lf_387 ( ATerm arg1 , ATerm arg2 ) ;
 static Symbol lf_388sym ;
 static ATerm lf_388 ( ATerm arg1 , ATerm arg2 ) ;
 static Symbol lf_389sym ;
-static ATerm lf_389 ( ATerm arg1 , ATerm arg2 ) ;
+static ATerm lf_389 ( ATerm arg1 , ATerm arg2 , ATerm arg3 , ATerm arg4 ) ;
 static Symbol lf_390sym ;
-static ATerm lf_390 ( ATerm arg1 , ATerm arg2 , ATerm arg3 , ATerm arg4 ) ;
+static ATerm lf_390 ( ATerm arg1 , ATerm arg2 ) ;
 static Symbol lf_list_391sym ;
 static ATerm lf_list_391 ( ) ;
 static Symbol lf_392sym ;
@@ -1807,9 +1807,9 @@ lf_387sym = ATmakeSymbol ( "prod([cf(iter(sort(\"Markup\"))),cf(opt(layout)),cf(
 ATprotectSymbol ( lf_387sym ) ;
 lf_388sym = ATmakeSymbol ( "prod([cf(iter(sort(\"Markup\"))),cf(opt(layout)),cf(sort(\"Expression\")),cf(opt(layout)),lit(\";\")],cf(sort(\"Statement\")),no-attrs)" , 2 , ATtrue ) ;
 ATprotectSymbol ( lf_388sym ) ;
-lf_389sym = ATmakeSymbol ( "prod([cf(iter(sort(\"Markup\"))),cf(opt(layout)),cf(sort(\"Markup\")),cf(opt(layout)),lit(\";\")],cf(sort(\"Statement\")),no-attrs)" , 2 , ATtrue ) ;
+lf_389sym = ATmakeSymbol ( "prod([lit(\"eval-markups\"),cf(opt(layout)),lit(\"(\"),cf(opt(layout)),cf(iter(sort(\"Markup\"))),cf(opt(layout)),lit(\",\"),cf(opt(layout)),cf(sort(\"Environment\")),cf(opt(layout)),lit(\",\"),cf(opt(layout)),cf(sort(\"Elements\")),cf(opt(layout)),lit(\",\"),cf(opt(layout)),cf(iter-star(sort(\"Module\"))),cf(opt(layout)),lit(\")\")],cf(sort(\"Elements\")),no-attrs)" , 4 , ATtrue ) ;
 ATprotectSymbol ( lf_389sym ) ;
-lf_390sym = ATmakeSymbol ( "prod([lit(\"eval-markups\"),cf(opt(layout)),lit(\"(\"),cf(opt(layout)),cf(iter(sort(\"Markup\"))),cf(opt(layout)),lit(\",\"),cf(opt(layout)),cf(sort(\"Environment\")),cf(opt(layout)),lit(\",\"),cf(opt(layout)),cf(sort(\"Elements\")),cf(opt(layout)),lit(\",\"),cf(opt(layout)),cf(iter-star(sort(\"Module\"))),cf(opt(layout)),lit(\")\")],cf(sort(\"Elements\")),no-attrs)" , 4 , ATtrue ) ;
+lf_390sym = ATmakeSymbol ( "prod([cf(iter(sort(\"Markup\"))),cf(opt(layout)),cf(sort(\"Markup\")),cf(opt(layout)),lit(\";\")],cf(sort(\"Statement\")),no-attrs)" , 2 , ATtrue ) ;
 ATprotectSymbol ( lf_390sym ) ;
 lf_list_391sym = ATmakeSymbol ( "list(cf(iter(sort(\"Markup\"))))" , 1 , ATtrue ) ;
 ATprotectSymbol ( lf_list_391sym ) ;
@@ -2163,8 +2163,8 @@ register_prod ( ATparse ( "prod([lit(\"value-to-text\"),cf(opt(layout)),lit(\"(\
 register_prod ( ATparse ( "prod([lit(\"yield\"),cf(opt(layout)),lit(\";\")],cf(sort(\"Statement\")),no-attrs)" ) , lf_393 , lf_393sym ) ;
 register_prod ( ATparse ( "prod([cf(sort(\"Markup\")),cf(opt(layout)),lit(\";\")],cf(sort(\"Statement\")),no-attrs)" ) , lf_392 , lf_392sym ) ;
 register_prod ( ATparse ( "list(cf(iter(sort(\"Markup\"))))" ) , lf_list_391 , lf_list_391sym ) ;
-register_prod ( ATparse ( "prod([lit(\"eval-markups\"),cf(opt(layout)),lit(\"(\"),cf(opt(layout)),cf(iter(sort(\"Markup\"))),cf(opt(layout)),lit(\",\"),cf(opt(layout)),cf(sort(\"Environment\")),cf(opt(layout)),lit(\",\"),cf(opt(layout)),cf(sort(\"Elements\")),cf(opt(layout)),lit(\",\"),cf(opt(layout)),cf(iter-star(sort(\"Module\"))),cf(opt(layout)),lit(\")\")],cf(sort(\"Elements\")),no-attrs)" ) , lf_390 , lf_390sym ) ;
-register_prod ( ATparse ( "prod([cf(iter(sort(\"Markup\"))),cf(opt(layout)),cf(sort(\"Markup\")),cf(opt(layout)),lit(\";\")],cf(sort(\"Statement\")),no-attrs)" ) , lf_389 , lf_389sym ) ;
+register_prod ( ATparse ( "prod([cf(iter(sort(\"Markup\"))),cf(opt(layout)),cf(sort(\"Markup\")),cf(opt(layout)),lit(\";\")],cf(sort(\"Statement\")),no-attrs)" ) , lf_390 , lf_390sym ) ;
+register_prod ( ATparse ( "prod([lit(\"eval-markups\"),cf(opt(layout)),lit(\"(\"),cf(opt(layout)),cf(iter(sort(\"Markup\"))),cf(opt(layout)),lit(\",\"),cf(opt(layout)),cf(sort(\"Environment\")),cf(opt(layout)),lit(\",\"),cf(opt(layout)),cf(sort(\"Elements\")),cf(opt(layout)),lit(\",\"),cf(opt(layout)),cf(iter-star(sort(\"Module\"))),cf(opt(layout)),lit(\")\")],cf(sort(\"Elements\")),no-attrs)" ) , lf_389 , lf_389sym ) ;
 register_prod ( ATparse ( "prod([cf(iter(sort(\"Markup\"))),cf(opt(layout)),cf(sort(\"Expression\")),cf(opt(layout)),lit(\";\")],cf(sort(\"Statement\")),no-attrs)" ) , lf_388 , lf_388sym ) ;
 register_prod ( ATparse ( "prod([cf(iter(sort(\"Markup\"))),cf(opt(layout)),cf(sort(\"Embedding\")),cf(opt(layout)),lit(\";\")],cf(sort(\"Statement\")),no-attrs)" ) , lf_387 , lf_387sym ) ;
 register_prod ( ATparse ( "prod([cf(iter(sort(\"Markup\"))),cf(opt(layout)),cf(sort(\"Statement\"))],cf(sort(\"Statement\")),attrs([assoc(non-assoc)]))" ) , lf_386 , lf_386sym ) ;
@@ -2577,7 +2577,7 @@ ATermTable table_lf_454 ;
 ATermTable table_lf_402 ;
 ATermTable table_lf_376 ;
 ATermTable table_lf_381 ;
-ATermTable table_lf_390 ;
+ATermTable table_lf_389 ;
 ATermTable table_lf_396 ;
 ATermTable table_lf_437 ;
 ATermTable table_lf_returns_list360 ;
@@ -3394,7 +3394,7 @@ create_table ( table_lf_454 , 0 ) ;
 create_table ( table_lf_402 , 0 ) ;
 create_table ( table_lf_376 , 0 ) ;
 create_table ( table_lf_381 , 0 ) ;
-create_table ( table_lf_390 , 0 ) ;
+create_table ( table_lf_389 , 0 ) ;
 create_table ( table_lf_396 , 0 ) ;
 create_table ( table_lf_437 , 0 ) ;
 create_table ( table_lf_returns_list360 , 0 ) ;
@@ -28086,7 +28086,7 @@ if ( check_sym ( tmp [ 5 ] , lf_list_458sym ) ) {
 tmp [ 6 ] = arg_0 ( tmp [ 5 ] ) ;
 }
 {
-tmp [ 7 ] = lf_390 ( make_nf1 ( lf_list_391sym , tmp [ 1 ] ) , arg1 , make_nf1 ( lf_457sym , make_nf1 ( lf_list_458sym , tmp [ 6 ] ) ) , arg2 ) ;
+tmp [ 7 ] = lf_389 ( make_nf1 ( lf_list_391sym , tmp [ 1 ] ) , arg1 , make_nf1 ( lf_457sym , make_nf1 ( lf_list_458sym , tmp [ 6 ] ) ) , arg2 ) ;
 }
 {
 if ( check_sym ( tmp [ 7 ] , lf_457sym ) ) {
@@ -28154,7 +28154,7 @@ tmp [ 3 ] = arg_0 ( arg2 ) ;
 if ( ! constant565 ) {
 constant565 = make_nf1 ( lf_457sym , make_nf1 ( lf_list_458sym , make_list ( null ( ) ) ) ) ;
 }
-tmp [ 4 ] = lf_390 ( make_nf1 ( lf_list_391sym , cons ( tmp [ 1 ] , make_list ( atmp_0_1 ) ) ) , arg1 , constant565 , arg2 ) ;
+tmp [ 4 ] = lf_389 ( make_nf1 ( lf_list_391sym , cons ( tmp [ 1 ] , make_list ( atmp_0_1 ) ) ) , arg1 , constant565 , arg2 ) ;
 }
 {
 if ( check_sym ( tmp [ 4 ] , lf_457sym ) ) {
@@ -28250,9 +28250,9 @@ FUNC_EXIT ( make_nf1 ( lf_457sym , make_nf1 ( lf_list_458sym , cons ( make_list 
 FUNC_EXIT ( make_nf3 ( lf_396sym , arg0 , arg1 , arg2 ) ) ;
 }
 }
-ATerm lf_390 ( ATerm arg0 , ATerm arg1 , ATerm arg2 , ATerm arg3 ) {
+ATerm lf_389 ( ATerm arg0 , ATerm arg1 , ATerm arg2 , ATerm arg3 ) {
 ATerm tmp [ 9 ] ;
-FUNC_ENTRY ( lf_390sym , ATmakeAppl ( lf_390sym , arg0 , arg1 , arg2 , arg3 ) ) ;
+FUNC_ENTRY ( lf_389sym , ATmakeAppl ( lf_389sym , arg0 , arg1 , arg2 , arg3 ) ) ;
 {
 if ( check_sym ( arg0 , lf_list_391sym ) ) {
 ATerm atmp_0_0 = arg_0 ( arg0 ) ;
@@ -28336,7 +28336,7 @@ if ( check_sym ( tmp [ 7 ] , lf_list_458sym ) ) {
 tmp [ 8 ] = arg_0 ( tmp [ 7 ] ) ;
 }
 {
-FUNC_EXIT ( lf_390 ( make_nf1 ( lf_list_391sym , slice ( atmp_0_0_0 [ 0 ] , atmp_0_0_0 [ 1 ] ) ) , arg1 , make_nf1 ( lf_457sym , make_nf1 ( lf_list_458sym , tmp [ 8 ] ) ) , arg3 ) ) ;
+FUNC_EXIT ( lf_389 ( make_nf1 ( lf_list_391sym , slice ( atmp_0_0_0 [ 0 ] , atmp_0_0_0 [ 1 ] ) ) , arg1 , make_nf1 ( lf_457sym , make_nf1 ( lf_list_458sym , tmp [ 8 ] ) ) , arg3 ) ) ;
 }
 }
 }
@@ -28364,7 +28364,7 @@ tmp [ 1 ] = atmp_0_0_0 [ 1 ] ;
 }
 }
 {
-FUNC_EXIT ( make_nf4 ( lf_390sym , arg0 , arg1 , arg2 , arg3 ) ) ;
+FUNC_EXIT ( make_nf4 ( lf_389sym , arg0 , arg1 , arg2 , arg3 ) ) ;
 }
 }
 ATerm lf_381 ( ATerm arg0 , ATerm arg1 ) {
@@ -28740,7 +28740,10 @@ if ( check_sym ( arg3 , lf_list_456sym ) ) {
 tmp [ 3 ] = arg_0 ( arg3 ) ;
 }
 {
-FUNC_EXIT ( lf_390 ( make_nf1 ( lf_list_391sym , make_list ( atmp_0_0 ) ) , arg1 , arg2 , arg3 ) ) ;
+if ( ! constant565 ) {
+constant565 = make_nf1 ( lf_457sym , make_nf1 ( lf_list_458sym , make_list ( null ( ) ) ) ) ;
+}
+FUNC_EXIT ( lf_435 ( atmp_0_0 , arg1 , constant565 , arg3 ) ) ;
 }
 }
 }
@@ -28751,7 +28754,7 @@ FUNC_EXIT ( lf_390 ( make_nf1 ( lf_list_391sym , make_list ( atmp_0_0 ) ) , arg1
 }
 }
 {
-if ( check_sym ( arg0 , lf_389sym ) ) {
+if ( check_sym ( arg0 , lf_390sym ) ) {
 ATerm atmp_0_0 = arg_0 ( arg0 ) ;
 {
 if ( check_sym ( atmp_0_0 , lf_list_391sym ) ) {
@@ -28775,7 +28778,10 @@ if ( check_sym ( arg3 , lf_list_456sym ) ) {
 tmp [ 5 ] = arg_0 ( arg3 ) ;
 }
 {
-FUNC_EXIT ( lf_390 ( make_nf1 ( lf_list_391sym , cons ( tmp [ 1 ] , make_list ( atmp_0_1 ) ) ) , arg1 , arg2 , arg3 ) ) ;
+if ( ! constant565 ) {
+constant565 = make_nf1 ( lf_457sym , make_nf1 ( lf_list_458sym , make_list ( null ( ) ) ) ) ;
+}
+FUNC_EXIT ( lf_389 ( make_nf1 ( lf_list_391sym , cons ( tmp [ 1 ] , make_list ( atmp_0_1 ) ) ) , arg1 , constant565 , arg3 ) ) ;
 }
 }
 }
@@ -28827,7 +28833,7 @@ if ( check_sym ( tmp [ 7 ] , lf_list_458sym ) ) {
 tmp [ 8 ] = arg_0 ( tmp [ 7 ] ) ;
 }
 {
-FUNC_EXIT ( lf_390 ( make_nf1 ( lf_list_391sym , tmp [ 1 ] ) , arg1 , make_nf1 ( lf_457sym , make_nf1 ( lf_list_458sym , tmp [ 8 ] ) ) , arg3 ) ) ;
+FUNC_EXIT ( lf_389 ( make_nf1 ( lf_list_391sym , tmp [ 1 ] ) , arg1 , make_nf1 ( lf_457sym , make_nf1 ( lf_list_458sym , tmp [ 8 ] ) ) , arg3 ) ) ;
 }
 }
 }
@@ -28870,7 +28876,7 @@ if ( check_sym ( arg3 , lf_list_456sym ) ) {
 tmp [ 5 ] = arg_0 ( arg3 ) ;
 }
 {
-FUNC_EXIT ( lf_390 ( make_nf1 ( lf_list_391sym , tmp [ 1 ] ) , arg1 , lf_396 ( atmp_0_1 , arg1 , arg3 ) , arg3 ) ) ;
+FUNC_EXIT ( lf_389 ( make_nf1 ( lf_list_391sym , tmp [ 1 ] ) , arg1 , lf_396 ( atmp_0_1 , arg1 , arg3 ) , arg3 ) ) ;
 }
 }
 }
@@ -28922,7 +28928,7 @@ if ( check_sym ( tmp [ 7 ] , lf_list_458sym ) ) {
 tmp [ 8 ] = arg_0 ( tmp [ 7 ] ) ;
 }
 {
-FUNC_EXIT ( lf_390 ( make_nf1 ( lf_list_391sym , tmp [ 1 ] ) , arg1 , make_nf1 ( lf_457sym , make_nf1 ( lf_list_458sym , tmp [ 8 ] ) ) , arg3 ) ) ;
+FUNC_EXIT ( lf_389 ( make_nf1 ( lf_list_391sym , tmp [ 1 ] ) , arg1 , make_nf1 ( lf_457sym , make_nf1 ( lf_list_458sym , tmp [ 8 ] ) ) , arg3 ) ) ;
 }
 }
 }
@@ -31071,9 +31077,9 @@ ATerm lf_list_391 ( ATerm arg0 ) {
 CONS_ENTRY ( lf_list_391sym , ATmakeAppl ( lf_list_391sym , arg0 ) ) ;
 CONS_EXIT ( make_nf1 ( lf_list_391sym , arg0 ) ) ;
 }
-ATerm lf_389 ( ATerm arg0 , ATerm arg1 ) {
-CONS_ENTRY ( lf_389sym , ATmakeAppl ( lf_389sym , arg0 , arg1 ) ) ;
-CONS_EXIT ( make_nf2 ( lf_389sym , arg0 , arg1 ) ) ;
+ATerm lf_390 ( ATerm arg0 , ATerm arg1 ) {
+CONS_ENTRY ( lf_390sym , ATmakeAppl ( lf_390sym , arg0 , arg1 ) ) ;
+CONS_EXIT ( make_nf2 ( lf_390sym , arg0 , arg1 ) ) ;
 }
 ATerm lf_388 ( ATerm arg0 , ATerm arg1 ) {
 CONS_ENTRY ( lf_388sym , ATmakeAppl ( lf_388sym , arg0 , arg1 ) ) ;
