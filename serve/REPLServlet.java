@@ -31,7 +31,6 @@ public class REPLServlet extends HttpServlet {
 	catch (InterruptedException e) {
 	}
 	return waebric;
-	//return read(waebric.getInputStream());
     }
 
 
@@ -65,24 +64,28 @@ public class REPLServlet extends HttpServlet {
 	return string.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">", "&gt;");
     }
 
-    private String tidy(String string) {
-	Tidy tidy = new Tidy();
-	tidy.setQuiet(true);
-	tidy.setXHTML(true);
-	tidy.setTidyMark(false);
-	tidy.setMakeClean(false);
-	tidy.setIndentContent(true);
-	tidy.setIndentAttributes(false);
-	//tidy.setSmartIndent(true);
-	tidy.setDocType("omit");
+//     private String tidy(String string) {
+// 	Tidy tidy = new Tidy();
+// 	tidy.setQuiet(true);
+// 	tidy.setXHTML(true);
+// 	tidy.setTidyMark(false);
+// 	tidy.setMakeClean(false);
+// 	tidy.setIndentContent(true);
+// 	tidy.setIndentAttributes(false);
+// 	tidy.setDocType("omit");
+// 	tidy.setDropEmptyParas(false);
+// 	tidy.setDropFontTags(false);
+// 	tidy.setEncloseBlockText(false);
+// 	tidy.setEncloseText(false);
+// 	tidy.setLogicalEmphasis(false);
 
-	ByteArrayOutputStream output = new ByteArrayOutputStream();
-	ByteArrayInputStream input = new ByteArrayInputStream(string.getBytes());
-	Document doc = tidy.parseDOM(input, output);
-	ByteArrayOutputStream pp = new ByteArrayOutputStream();
-	tidy.pprint(doc, pp);
-	return pp.toString();
-    } 
+// 	ByteArrayOutputStream output = new ByteArrayOutputStream();
+// 	ByteArrayInputStream input = new ByteArrayInputStream(string.getBytes());
+// 	Document doc = tidy.parseDOM(input, output);
+// 	ByteArrayOutputStream pp = new ByteArrayOutputStream();
+// 	tidy.pprint(doc, pp);
+// 	return pp.toString();
+//     } 
 
     public void doPost(HttpServletRequest request,
 		      HttpServletResponse response)
@@ -91,7 +94,7 @@ public class REPLServlet extends HttpServlet {
 	Process eval = eval(source);
 	String result = read(eval.getInputStream());
 	if (!result.equals("")) {
-	    String escapedResult = escape(tidy(result));
+	    String escapedResult = escape(result);
 	    // ;charset=utf-8
 	    URI uri = null;
 	    try {

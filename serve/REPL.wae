@@ -71,10 +71,11 @@ def layout
      css("pretty/prettify.css", "screen, projection");
      script(type="text/javascript", src="pretty/prettify.js");
      css("waebric.css", "screen");
-     title "Waebric REPL";
+     title "Try Waebric online";
    }
    body(onload="prettyPrint()") {
      div.container {
+       div.span-24.last h1 "Try Waebric online";
        yield;
      }
    }
