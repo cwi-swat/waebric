@@ -1,0 +1,9 @@
+#! /bin/sh
+
+BINDIR=__BINDIR__
+DATADIR=__DATA_DIR__
+
+WINSTONE=${DATADIR}/__WINSTONE__
+ROOT=${DATADIR}/root
+
+java -jar ${WINSTONE} --webroot ${ROOT} --useServletReloading=true

@@ -1,0 +1,90 @@
+module REPL
+
+def homePage(source)
+  layout {
+    inputForm source;
+  }
+end
+
+def errorPage(source, message)
+  layout {
+     inputForm source;
+     hr.space;
+     errorMessage(message);
+  }
+end
+    
+def errorMessage(msg) 
+    h3 "Error";
+    code msg;
+end
+
+def resultPage(source, escapedResult, dataURI, ast)
+  layout {
+     div.span-12 {
+      h3 "Input";
+      inputForm source;
+     }
+     div.span-12.last {
+       h3 "Output";
+       escapedResult(escapedResult);
+     }
+     hr.space;
+     div.span-12 {
+       h3 "Preview";
+       preview(dataURI);
+     }
+     div.span-12.last {
+       h3 "Abstract Syntax Tree";
+       p ast;
+     }
+  }
+end
+
+
+def escapedResult(result) 
+  code.prettyprint.lang-xhtml result;
+end
+
+def preview(dataURI) 
+   object#preview(type="text/html", data=dataURI) {
+     p "Something went wrong...";
+   }
+end
+
+def css(url, media)
+  link(rel="stylesheet", href=url, type="text/css", media=media);
+end
+
+def layout
+  html {
+  head {
+     meta(http-equiv="content-type", content="text/html; charset=utf-8");
+     meta(name="keywords", content="Waebric, markup, DSL");
+     meta(name="description", content="Online Waebric evaluator");
+     meta(name="language", content="en");
+     css("blueprint/screen.css", "screen, projection");
+     css("blueprint/print.css", "print");
+     comment "[if IE]>";
+     css("blueprint/ie.css", "screen, projection");
+     comment "<![endif]";
+     css("pretty/prettify.css", "screen, projection");
+     script(type="text/javascript", src="pretty/prettify.js");
+     css("waebric.css", "screen");
+     title "Waebric REPL";
+   }
+   body(onload="prettyPrint()") {
+     div.container {
+       yield;
+     }
+   }
+  }
+end
+
+def inputForm
+     form(action="/eval", method="post") {
+       textarea$source yield;
+       hr.space;
+       input$Submit:submit("Submit");
+     }
+end

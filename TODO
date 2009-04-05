@@ -1,4 +1,8 @@
 
+Wishlist
+ - public methods in generated java should HTML escape input params.
+ - String concatenation
+
 Missing features
  - cdata
  - (non-)escaping in comments and cdata
