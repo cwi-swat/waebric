@@ -376,6 +376,10 @@ equations
 [exp-to-jexp-3]
 	exp-to-jexp(&id) = idcon-to-id(&id)
 
+[exp-to-jexp-3-1]
+	exp-to-jexp(&exp1 + &exp2) = exp-to-jexp(&exp1) + exp-to-jexp(&exp2)
+
+
 [exp-to-jexp-4]
 	&jexp := exp-to-jexp(&exp)
 	===

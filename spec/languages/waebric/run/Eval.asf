@@ -153,6 +153,15 @@ equations
 	===
 	eval-exp($id, $env) = $value
 
+
+[eval-exp-5]
+	$value1 := eval-exp($exp1, $env),
+	$value2 := eval-exp($exp2, $env)
+	===
+	eval-exp($exp1 + $exp2, $env) = 
+		join(value-to-text($value1),
+			value-to-text($value2))
+
 [eval-exp-6]
 	[$vpair*] := eval-exp($exp, $env),
 	$value0 := [$vpair*],

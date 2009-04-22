@@ -22,7 +22,12 @@ context-free syntax
   IdCon                -> Expression  {cons("var"), category("MetaVariable")}
   SymbolCon            -> Expression  {cons("sym")}
   NatCon               -> Expression  {cons("num")}
+
+context-free priorities
   Expression "." IdCon -> Expression  {cons("field")}
+  >
+  Expression "+" Expression -> Expression {cons("cat"), left}
+  
 
 context-free syntax
   "[" {Expression ","}* "]"   -> Expression  {cons("list")}
