@@ -13,27 +13,27 @@ INPUT=$1
 set -e
 
 if [ "a${INPUT}" = "a" ]; then
-    echo "Use: ${PROGRAM} <filename>"
+    echo "Use: ${PROGRAM} <filename>" 1>&2
     exit 1
 fi
 
 MOD=`basename ${INPUT} ${WBEXT}`
 
-TEMPWAEBRIC=`basename $0`
+TEMPWAEBRIC=`basename $0`.XXXXX
 BUILD=`mktemp -d -t ${TEMPWAEBRIC}`
 if [ $? -ne 0 ]; then
-    echo "$0: Can't create temp directory, exiting..."
+    echo "$0: Can't create temp directory, exiting..." 1>&2
     exit 1
 fi
 
 ${COMPILER} ${INPUT}
 
-echo "Compiling ${MOD}.java..."
+echo "Compiling ${MOD}.java..." 1>&2
 javac -d ${BUILD} ${MOD}.java
 
-echo "Running main in ${MOD}.class."
+echo "Running main in ${MOD}.class." 1>&2
 java -cp ${BUILD} ${MOD}
 
-echo "Done."
+echo "Done." 1>&2
 
 

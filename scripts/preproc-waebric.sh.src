@@ -20,7 +20,7 @@ fi
 
 MOD=`basename ${INPUT} ${WBEXT}`
 
-TEMPWAEBRIC=`basename $0`
+TEMPWAEBRIC=`basename $0`.XXXXX
 TEMPFILE=`mktemp -t ${TEMPWAEBRIC}`
 if [ $? -ne 0 ]; then
     echo "$0: Can't create temp file, exiting..."

@@ -14,16 +14,36 @@ INPUT=$1
 set -e
 
 if [ "a${INPUT}" = "a" ]; then
-    echo "Use: ${PROGRAM} <filename>"
+    echo "Use: ${PROGRAM} <filename>" 1>&2
     exit 1
 fi
 
 MOD=`basename ${INPUT} ${WBEXT}`
 
-echo "Compiling ${INPUT} to ${MOD}.java..."
+echo "Compiling ${INPUT} to ${MOD}.java..." 1>&2
 ${PREPROC} ${INPUT} | apply-function -f compile -s CompilationUnit \
    | ${W2J} \
    | restorebrackets -p ${JAVA_TBL} \
    | unparsePT -o ${MOD}.java
 
-echo "Done."
+TEMPWAEBRIC=`basename $0`.XXXXX
+BUILD=`mktemp -d -t ${TEMPWAEBRIC}`
+if [ $? -ne 0 ]; then
+    echo "$0: Can't create temp directory, exiting..." 1>&2
+    exit 1
+fi
+
+
+echo "Compiling ${MOD}.java..." 1>&2
+javac -d ${BUILD} ${MOD}.java
+
+echo "Creating ${MOD}.jar..." 1>&2
+
+cd ${BUILD}
+jar cf ${MOD}.jar *.class
+cd -
+cp ${BUILD}/${MOD}.jar .
+jar uf ${MOD}.jar ${MOD}.java
+
+
+echo "Done." 1>&2
