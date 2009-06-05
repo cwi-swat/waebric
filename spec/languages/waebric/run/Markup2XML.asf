@@ -7,13 +7,18 @@ equations
 	markup-to-xhtml($elt*) =
 $stag$content*$etag
 
+[markup-to-document-empty]
+	>$empty-tag< := markup-to-content($elt*)
+	===
+	markup-to-xhtml($elt*) =
+$empty-tag
+
+
 [default-markup-to-document-unrooted]
 	>$content*< := markup-to-content($elt*)
 	===
 	markup-to-xhtml($elt*) =
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-$content*
-</html>
+<html>$content*</html>
 
 equations
 
