@@ -355,6 +355,42 @@ data for the \textit{menu} parameter) of menu could look like the
 screen shot next to the source code.
 
 
+\section{Well-formedness}
+
+Apart from syntactic well-formedness, a \waebric implementation also
+performs modest semantic well-formedness checks. The interpreter and
+compiler, however, will always produce output, regardless of
+errors. The following warning signs are checked for (the text between
+[] indicates the effect on evaluation).
+
+\begin{description}
+\item[Undefined functions] If for a markup-call, $f$, no function
+  definition can be found in the current module or one of its
+  (transitive) imports, and, if $f$ is not a tag defined in the XHTML
+  1.0 Transitional standard, then this is an error. [$f$ will be
+  interpreted \textit{as if} it was part of XHTML 1.0 transitional.]
+
+\item[Undefined variables] If a variable reference $x$ cannot be
+  traced back to an enclosing let-definition or function parameter,
+  this is an error.  [The variable $x$ will be \textit{undefined} and
+  evaluate to the string ``undef''.]
+
+\item[Non-existing module] If for an import directive \texttt{import
+    $m$} no corresponding file \texttt{$m$.wae} can be found, this a
+  an error. [The import directive is skipped]
+
+\item[Duplicate definitions] Multiple function definitions with the
+  same name are disallowed\footnote{Note that it is possible to shadow
+    standard XHTML tags, for instance, by defining a function \texttt{p}.}.
+
+\item[Arity mismatches] If a function is called with an incorrect
+  number of arguments (as follows from its definition), this is an
+  error. [If a function is called with more actual arguments than the
+  number of formal arguments, the superfluous arguments are
+  ignored. If the actual arguments are too few in number, the
+  remaining formal parameters become undefined variables.]
+\end{description}
+
 \begin{comment}
 
 \section{Semantics}
