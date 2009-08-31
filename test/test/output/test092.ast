@@ -1,0 +1,1 @@
+module(module-id(["test092"]),[def("main",empty,[let([var-bind("x",text("\"www.google.nl\""))],[markup-exp([call(tag("a",[]),args([attr("href",cat(text("\"http://\""),var("x")))]))],text("\"Google\""))])])])

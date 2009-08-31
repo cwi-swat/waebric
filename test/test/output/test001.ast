@@ -1,0 +1,1 @@
+module(module-id(["test001"]),[def("main",empty,[])])

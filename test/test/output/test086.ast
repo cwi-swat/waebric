@@ -1,0 +1,1 @@
+module(module-id(["test086"]),[def("main",empty,[let([var-bind("b",record([pair("x",num(3)),pair("y",num(4)),pair("z",num(6))]))],[each("x",var("b"),block([markup-exp([tag("p",[])],var("x"))]))])])])

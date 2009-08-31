@@ -1,0 +1,1 @@
+module(module-id(["test096"]),[def("main",empty,[markup-stat([tag("p",[])],block([])),markup-exp([tag("p",[])],record([])),markup-exp([tag("p",[])],list([])),markup-exp([tag("p",[])],text("\"\""))])])

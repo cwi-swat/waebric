@@ -1,0 +1,1 @@
+module(module-id(["test085"]),[def("main",empty,[let([var-bind("b",list([num(1),num(2),num(3)]))],[if-else(and(is-a(var("b"),list-type),not(field(var("b"),"x"))),echo(text("\"Yes\"")),echo(text("\"No\"")))])])])

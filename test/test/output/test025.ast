@@ -1,0 +1,1 @@
+module(module-id(["test025"]),[def("main",empty,[markup-exp([call(tag("html",[]),args([attr("name",text("\"bla\"")),attr("type",text("\"xhtml\""))]))],text("\"Hello world!\""))])])

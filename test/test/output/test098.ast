@@ -1,0 +1,1 @@
+module(module-id(["test098"]),[def("g",formals(["a"]),[let([func-bind("f",[],markup-markup([tag("p",[])],call(tag("g",[]),args([text("\"b\"")]))))],[if-else(var("a"),echo(text("\"A was defined\"")),block([echo(text("\"calling f\"")),markup(tag("f",[]))]))])]),def("main",empty,[markup(tag("g",[]))])])

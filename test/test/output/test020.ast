@@ -1,0 +1,1 @@
+module(module-id(["test020"]),[def("main",empty,[let([var-bind("y",text("\" world!\"")),func-bind("f",["x"],echo(cat(var("x"),var("y"))))],[markup(call(tag("f",[]),args([text("\"Hello\"")])))])])])

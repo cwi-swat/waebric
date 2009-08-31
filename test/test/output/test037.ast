@@ -1,0 +1,1 @@
+module(module-id(["test037"]),[def("main",empty,[markup(call(tag("f",[]),args([])))]),def("f",formals([]),[echo(text("\"bla\""))])])

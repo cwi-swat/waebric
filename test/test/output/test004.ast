@@ -1,0 +1,1 @@
+module(module-id(["test004"]),[def("main",empty,[echo-embedding(pre("\"abc<",exp-embedding([tag("em",[])],text("\"bla\"")),mid(">def<",exp-embedding([tag("em",[])],text("\"bla2\"")),post(">ghi\""))))])])

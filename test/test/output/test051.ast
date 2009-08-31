@@ -1,0 +1,1 @@
+module(module-id(["test051"]),[def("main",empty,[if-else(var("a"),echo(text("\"a\"")),echo(text("\"no\"")))])])

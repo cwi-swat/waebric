@@ -1,0 +1,1 @@
+module(module-id(["test011"]),[def("main",empty,[let([var-bind("x",text("\"Hello\""))],[echo(var("x"))])])])

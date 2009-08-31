@@ -1,0 +1,1 @@
+module(module-id(["test028"]),[def("main",empty,[markup-stat([tag("html",[])],block([echo(text("\"bla\""))]))])])

@@ -1,0 +1,1 @@
+module(module-id(["test017"]),[def("main",empty,[let([func-bind("f",[],echo(text("\"abc\"")))],[markup(tag("f",[]))])])])

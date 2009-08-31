@@ -1,0 +1,1 @@
+module(module-id(["test084"]),[def("main",empty,[let([var-bind("b",record([pair("x",text("\"X\"")),pair("y",text("\"Y\""))]))],[if-else(and(field(var("b"),"x"),field(var("b"),"y")),echo(text("\"Yes\"")),echo(text("\"No\"")))])])])

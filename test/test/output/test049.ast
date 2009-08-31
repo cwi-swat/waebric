@@ -1,0 +1,1 @@
+module(module-id(["test049"]),[def("main",empty,[let([var-bind("l",list([num(1),num(2),num(3),num(4)]))],[each("x",var("l"),echo(var("x")))])])])

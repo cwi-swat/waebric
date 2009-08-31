@@ -1,0 +1,1 @@
+module(module-id(["test074"]),[def("main",empty,[let([func-bind("p",[],markup-exp([tag("p",[])],text("\"a paragraph\"")))],[markup(tag("p",[]))])])])

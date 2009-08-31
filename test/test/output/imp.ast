@@ -1,0 +1,1 @@
+module(module-id(["imp"]),[import(module-id(["mod"])),import(module-id(["subdir","mod2"])),def("main",empty,[markup(tag("f",[])),markup(tag("g",[]))])])

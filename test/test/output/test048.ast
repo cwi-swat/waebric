@@ -1,0 +1,1 @@
+module(module-id(["test048"]),[def("main",empty,[each("x",list([]),echo(var("x")))])])

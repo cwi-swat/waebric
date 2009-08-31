@@ -1,0 +1,1 @@
+module(module-id(["test064"]),[def("f",formals(["a","b"]),[echo-embedding(pre("\"A = <",exp-embedding([],var("a")),post(">\""))),echo-embedding(pre("\"B = <",exp-embedding([],var("b")),post(">\"")))]),def("main",empty,[markup(tag("f",[]))])])

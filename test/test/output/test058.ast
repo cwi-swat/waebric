@@ -1,0 +1,1 @@
+module(module-id(["test058"]),[def("f",formals(["a"]),[let([var-bind("a",text("\"another A\""))],[yield,echo(var("a"))])]),def("main",empty,[let([var-bind("a",text("\"A\""))],[markup-exp([call(tag("f",[]),args([text("\"B\"")]))],var("a"))])])])

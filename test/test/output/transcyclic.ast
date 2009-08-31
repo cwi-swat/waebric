@@ -1,0 +1,1 @@
+module(module-id(["transcyclic"]),[import(module-id(["middlecycle"])),def("main",empty,[markup(tag("f",[]))])])

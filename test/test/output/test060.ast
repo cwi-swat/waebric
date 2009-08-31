@@ -1,0 +1,1 @@
+module(module-id(["test060"]),[def("f",empty,[markup-stat([tag("p",[]),tag("p",[]),tag("p",[])],yield)]),def("main",empty,[each("x",list([num(1),num(2),num(3),num(4)]),markup-exp([tag("f",[])],var("x")))])])

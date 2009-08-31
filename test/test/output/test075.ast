@@ -1,0 +1,1 @@
+module(module-id(["test075"]),[def("main",empty,[let([func-bind("mypar",[],markup-stat([tag("p",[])],block([echo(text("\"Mypar: \"")),yield])))],[markup-exp([tag("mypar",[])],text("\"Hallo\""))])])])

@@ -1,0 +1,1 @@
+module(module-id(["test026"]),[def("main",empty,[markup(call(tag("html",[]),args([])))])])

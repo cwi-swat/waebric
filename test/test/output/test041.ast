@@ -1,0 +1,1 @@
+module(module-id(["test041"]),[def("main",empty,[markup(call(tag("f",[]),args([text("\"Hello\""),text("\" world!\"")])))]),def("f",formals(["x"]),[echo(cat(text("\"x = \""),var("x")))])])

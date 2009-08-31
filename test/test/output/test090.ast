@@ -1,0 +1,1 @@
+module(module-id(["test090"]),[def("main",empty,[let([var-bind("a",num(1))],[let([var-bind("a",num(2))],[let([var-bind("a",num(3))],[let([var-bind("a",num(4))],[let([var-bind("a",num(5))],[let([var-bind("a",num(6))],[echo(var("a"))])])])])])])])])

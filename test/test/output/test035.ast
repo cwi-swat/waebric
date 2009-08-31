@@ -1,0 +1,1 @@
+module(module-id(["test035"]),[def("main",empty,[markup(tag("html",[class("alert"),id("bla"),class("notalert"),id("notbla")]))])])
