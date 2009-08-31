@@ -1,0 +1,8 @@
+
+module cycle
+
+import cyclic
+
+def f
+  echo "F";
+end

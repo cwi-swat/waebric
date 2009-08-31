@@ -1,0 +1,8 @@
+
+module transcyclic
+
+import middlecycle
+
+def main
+ f;
+end

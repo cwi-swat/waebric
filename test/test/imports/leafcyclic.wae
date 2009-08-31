@@ -1,0 +1,7 @@
+module leafcyclic
+
+import transcyclic
+
+def f
+ echo "F";
+end

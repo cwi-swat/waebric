@@ -1,0 +1,5 @@
+module mod
+
+def f
+  echo "F";
+end

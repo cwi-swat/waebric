@@ -1,0 +1,7 @@
+module trans
+
+import middle
+
+def main
+ f;
+end
