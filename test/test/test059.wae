@@ -1,6 +1,5 @@
 module test059
 
-
 def f
   yield;
 end
