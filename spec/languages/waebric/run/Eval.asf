@@ -317,6 +317,10 @@ equations
 	===
 	eval-embed($markup+ $markup, $env, $module*) = $elt*
 
+[]	$elt* := eval-markups($markup, $env, , $module*)
+	===
+	eval-embed($markup, $env, $module*) = $elt*
+
 equations
 
 [eval-arglist-nil]
@@ -327,6 +331,10 @@ equations
 	$value* := eval-args-for-func(($arg*), $env)
 	===
 	eval-args-for-func(($exp, $arg*), $env) = $value, $value*
+
+[eval-arglist-cons]
+	eval-args-for-func(($id = $exp, $arg*), $env) = 
+		eval-args-for-func(($exp, $arg*), $env)
 
 equations
 
