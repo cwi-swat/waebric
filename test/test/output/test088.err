@@ -2,8 +2,8 @@ Parsing test088.wae...
 parser:error: parse error, ' ' unexpected
 --- input string [file: test088.wae line: 7 col: 13]
 Assertion failed: (PT_isValidParseTree(parseTree)), function PT_addParseTreePosInfoToDepth, file MEPT-posinfo.c, line 311.
-/Users/tvdstorm/GLT/install/bin/preproc-waebric: line 39: 27314 Done(1)                 sglr -p ${TBL} -i ${INPUT} -s Module
-     27315 Abort trap              | addPosInfo -p ${INPUT} > ${TEMPFILE}
+/Users/tvdstorm/GLT/install/bin/preproc-waebric: line 39: 31915 Done(1)                 sglr -p ${TBL} -i ${INPUT} -s Module
+     31916 Abort trap              | addPosInfo -p ${INPUT} > ${TEMPFILE}
 readFromTextFile: parse error at line 0, col 0
 Unable to read in -
 readFromTextFile: parse error at line 0, col 0
