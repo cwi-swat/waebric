@@ -1,1 +1,0 @@
-module(module-id(["cycle"]),[import(module-id(["cyclic"])),def("f",empty,[echo(text("\"F\""))])])
